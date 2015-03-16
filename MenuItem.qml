@@ -21,6 +21,16 @@ Rectangle {
         onEntered:  { select() }
     }
 
+    Text{
+        id: text1
+        color: "black"
+        anchors.centerIn: parent
+
+        text: "WHAAAA"
+        font { family: "Consolas"; pointSize: 24 }
+        horizontalAlignment: Text.AlignHCenter
+    }
+
     function select() {
         text1.color = "white"
         itemSelected()
@@ -28,19 +38,5 @@ Rectangle {
 
     function deselect() {
         text1.color = "black"
-    }
-
-    Text{
-        id: text1
-
-        anchors.centerIn: parent
-
-        text: "WHAAAA"
-
-        font { family: "Consolas"; pointSize: 24 }
-
-        horizontalAlignment: Text.AlignHCenter
-
-        color: "black"
     }
 }
