@@ -8,6 +8,7 @@ ApplicationWindow {
     id: mainWindow
 
     title: qsTr("QML Invaders")
+
     width: 640
     height: 480
     visible: true

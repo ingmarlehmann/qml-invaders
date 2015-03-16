@@ -15,6 +15,7 @@ Rectangle {
     property var menuItems: ["New game", "Load game", "Highscores", "Quit"]
     property int selectedMenuItem: 0
 
+
     BorderImage{
         id: borderContainer
         source: "images/line-border-clipart-line-border-designs-showcard_border.png"

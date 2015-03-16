@@ -44,4 +44,3 @@ Rectangle {
         color: "black"
     }
 }
-
