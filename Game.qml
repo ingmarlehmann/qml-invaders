@@ -12,30 +12,35 @@ Rectangle {
         quit()
     }
 
-    Row{
-        Image{
-            width: 50
-            height: 50
-            source: "qrc:/images/invader1.png"
-        }
-        Image{
-            width: 50
-            height: 50
-            source: "qrc:/images/invader2.png"
-        }
-        Image{
-            width: 50
-            height: 50
-            source: "qrc:/images/invader3.png"
+    Grid{
+        id: enemies
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        columns: 10
+
+        x: 20
+        y: 20
+
+        Repeater{
+            model: 50
+
+            Image{
+                width: 50
+                height: 50
+                source: "qrc:/images/invader1.png"
+            }
         }
     }
 
     Image{
-        x: 200
-        y: 200
+        id: playerShip
+
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom
 
         width: 50
         height: 50
+
         source: "qrc:/images/ship.jpeg"
     }
 }

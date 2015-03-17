@@ -118,7 +118,7 @@ Rectangle {
 
     Keys.onReturnPressed: {
         // Select the current menu choice
-        menuItemSelected(menuItems[hoveredMenuItem]);
+        menuItemSelected(menuModel.get(hoveredMenuItem).text);
     }
 
     Keys.onUpPressed: {
