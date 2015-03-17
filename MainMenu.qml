@@ -3,8 +3,8 @@ import QtQuick 2.2
 Rectangle {
     id: root
 
-    width: 640
-    height: 480
+    width: parent.width
+    height: parent.height
 
     color: "black"
 
@@ -23,63 +23,73 @@ Rectangle {
         ListElement{ text: "Quit"; highlighted: false; }
     }
 
-    BorderImage{
+    Rectangle{
         id: borderContainer
-        source: "images/line-border-clipart-line-border-designs-showcard_border.png"
+        anchors.centerIn: parent
+
+        color: "black"
 
         width: parent.width - 150
         height: parent.height
 
-        anchors.centerIn: parent
-
         Column{
-            id: menuContainer
+            id: mainColumn
             anchors.centerIn: parent
+            spacing: 50
 
-            property int maxWidth: 0
+            Image{
+                id: topLogo
+                fillMode: Image.PreserveAspectFit
+                source: "qrc:/images/space_invaders_logo.png"
+                width: 400
+            }
 
-            Repeater{
-                model: menuModel
+            Column{
+                id: menuContainer
+                anchors.horizontalCenter: parent.horizontalCenter
 
-                MenuItem{
-                    id: currentItem
-                    buttonText: text
-                    width: menuContainer.maxWidth
-                    anchors.horizontalCenter: parent.horizontalCenter
+                property int maxWidth: 0
 
-                    // connect the model hovered changes to the apropriate menu options hovered.
-                    Connections{
-                        target: menuModel.get(index)
-                        onHighlightedChanged: {
-                            if(menuModel.get(index).highlighted){
-                                currentItem.highlighted = true;
-                            } else {
-                                currentItem.highlighted = false;
+                Repeater{
+                    model: menuModel
+
+                    MenuItem{
+                        id: currentItem
+                        buttonText: text
+                        width: menuContainer.maxWidth
+                        anchors.horizontalCenter: parent.horizontalCenter
+
+                        // connect the model hovered changes to the apropriate menu options hovered.
+                        Connections{
+                            target: menuModel.get(index)
+                            onHighlightedChanged: {
+                                if(menuModel.get(index).highlighted){
+                                    currentItem.highlighted = true;
+                                } else {
+                                    currentItem.highlighted = false;
+                                }
                             }
-
-                            console.log("item [" + index + "] " + "highlighted state changed to '" + currentItem.highlighted + "' for: " + text);
-                            console.log("model highlighted value was: " + highlighted);
                         }
-                    }
 
-                    // The menu item was clicked, signal parents.
-                    onItemClicked: {
-                        menuItemSelected(buttonText);
-                    }
-
-                    // The menu item was hovered. Set the curent selected index,
-                    // which will fire an event chain to deactivate the other
-                    // menu items.
-                    onHoveredChanged: {
-                        if(currentItem.hovered){
-                            hoveredMenuItem = index;
+                        // The menu item was clicked, signal parents.
+                        onItemClicked: {
+                            menuItemSelected(buttonText);
                         }
-                    }
 
-                    // Recalculate size dynamically when the content width of one of the menu
-                    // options changes.
-                    onContentWidthChanged: {
-                        menuContainer.maxWidth = Math.max(menuContainer.maxWidth, contentWidth) + 20;
+                        // The menu item was hovered. Set the curent selected index,
+                        // which will fire an event chain to deactivate the other
+                        // menu items.
+                        onHoveredChanged: {
+                            if(currentItem.hovered){
+                                hoveredMenuItem = index;
+                            }
+                        }
+
+                        // Recalculate size dynamically when the content width of one of the menu
+                        // options changes.
+                        onContentWidthChanged: {
+                            menuContainer.maxWidth = Math.max(menuContainer.maxWidth, contentWidth) + 20;
+                        }
                     }
                 }
             }
@@ -94,17 +104,13 @@ Rectangle {
     // 1. which menu option is highlighted.
     // 2. that the other menu options get de-highlighted.
     onHoveredMenuItemChanged: {
-        console.log("hoveredMenuItem changed to: " + hoveredMenuItem)
-
         // Deselect all the other menu items, otherwise the user kan press key down a couple of times
         // and the selection stays if the mouse hovers another menu option.
         for(var modelIndex=0; modelIndex<menuModel.count; ++modelIndex){
             if(modelIndex !== hoveredMenuItem){
-                console.log("setting model[" + modelIndex + "] property to 'false'")
                 menuModel.setProperty(modelIndex, "highlighted", false);
             }
             else {
-                console.log("setting model[" + modelIndex + "] property to 'true'")
                 menuModel.setProperty(modelIndex, "highlighted", true);
             }
         }

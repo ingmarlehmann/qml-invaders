@@ -4,10 +4,13 @@ Rectangle {
     width: 20
     height: 70
 
-    color: "lightgray"
+    color: "black"
 
     property alias buttonText: text1.text
     property alias contentWidth: text1.contentWidth
+
+    property string textHighlightColor: "#00FF00"
+    property string textNormalColor: "#009900"
 
     signal itemClicked
 
@@ -26,7 +29,7 @@ Rectangle {
 
     Text{
         id: text1
-        color: highlighted ? "white" : "black"
+        color: highlighted ? textHighlightColor : textNormalColor
         anchors.centerIn: parent
 
         text: "Default text"

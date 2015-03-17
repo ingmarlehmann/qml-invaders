@@ -10,7 +10,7 @@ ApplicationWindow {
     title: qsTr("QML Invaders")
 
     width: 640
-    height: 480
+    height: 640
     visible: true
 
     Rectangle{
