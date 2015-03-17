@@ -10,7 +10,9 @@ Rectangle {
     property alias contentWidth: text1.contentWidth
 
     signal itemClicked
-    signal itemSelected
+
+    property bool highlighted: false
+    property bool hovered: false
 
     MouseArea{
         anchors.fill: parent
@@ -18,25 +20,17 @@ Rectangle {
         acceptedButtons: Qt.LeftButton
 
         onClicked:  { itemClicked() }
-        onEntered:  { select() }
+        onEntered:  { hovered = true }
+        onExited:   { hovered = false }
     }
 
     Text{
         id: text1
-        color: "black"
+        color: highlighted ? "white" : "black"
         anchors.centerIn: parent
 
-        text: "WHAAAA"
+        text: "Default text"
         font { family: "Consolas"; pointSize: 24 }
         horizontalAlignment: Text.AlignHCenter
-    }
-
-    function select() {
-        text1.color = "white"
-        itemSelected()
-    }
-
-    function deselect() {
-        text1.color = "black"
     }
 }

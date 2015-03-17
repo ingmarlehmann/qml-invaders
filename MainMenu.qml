@@ -1,4 +1,4 @@
-import QtQuick 2.4
+import QtQuick 2.2
 
 Rectangle {
     id: root
@@ -12,9 +12,16 @@ Rectangle {
     // is selected either by keyboard or mouse input.
     signal menuItemSelected(string selectedMenuItem)
 
-    property var menuItems: ["New game", "Load game", "Highscores", "Quit"]
-    property int selectedMenuItem: 0
+    property int hoveredMenuItem: 99
 
+    ListModel{
+        id: menuModel
+
+        ListElement{ text: "New game"; highlighted: false; }
+        ListElement{ text: "Load game"; highlighted: false; }
+        ListElement{ text: "Highscores"; highlighted: false; }
+        ListElement{ text: "Quit"; highlighted: false; }
+    }
 
     BorderImage{
         id: borderContainer
@@ -28,169 +35,103 @@ Rectangle {
         Column{
             id: menuContainer
             anchors.centerIn: parent
-            property int maxWidth: {
-                var width = Math.max(menuNewGame.contentWidth,
-                         menuLoadGame.contentWidth,
-                         menuShowHighScore.contentWidth,
-                         menuQuit.contentWidth) + 20
 
-                return width;
-            }
+            property int maxWidth: 0
 
-            MenuItem{
-                id: menuNewGame
-                buttonText: menuItems[0]
+            Repeater{
+                model: menuModel
 
-                width: menuContainer.maxWidth
-                anchors.horizontalCenter: parent.horizontalCenter
+                MenuItem{
+                    id: currentItem
+                    buttonText: text
+                    width: menuContainer.maxWidth
+                    anchors.horizontalCenter: parent.horizontalCenter
 
-                Component.onCompleted: {
-                    this.itemClicked.connect( function() {
-                        menuItemSelected(buttonText)
-                    })
-                    this.itemSelected.connect( function() {
-                        selectedMenuItem = 0
-                        menuLoadGame.deselect()
-                        menuShowHighScore.deselect()
-                        menuQuit.deselect()
-                    })
-                }
-            }
-            MenuItem{
-                id: menuLoadGame
-                buttonText: menuItems[1]
+                    // connect the model hovered changes to the apropriate menu options hovered.
+                    Connections{
+                        target: menuModel.get(index)
+                        onHighlightedChanged: {
+                            if(menuModel.get(index).highlighted){
+                                currentItem.highlighted = true;
+                            } else {
+                                currentItem.highlighted = false;
+                            }
 
-                width: menuContainer.maxWidth
-                anchors.horizontalCenter: parent.horizontalCenter
+                            console.log("item [" + index + "] " + "highlighted state changed to '" + currentItem.highlighted + "' for: " + text);
+                            console.log("model highlighted value was: " + highlighted);
+                        }
+                    }
 
-                Component.onCompleted: {
-                    this.itemClicked.connect( function() {
-                        menuItemSelected(buttonText)
-                    })
-                    this.itemSelected.connect( function() {
-                        selectedMenuItem = 1
-                        menuNewGame.deselect()
-                        menuShowHighScore.deselect()
-                        menuQuit.deselect()
-                    })
-                }
-            }
-            MenuItem{
-                id: menuShowHighScore
-                buttonText: menuItems[2]
+                    // The menu item was clicked, signal parents.
+                    onItemClicked: {
+                        menuItemSelected(buttonText);
+                    }
 
-                width: menuContainer.maxWidth
-                anchors.horizontalCenter: parent.horizontalCenter
+                    // The menu item was hovered. Set the curent selected index,
+                    // which will fire an event chain to deactivate the other
+                    // menu items.
+                    onHoveredChanged: {
+                        if(currentItem.hovered){
+                            hoveredMenuItem = index;
+                        }
+                    }
 
-                Component.onCompleted: {
-                    this.itemClicked.connect( function() {
-                        menuItemSelected(buttonText)
-                    })
-                    this.itemSelected.connect( function() {
-                        selectedMenuItem = 2
-                        menuNewGame.deselect()
-                        menuLoadGame.deselect()
-                        menuQuit.deselect()
-                    })
-                }
-            }
-            MenuItem{
-                id: menuQuit
-                buttonText: menuItems[3]
-
-                width: menuContainer.maxWidth
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                Component.onCompleted: {
-                    this.itemClicked.connect( function() {
-                        menuItemSelected(buttonText)
-                    })
-                    this.itemSelected.connect( function() {
-                        selectedMenuItem = 3
-                        menuNewGame.deselect()
-                        menuShowHighScore.deselect()
-                        menuLoadGame.deselect()
-                    })
+                    // Recalculate size dynamically when the content width of one of the menu
+                    // options changes.
+                    onContentWidthChanged: {
+                        menuContainer.maxWidth = Math.max(menuContainer.maxWidth, contentWidth) + 20;
+                    }
                 }
             }
         }
-    }
-
-    function findWidestItem() {
-        var widestItem = 0;
-        if(menuNewGame.width > widestItem){
-            widestItem = menuNewGame.width
-        }
-        if(menuLoadGame.width > widestItem){
-            widestItem = menuLoadGame.width
-        }
-        if(menuShowHighScore.width > widestItem){
-            widestItem = menuShowHighScore.width
-        }
-        if(menuQuit.width > widestItem){
-            widestItem = menuQuit.width
-        }
-
-        return widestItem + 20
     }
 
     Component.onCompleted: {
-        highlightMenuItem(selectedMenuItem)
+        hoveredMenuItem = 0;
+    }
+
+    // hoveredMenuItem change event controls:
+    // 1. which menu option is highlighted.
+    // 2. that the other menu options get de-highlighted.
+    onHoveredMenuItemChanged: {
+        console.log("hoveredMenuItem changed to: " + hoveredMenuItem)
+
+        // Deselect all the other menu items, otherwise the user kan press key down a couple of times
+        // and the selection stays if the mouse hovers another menu option.
+        for(var modelIndex=0; modelIndex<menuModel.count; ++modelIndex){
+            if(modelIndex !== hoveredMenuItem){
+                console.log("setting model[" + modelIndex + "] property to 'false'")
+                menuModel.setProperty(modelIndex, "highlighted", false);
+            }
+            else {
+                console.log("setting model[" + modelIndex + "] property to 'true'")
+                menuModel.setProperty(modelIndex, "highlighted", true);
+            }
+        }
     }
 
     Keys.onReturnPressed: {
         // Select the current menu choice
-        menuItemSelected(menuItems[selectedMenuItem])
+        menuItemSelected(menuItems[hoveredMenuItem]);
     }
 
     Keys.onUpPressed: {
         // Select the previous menu item.
-        if(selectedMenuItem > 0){
-            --selectedMenuItem
+        if(hoveredMenuItem > 0){
+            --hoveredMenuItem;
         }
         else {
-            selectedMenuItem = 3
+            hoveredMenuItem = menuModel.count-1;
         }
-
-        highlightMenuItem(selectedMenuItem)
     }
 
     Keys.onDownPressed: {
         // Select the next menu item.
-        if(selectedMenuItem < 3){
-            ++selectedMenuItem
+        if(hoveredMenuItem < menuModel.count-1){
+            ++hoveredMenuItem;
         }
         else {
-            selectedMenuItem = 0
-        }
-
-        highlightMenuItem(selectedMenuItem)
-    }
-
-    function highlightMenuItem(item) {
-        if(item === 0){
-            menuNewGame.select()
-            menuLoadGame.deselect()
-            menuShowHighScore.deselect()
-            menuQuit.deselect()
-        }
-        else if(item === 1){
-            menuNewGame.deselect()
-            menuLoadGame.select()
-            menuShowHighScore.deselect()
-            menuQuit.deselect()
-        }
-        else if(item === 2){
-            menuNewGame.deselect()
-            menuLoadGame.deselect()
-            menuShowHighScore.select()
-            menuQuit.deselect()
-        }
-        else if(item === 3){
-            menuNewGame.deselect()
-            menuLoadGame.deselect()
-            menuShowHighScore.deselect()
-            menuQuit.select()
+            hoveredMenuItem = 0;
         }
     }
 }
