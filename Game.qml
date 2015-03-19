@@ -12,31 +12,7 @@ Rectangle {
     property int shipX: (parent.width/2)-(playerShip.width/2)
     property int moveDir: constants.movedir_none
 
-    Keys.onEscapePressed: {
-        quit()
-    }
-
-    Keys.onPressed: {
-        if(event.key === Qt.Key_Left && !event.isAutoRepeat){
-            moveDir |= constants.movedir_left;
-            console.log("movedir: " + moveDir);
-        }
-        if(event.key === Qt.Key_Right && !event.isAutoRepeat){
-            moveDir |= constants.movedir_right;
-            console.log("movedir: " + moveDir);
-        }
-    }
-
-    Keys.onReleased: {
-        if(event.key === Qt.Key_Left && !event.isAutoRepeat){
-            moveDir &= ~(constants.movedir_left);
-            console.log("movedir: " + moveDir);
-        }
-        if(event.key === Qt.Key_Right && !event.isAutoRepeat){
-            moveDir &= ~(constants.movedir_right);
-            console.log("movedir: " + moveDir);
-        }
-    }
+    property double lastUpdateTime: 0
 
     Timer{
         id: moveTimer
@@ -44,17 +20,22 @@ Rectangle {
         running: true
         repeat: true
         onTriggered: {
+            var currentTime = new Date().getTime();
+            var dT = (currentTime - lastUpdateTime);
+
             if(moveDir === constants.movedir_left){
-                if(root.shipX > 0){
-                    root.shipX -= 10;
-                    console.log("moving ship left.");
+                if(root.shipX + (0.8 * dT) - (playerShip.width/2) > 0){
+                    root.shipX -= (0.8 * dT);
+                    //console.log("moving ship left. dT: " + dT);
                 }
             } else if(moveDir === constants.movedir_right){
-                if(root.shipX <= (parent.width-playerShip.width)){
-                    root.shipX += 10;
-                    console.log("moving ship right.");
+                if(root.shipX <= (parent.width-(playerShip.width)-(0.8 * dT))){
+                    root.shipX += (0.8 * dT);
+                    //console.log("moving ship right. dT:" + dT);
                 }
             }
+
+            lastUpdateTime = new Date().getTime();
         }
     }
 
@@ -88,6 +69,36 @@ Rectangle {
         height: 50
 
         source: "qrc:/images/ship.jpeg"
+    }
+
+    Keys.onEscapePressed: {
+        quit()
+    }
+
+    Keys.onPressed: {
+        if(event.key === Qt.Key_Left && !event.isAutoRepeat){
+            moveDir |= constants.movedir_left;
+            //console.log("movedir: " + moveDir);
+        }
+        if(event.key === Qt.Key_Right && !event.isAutoRepeat){
+            moveDir |= constants.movedir_right;
+            //console.log("movedir: " + moveDir);
+        }
+        if(event.key === Qt.Key_Q && !event.isAutoRepeat){
+            event.accepted = true;
+            quit()
+        }
+    }
+
+    Keys.onReleased: {
+        if(event.key === Qt.Key_Left && !event.isAutoRepeat){
+            moveDir &= ~(constants.movedir_left);
+            //console.log("movedir: " + moveDir);
+        }
+        if(event.key === Qt.Key_Right && !event.isAutoRepeat){
+            moveDir &= ~(constants.movedir_right);
+            //console.log("movedir: " + moveDir);
+        }
     }
 
     Item{

@@ -140,5 +140,11 @@ Rectangle {
             hoveredMenuItem = 0;
         }
     }
+
+    Keys.onReleased: {
+        if(event.key === Qt.Key_Q && !event.isAutoRepeat){
+            hoveredMenuItem = 3;
+        }
+    }
 }
 

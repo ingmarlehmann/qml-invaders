@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
+#include <QElapsedTimer>
 
 int main(int argc, char *argv[])
 {
