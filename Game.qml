@@ -49,12 +49,30 @@ Rectangle {
         y: 20
 
         Repeater{
-            model: 50
+            model: 10
 
             Image{
                 width: 50
                 height: 50
                 source: "qrc:/images/invader1.png"
+            }
+        }
+        Repeater{
+            model: 20
+
+            Image{
+                width: 50
+                height: 50
+                source: "qrc:/images/invader2.png"
+            }
+        }
+        Repeater{
+            model: 10
+
+            Image{
+                width: 50
+                height: 50
+                source: "qrc:/images/invader3.png"
             }
         }
     }
