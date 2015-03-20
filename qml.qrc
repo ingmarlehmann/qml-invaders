@@ -10,5 +10,9 @@
         <file>images/invader3.png</file>
         <file>images/ship.jpeg</file>
         <file>images/space_invaders_logo.png</file>
+        <file>Ship.qml</file>
+        <file>PlayerProjectile.qml</file>
+        <file>EnemyProjectile.qml</file>
+        <file>objectFactory.js</file>
     </qresource>
 </RCC>

@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import "objectFactory.js" as ObjectFactory
 
 Rectangle {
     id: root
@@ -15,6 +16,8 @@ Rectangle {
     property double lastUpdateTime: 0
     property real step: 0.8
 
+    property var projectiles: []
+
     Timer{
         id: moveTimer
         interval: 16 // 16ms is maximum resolution at 60 fps.
@@ -26,10 +29,10 @@ Rectangle {
 
             if(moveDir === constants.movedir_left){
                 root.shipX = Math.max(0, root.shipX - (root.step * dT));
-                console.log("moving ship left. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
+                //console.log("moving ship left. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
             } else if(moveDir === constants.movedir_right){
                 root.shipX = Math.min(parent.width-playerShip.width, root.shipX + (root.step * dT));
-                console.log("moving ship right. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
+                //console.log("moving ship right. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
             }
 
             lastUpdateTime = new Date().getTime();
@@ -75,20 +78,9 @@ Rectangle {
     }
 
 
-    Image{
+    Ship{
         id: playerShip
-        anchors.bottom: parent.bottom
-
-        cache: true
-        asynchronous: true
-        smooth: true
-
         x: root.shipX
-
-        width: 50
-        height: 50
-
-        source: "qrc:/images/ship.jpeg"
     }
 
     Keys.onEscapePressed: {
@@ -99,9 +91,6 @@ Rectangle {
         if(event.key === Qt.Key_Left){
             if(!event.isAutoRepeat){
                 moveDir |= constants.movedir_left;
-                //console.log("Keys.onPressed(event.key='Qt.Key_Left&&event.isAutoRepeat=false)");
-            } else {
-                //console.log("Keys.onPressed(event.key='Qt.Key_Left&&event.isAutoRepeat=true)");
             }
 
             event.accepted = true;
@@ -109,45 +98,50 @@ Rectangle {
         if(event.key === Qt.Key_Right){
             if(!event.isAutoRepeat){
                 moveDir |= constants.movedir_right;
-                //console.log("Keys.onPressed(event.key='Qt.Key_Right&&event.isAutoRepeat=false)");
-            } else {
-                //console.log("Keys.onPressed(event.key='Qt.Key_Left&&event.isAutoRepeat=true)");
             }
 
             event.accepted = true;
         }
-        //if(event.key === Qt.Key_Q){
-        //    event.accepted = true;
-            //quit()
-        //}
     }
 
     Keys.onReleased: {
         if(event.key === Qt.Key_Left){
             if(!event.isAutoRepeat){
-                //console.log("Keys.onReleased(event.key='Qt.Key_Left&&event.isAutoRepeat=false)");
                 moveDir &= ~(constants.movedir_left);
-            } else {
-                //console.log("Keys.onReleased(event.key='Qt.Key_Left&&event.isAutoRepeat=true)");
             }
-
-            event.accepted = true;
         }
 
         if(event.key === Qt.Key_Right){
             if(!event.isAutoRepeat){
-                //console.log("Keys.onReleased(event.key='Qt.Key_Right&&event.isAutoRepeat=false)");
                 moveDir &= ~(constants.movedir_right);
-            } else {
-                //console.log("Keys.onReleased(event.key='Qt.Key_Right&&event.isAutoRepeat=true)");
             }
-
-            event.accepted = true;
         }
 
         if(event.key === Qt.Key_Q){
             event.accepted = true;
             quit()
+        }
+
+        if(event.key === Qt.Key_Space){
+            if(!event.isAutoRepeat){
+                var objectName = "playerProjectile";
+                var projectileStartX = playerShip.x + (playerShip.width/2);
+                var projectileStartY = root.height - (playerShip.height+30);
+                var completedCallback = function(newObject) {
+                    if(newObject) {
+                        projectiles.push(newObject);
+                        newObject.y = 0;
+                    } else {
+                        console.log("error creating object" + objectName);
+                    }
+                }
+
+                ObjectFactory.createObject(
+                            objectName,
+                            { x: projectileStartX, y: projectileStartY },
+                            root, // object parent
+                            completedCallback );
+            }
         }
     }
 
