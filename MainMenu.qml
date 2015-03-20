@@ -141,9 +141,16 @@ Rectangle {
         }
     }
 
+    Keys.onPressed: {
+        if(event.key === Qt.Key_Q){
+            event.accepted = true;
+        }
+    }
+
     Keys.onReleased: {
-        if(event.key === Qt.Key_Q && !event.isAutoRepeat){
+        if(event.key === Qt.Key_Q){
             hoveredMenuItem = 3;
+            event.accepted = true;
         }
     }
 }

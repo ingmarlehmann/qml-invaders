@@ -13,6 +13,7 @@ Rectangle {
     property int moveDir: constants.movedir_none
 
     property double lastUpdateTime: 0
+    property real step: 0.8
 
     Timer{
         id: moveTimer
@@ -24,15 +25,11 @@ Rectangle {
             var dT = (currentTime - lastUpdateTime);
 
             if(moveDir === constants.movedir_left){
-                if(root.shipX + (0.8 * dT) - (playerShip.width/2) > 0){
-                    root.shipX -= (0.8 * dT);
-                    //console.log("moving ship left. dT: " + dT);
-                }
+                root.shipX = Math.max(0, root.shipX - (root.step * dT));
+                console.log("moving ship left. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
             } else if(moveDir === constants.movedir_right){
-                if(root.shipX <= (parent.width-(playerShip.width)-(0.8 * dT))){
-                    root.shipX += (0.8 * dT);
-                    //console.log("moving ship right. dT:" + dT);
-                }
+                root.shipX = Math.min(parent.width-playerShip.width, root.shipX + (root.step * dT));
+                console.log("moving ship right. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
             }
 
             lastUpdateTime = new Date().getTime();
@@ -77,9 +74,14 @@ Rectangle {
         }
     }
 
+
     Image{
         id: playerShip
         anchors.bottom: parent.bottom
+
+        cache: true
+        asynchronous: true
+        smooth: true
 
         x: root.shipX
 
@@ -94,28 +96,58 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if(event.key === Qt.Key_Left && !event.isAutoRepeat){
-            moveDir |= constants.movedir_left;
-            //console.log("movedir: " + moveDir);
-        }
-        if(event.key === Qt.Key_Right && !event.isAutoRepeat){
-            moveDir |= constants.movedir_right;
-            //console.log("movedir: " + moveDir);
-        }
-        if(event.key === Qt.Key_Q && !event.isAutoRepeat){
+        if(event.key === Qt.Key_Left){
+            if(!event.isAutoRepeat){
+                moveDir |= constants.movedir_left;
+                //console.log("Keys.onPressed(event.key='Qt.Key_Left&&event.isAutoRepeat=false)");
+            } else {
+                //console.log("Keys.onPressed(event.key='Qt.Key_Left&&event.isAutoRepeat=true)");
+            }
+
             event.accepted = true;
-            quit()
         }
+        if(event.key === Qt.Key_Right){
+            if(!event.isAutoRepeat){
+                moveDir |= constants.movedir_right;
+                //console.log("Keys.onPressed(event.key='Qt.Key_Right&&event.isAutoRepeat=false)");
+            } else {
+                //console.log("Keys.onPressed(event.key='Qt.Key_Left&&event.isAutoRepeat=true)");
+            }
+
+            event.accepted = true;
+        }
+        //if(event.key === Qt.Key_Q){
+        //    event.accepted = true;
+            //quit()
+        //}
     }
 
     Keys.onReleased: {
-        if(event.key === Qt.Key_Left && !event.isAutoRepeat){
-            moveDir &= ~(constants.movedir_left);
-            //console.log("movedir: " + moveDir);
+        if(event.key === Qt.Key_Left){
+            if(!event.isAutoRepeat){
+                //console.log("Keys.onReleased(event.key='Qt.Key_Left&&event.isAutoRepeat=false)");
+                moveDir &= ~(constants.movedir_left);
+            } else {
+                //console.log("Keys.onReleased(event.key='Qt.Key_Left&&event.isAutoRepeat=true)");
+            }
+
+            event.accepted = true;
         }
-        if(event.key === Qt.Key_Right && !event.isAutoRepeat){
-            moveDir &= ~(constants.movedir_right);
-            //console.log("movedir: " + moveDir);
+
+        if(event.key === Qt.Key_Right){
+            if(!event.isAutoRepeat){
+                //console.log("Keys.onReleased(event.key='Qt.Key_Right&&event.isAutoRepeat=false)");
+                moveDir &= ~(constants.movedir_right);
+            } else {
+                //console.log("Keys.onReleased(event.key='Qt.Key_Right&&event.isAutoRepeat=true)");
+            }
+
+            event.accepted = true;
+        }
+
+        if(event.key === Qt.Key_Q){
+            event.accepted = true;
+            quit()
         }
     }
 

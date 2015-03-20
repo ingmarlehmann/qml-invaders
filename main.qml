@@ -49,13 +49,13 @@ ApplicationWindow {
 
     function exitToMainMenu()
     {
-        game.focus = false
-        credits.focus = false
-        menu.focus = true
-
         game.visible = false
         menu.visible = true
         credits.visible = false
+
+        game.focus = false
+        credits.focus = false
+        menu.focus = true
     }
 
     function menuItemSelected(selectedMenuItem)
