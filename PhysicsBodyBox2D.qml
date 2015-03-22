@@ -4,7 +4,7 @@ Rectangle {
     id: root
     anchors.centerIn: parent
 
-    //visible: false // comment out for debugging
+    visible: false // comment out for debugging
 
     border.color: "green"
     color: "transparent"
@@ -14,14 +14,14 @@ Rectangle {
         var a = {
             x_max: parent.x + parent.width,
             x_min: parent.x,
-            y_max: parent.y + height,
+            y_max: parent.y + parent.height,
             y_min: parent.y
         };
 
         var b = {
-            x_max: other.parent.x + parent.width,
+            x_max: other.parent.x + other.parent.width,
             x_min: other.parent.x,
-            y_max: other.parent.y + height,
+            y_max: other.parent.y + other.parent.height,
             y_min: other.parent.y
         };
 

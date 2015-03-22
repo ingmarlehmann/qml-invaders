@@ -12,6 +12,8 @@ Image{
 
     property alias physicsBody: physicsBody
 
+    property double lastCollision: 0
+
     PhysicsBodyBox2D{
         id: physicsBody
 

@@ -54,23 +54,33 @@ Rectangle {
             // Update player projectiles
             for(var i=0; i< projectiles.length; ++i){
                 for(var j=0; j< enemyShips.length; ++j){
+                    if(enemyShips[j].opacity !== 0){
+                        //console.log("testing enemy ship " + j + " against projectile " + i);
+                        var box1 = projectiles[i].physicsBody;
+                        var box2 = enemyShips[j].physicsBody;
 
-                    var box1 = projectiles[i].physicsBody;
-                    var box2 = enemyShips[j].physicsBody;
-
-                    var collides = box1.testCollision(box2);
-                    if(collides){
-                        //console.log("enemy ship " + j + " collides with projectile " + i);
-                        enemyShips[j].opacity = 0;
-                    }
-                    else {
-                        enemyShips[j].opacity = 100;
-                    }
-                }
+                        var collides = box1.testCollision(box2);
+                        if(collides){
+                            //console.log(" - enemy ship " + j + " collides with projectile " + i);
+                            enemyShips[j].opacity = 0;
+                            enemyShips[j].lastCollision = currentTime;
+                        }
+    //                    else {
+    //                        // If the object has collided, check how recently
+    //                        if(enemyShips[j].lastCollision !== 0){
+    //                            if(enemyShips[j].lastCollision + 100 >= currentTime){
+    //                                enemyShips[j].opacity = 100;
+    //                            }
+    //                        } else {
+    //                            enemyShips[j].opacity = 100;
+    //                        }
+    //                    }
+                        }
+                   }
                 projectiles[i].y = Math.max(0, projectiles[i].y - (root.step * dT));
             }
 
-            // Remove all projectiles that have a y value over 5.
+            // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
             projectiles = projectiles.filter( function(value, index, array) {
                 if(value.y <= 5){
                     value.destroy();
@@ -131,6 +141,10 @@ Rectangle {
             fpsMonitor.toggle();
         }
 
+        if(event.key === Qt.Key_P){
+            togglePhysicsDebug();
+        }
+
         if(event.key === Qt.Key_Space){
             if(!event.isAutoRepeat){
                 var objectName = "playerProjectile";
@@ -155,12 +169,11 @@ Rectangle {
     }
 
     function createEnemyShips() {
-        //for(var x=0; x< 500; x+=50){
-            //for(var y=0; y< 400; y+=50){
-                //createEnemyShip("enemyShip1", x, y);
-        createEnemyShip("enemyShip1", 100, 100);
-            //}
-        //}
+        for(var x=0; x< 500; x+=50){
+            for(var y=0; y< 400; y+=50){
+                createEnemyShip("enemyShip1", x + 50, y);
+            }
+        }
     }
 
     function createEnemyShip(shipType, posX, posY) {
@@ -189,6 +202,10 @@ Rectangle {
         enemyShips = [];
 
         root.shipX = (parent.width/2)-(playerShip.width/2);
+    }
+
+    function togglePhysicsDebug(){
+        // TODO: implement
     }
 
     Item{
