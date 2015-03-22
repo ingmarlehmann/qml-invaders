@@ -98,6 +98,54 @@ Rectangle {
         x: root.shipX
     }
 
+    Column{
+        id: scoreRow
+
+        anchors.left: parent.left
+        anchors.leftMargin: 10
+
+        Text{
+            id: scoreHeaderText
+            text: "SCORE(1)"
+
+            color: "white"
+            font.pixelSize: 24
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Text{
+            id: scoreText
+
+            text: "0000"
+            color: "white"
+            font.pixelSize: 24
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+    }
+
+    Column{
+        id: hiScoreRow
+
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        Text{
+            id: hiScoreHeaderText
+            text: "HI-SCORE"
+
+            color: "white"
+            font.pixelSize: 24
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Text{
+            id: hiScoreText
+
+            text: "0000"
+            color: "white"
+            font.pixelSize: 24
+            anchors.horizontalCenter: parent.horizontalCenter
+        }
+    }
+
+
     Keys.onEscapePressed: {
         quit()
     }
@@ -170,7 +218,7 @@ Rectangle {
 
     function createEnemyShips() {
         for(var x=0; x< 500; x+=50){
-            for(var y=0; y< 400; y+=50){
+            for(var y=100; y< 400; y+=50){
                 createEnemyShip("enemyShip1", x + 50, y);
             }
         }
