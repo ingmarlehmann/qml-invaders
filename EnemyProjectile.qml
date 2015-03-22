@@ -14,4 +14,13 @@ Rectangle{
             duration: 2000
         }
     }
+
+    PhysicsBodyBox2D{
+        id: physicsBody
+
+        x: root.x
+        y: root.y
+        width: root.width
+        height: root.height
+    }
 }

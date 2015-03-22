@@ -22,7 +22,32 @@ ApplicationWindow {
             id: menu
             visible: true
             focus: true
+            opacity: 100
         }
+
+//        Rectangle{
+//            id: whiteScreen
+//            color: "white"
+
+//            width: parent.width
+//            height: parent.height
+
+//            opacity: 0
+
+//            Behavior on opacity{
+//                NumberAnimation{
+//                    duration: 2000
+//                }
+//            }
+//        }
+
+//        Text{
+//            id: whiteScreenOpacityText
+//            text: whiteScreen.opacity
+//            color: "red"
+//            x: 10
+//            y: 10
+//        }
 
         Game{
             id: game
@@ -34,6 +59,7 @@ ApplicationWindow {
             id: credits
             visible: false
             focus: false
+            opacity: 0
         }
     }
 
@@ -64,11 +90,15 @@ ApplicationWindow {
             Qt.quit()
         }
         else if(selectedMenuItem === "New game"){
-            menu.visible = false
-            game.visible = true
+            menu.visible = false;
+            game.visible = true;
 
-            menu.focus = false
-            game.focus = true
+            menu.focus = false;
+            game.focus = true;
+
+            game.newGame();
+
+            //whiteScreen.opacity = 100;
         }
         else if(selectedMenuItem === "Load game"){
             // TODO: Implement

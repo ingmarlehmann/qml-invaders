@@ -10,6 +10,10 @@ Rectangle {
 
     signal quit()
 
+    function newGame(){
+        createEnemyShips();
+    }
+
     property int shipX: (parent.width/2)-(playerShip.width/2)
     property int moveDir: constants.movedir_none
 
@@ -17,6 +21,17 @@ Rectangle {
     property real step: 0.8
 
     property var projectiles: []
+    property var enemyShips: []
+
+    FPSMonitor{
+        id: fpsMonitor
+
+        color: "white"
+        font.pixelSize: 24
+
+        x: parent.width - (fpsMonitor.contentWidth) - 10
+        y: 10
+    }
 
     Timer{
         id: moveTimer
@@ -27,6 +42,7 @@ Rectangle {
             var currentTime = new Date().getTime();
             var dT = (currentTime - lastUpdateTime);
 
+            // Move player ship.
             if(moveDir === constants.movedir_left){
                 root.shipX = Math.max(0, root.shipX - (root.step * dT));
                 //console.log("moving ship left. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
@@ -35,50 +51,39 @@ Rectangle {
                 //console.log("moving ship right. dT: " + dT + " step: " + root.step + " move len: " + (root.step*dT) + " abs pos: " + root.shipX);
             }
 
+            // Update player projectiles
+            for(var i=0; i< projectiles.length; ++i){
+                for(var j=0; j< enemyShips.length; ++j){
+
+                    var box1 = projectiles[i].physicsBody;
+                    var box2 = enemyShips[j].physicsBody;
+
+                    var collides = box1.testCollision(box2);
+                    if(collides){
+                        //console.log("enemy ship " + j + " collides with projectile " + i);
+                        enemyShips[j].opacity = 0;
+                    }
+                    else {
+                        enemyShips[j].opacity = 100;
+                    }
+                }
+                projectiles[i].y = Math.max(0, projectiles[i].y - (root.step * dT));
+            }
+
+            // Remove all projectiles that have a y value over 5.
+            projectiles = projectiles.filter( function(value, index, array) {
+                if(value.y <= 5){
+                    value.destroy();
+                }
+
+                return value.y > 5;
+            } );
+
             lastUpdateTime = new Date().getTime();
         }
     }
 
-    Grid{
-        id: enemies
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        columns: 10
-
-        x: 20
-        y: 20
-
-        Repeater{
-            model: 10
-
-            Image{
-                width: 50
-                height: 50
-                source: "qrc:/images/invader1.png"
-            }
-        }
-        Repeater{
-            model: 20
-
-            Image{
-                width: 50
-                height: 50
-                source: "qrc:/images/invader2.png"
-            }
-        }
-        Repeater{
-            model: 10
-
-            Image{
-                width: 50
-                height: 50
-                source: "qrc:/images/invader3.png"
-            }
-        }
-    }
-
-
-    Ship{
+    PlayerShip{
         id: playerShip
         x: root.shipX
     }
@@ -122,6 +127,10 @@ Rectangle {
             quit()
         }
 
+        if(event.key === Qt.Key_F){
+            fpsMonitor.toggle();
+        }
+
         if(event.key === Qt.Key_Space){
             if(!event.isAutoRepeat){
                 var objectName = "playerProjectile";
@@ -130,7 +139,7 @@ Rectangle {
                 var completedCallback = function(newObject) {
                     if(newObject) {
                         projectiles.push(newObject);
-                        newObject.y = 0;
+                        //newObject.y = 0;
                     } else {
                         console.log("error creating object" + objectName);
                     }
@@ -143,6 +152,43 @@ Rectangle {
                             completedCallback );
             }
         }
+    }
+
+    function createEnemyShips() {
+        //for(var x=0; x< 500; x+=50){
+            //for(var y=0; y< 400; y+=50){
+                //createEnemyShip("enemyShip1", x, y);
+        createEnemyShip("enemyShip1", 100, 100);
+            //}
+        //}
+    }
+
+    function createEnemyShip(shipType, posX, posY) {
+        var completedCallback = function(newObject) {
+            if(newObject) {
+                //console.log("info: Created object " + objectName);
+                //console.log("(createEnemyShip())EnemyShip:PhysicsBody x: " + newObject.x + " y: " + newObject.y + " width: " + newObject.width + " height: " + newObject.height);
+                enemyShips.push(newObject);
+            } else {
+                console.log("ERROR: Error creating object " + objectName);
+            }
+
+
+        }
+
+        ObjectFactory.createObject(
+                    shipType,
+                    { x: posX, y: posY },
+                    root, // object parent
+                    completedCallback );
+
+    }
+
+    function clearGameData(){
+        projectiles = [];
+        enemyShips = [];
+
+        root.shipX = (parent.width/2)-(playerShip.width/2);
     }
 
     Item{
