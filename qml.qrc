@@ -1,23 +1,23 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>MainMenu.qml</file>
-        <file>Credits.qml</file>
-        <file>Game.qml</file>
-        <file>MenuItem.qml</file>
-        <file>images/invader1.png</file>
-        <file>images/invader2.png</file>
-        <file>images/invader3.png</file>
-        <file>images/ship.jpeg</file>
-        <file>images/space_invaders_logo.png</file>
-        <file>PlayerShip.qml</file>
-        <file>PlayerProjectile.qml</file>
-        <file>EnemyProjectile.qml</file>
-        <file>objectFactory.js</file>
-        <file>EnemyShip1.qml</file>
-        <file>EnemyShip2.qml</file>
-        <file>EnemyShip3.qml</file>
-        <file>PhysicsBodyBox2D.qml</file>
-        <file>FPSMonitor.qml</file>
+        <file>data/MainMenu.qml</file>
+        <file>data/Credits.qml</file>
+        <file>data/Game.qml</file>
+        <file>data/MenuItem.qml</file>
+        <file>data/images/invader1.png</file>
+        <file>data/images/invader2.png</file>
+        <file>data/images/invader3.png</file>
+        <file>data/images/ship.jpeg</file>
+        <file>data/images/space_invaders_logo.png</file>
+        <file>data/PlayerShip.qml</file>
+        <file>data/PlayerProjectile.qml</file>
+        <file>data/EnemyProjectile.qml</file>
+        <file>data/objectFactory.js</file>
+        <file>data/EnemyShip1.qml</file>
+        <file>data/EnemyShip2.qml</file>
+        <file>data/EnemyShip3.qml</file>
+        <file>data/PhysicsBodyBox2D.qml</file>
+        <file>data/FPSMonitor.qml</file>
     </qresource>
 </RCC>
