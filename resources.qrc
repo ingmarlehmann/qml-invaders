@@ -19,5 +19,6 @@
         <file>data/EnemyShip3.qml</file>
         <file>data/PhysicsBodyBox2D.qml</file>
         <file>data/FPSMonitor.qml</file>
+        <file>data/gameEngine.js</file>
     </qresource>
 </RCC>

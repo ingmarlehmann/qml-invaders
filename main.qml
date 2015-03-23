@@ -17,42 +17,25 @@ ApplicationWindow {
         id: contentRoot
         color: "black"
         anchors.fill: parent
+        anchors.centerIn: parent
 
         MainMenu{
             id: menu
             visible: true
             focus: true
             opacity: 100
+
+            anchors.fill: parent
+            anchors.centerIn: parent
         }
-
-//        Rectangle{
-//            id: whiteScreen
-//            color: "white"
-
-//            width: parent.width
-//            height: parent.height
-
-//            opacity: 0
-
-//            Behavior on opacity{
-//                NumberAnimation{
-//                    duration: 2000
-//                }
-//            }
-//        }
-
-//        Text{
-//            id: whiteScreenOpacityText
-//            text: whiteScreen.opacity
-//            color: "red"
-//            x: 10
-//            y: 10
-//        }
 
         Game{
             id: game
             visible: false
             focus: false
+
+            anchors.fill: parent
+            anchors.centerIn: parent
         }
 
         Credits{
@@ -60,6 +43,9 @@ ApplicationWindow {
             visible: false
             focus: false
             opacity: 0
+
+            anchors.fill: parent
+            anchors.centerIn: parent
         }
     }
 
