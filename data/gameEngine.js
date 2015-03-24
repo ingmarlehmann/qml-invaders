@@ -1,6 +1,7 @@
 .import "player.js" as Player
 .import "score.js" as Score
 .import "constants.js" as Constants
+.import "pubsub.js" as PS
 
 function createEngine(root, width, height){
     var engine = (function (root, width, height) {
@@ -210,7 +211,7 @@ function createEngine(root, width, height){
                 }
             }
         }
-
+1
         // Access level: Public
         // Description: Clear the game data.
         _exports.clearGameData = function(){

@@ -1,4 +1,5 @@
 .import "constants.js" as Constants
+.import "pubsub.js" as PS
 
 function createScore(initialScore){
     var score = (function(initialScore){
@@ -15,6 +16,8 @@ function createScore(initialScore){
             for(var i=0; i< _scoreObservers.length; ++i){
                 _scoreObservers[i](_score);
             }
+
+            PS.PubSub.publish(Constants.TOPIC_SCORE, _score);
         }
 
         _exports.registerScoreObserver = function(observer){

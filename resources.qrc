@@ -24,5 +24,6 @@
         <file>data/score.js</file>
         <file>data/constants.js</file>
         <file>data/objectFactory.js</file>
+        <file>data/pubsub.js</file>
     </qresource>
 </RCC>

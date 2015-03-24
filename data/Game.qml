@@ -3,6 +3,7 @@ import QtQuick 2.0
 import "constants.js" as Constants
 import "gameEngine.js" as Engine
 import "objectFactory.js" as ObjectFactory
+import "pubsub.js" as PS
 
 Rectangle {
     id: gameRoot
@@ -114,7 +115,9 @@ Rectangle {
 
             gameEngine.setObjectFactory(objectFactory);
             gameEngine.player.registerPositionObserver(playerShip.positionChanged);
-            gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
+            //gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
+
+            PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
         }
     }
 
