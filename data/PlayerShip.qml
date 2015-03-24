@@ -1,16 +1,29 @@
 import QtQuick 2.0
 
-Image{
-    id: root
+Rectangle{
+    id: shipRoot
     anchors.bottom: parent.bottom
 
-    cache: true
-    asynchronous: true
-    smooth: true
+    color: "#000000"
 
     width: 50
-    height: 50
+    height: 25
 
-    source: "qrc:/data/images/ship.jpeg"
+    Image{
+        id: shipImage
+        anchors.fill: parent
+
+        visible: true
+
+        anchors.margins: 1
+
+        cache: true
+        asynchronous: true
+        smooth: true
+
+        source: "qrc:/data/images/ship.png"
+    }
+
+
 }
 

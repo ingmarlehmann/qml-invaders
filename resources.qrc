@@ -20,5 +20,6 @@
         <file>data/PhysicsBodyBox2D.qml</file>
         <file>data/FPSMonitor.qml</file>
         <file>data/gameEngine.js</file>
+        <file>data/images/ship.png</file>
     </qresource>
 </RCC>

@@ -2,7 +2,7 @@ import QtQuick 2.0
 import "gameEngine.js" as Engine
 
 Rectangle {
-    id: root
+    id: gameRoot
 
     anchors.fill: parent
     anchors.centerIn: parent
@@ -26,7 +26,7 @@ Rectangle {
     Timer{
         id: moveTimer
         interval: 16 // 16ms is maximum resolution at 60 fps.
-        running: (root.visible)
+        running: (gameRoot.visible)
         repeat: true
         onTriggered: {
             if(gameEngine){
@@ -38,23 +38,13 @@ Rectangle {
     PlayerShip{
         id: playerShip
 
-        x: getShipPosition()
-
-        onXChanged: {
-            console.log("ship position changed to: " + x);
+        Component.onCompleted: {
+            Engine.PLAYERSHIP_WIDTH = playerShip.width;
+            Engine.PLAYERSHIP_HEIGHT = playerShip.height;
         }
 
-        function getShipPosition() {
-            if(gameEngine){
-                console.log("using game engine ship position.");
-                console.log("gameEngine.player: " + gameEngine.player);
-                console.log("gameEngine.player.position: " + gameEngine.player.position);
-                console.log("gameEngine.player.position.x: " + gameEngine.player.position.x);
-                return gameEngine.player.position.x;
-            } else {
-                console.log("using default ship position.");
-                return (parent.width/2)-(playerShip.width/2);
-            }
+        function positionChanged(newPosition){
+            playerShip.x = newPosition.x;
         }
     }
 
@@ -75,10 +65,14 @@ Rectangle {
         Text{
             id: scoreText
 
-            text: gameEngine ? leftPad(gameEngine.score(), 4) : "0000"
+            text: "0000"
             color: "white"
             font.pixelSize: 24
             anchors.horizontalCenter: parent.horizontalCenter
+
+            function scoreChanged(newScore){
+                scoreText.text = leftPad(newScore, 4);
+            }
         }
     }
 
@@ -105,9 +99,17 @@ Rectangle {
         }
     }
 
+    Component.onCompleted: {
+        console.log("widht: " + gameRoot.width + " height: " + gameRoot.height);
+    }
+
     onVisibleChanged: {
         if(visible){
-            gameEngine = Engine.createEngine(root, parent.width, parent.height);
+            gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
+
+            gameEngine.player.registerPositionObserver(playerShip.positionChanged);
+            gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
+
             console.log("game width: " + width + " height: " + height);
             console.log(" parent width: " + parent.width + " parent height: " + parent.height);
         }
@@ -136,6 +138,10 @@ Rectangle {
     }
 
     Keys.onReleased: {
+        if(gameEngine){
+            gameEngine.keyUp(event);
+        }
+
         if(event.key === Qt.Key_Q && !event.isAutoRepeat){
             event.accepted = true;
             doQuit();
