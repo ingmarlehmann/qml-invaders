@@ -1,0 +1,7 @@
+# qt files
+*.pro.user
+Makefile
+*.o
+qml-invaders
+qrc_resources.*
+
