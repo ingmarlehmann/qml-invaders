@@ -17,7 +17,7 @@ function createScore(initialScore){
                 _scoreObservers[i](_score);
             }
 
-            PS.PubSub.publish(Constants.TOPIC_SCORE, _score);
+            //PS.PubSub.publish(Constants.TOPIC_SCORE, _score);
         }
 
         _exports.registerScoreObserver = function(observer){

@@ -115,9 +115,9 @@ Rectangle {
 
             gameEngine.setObjectFactory(objectFactory);
             gameEngine.player.registerPositionObserver(playerShip.positionChanged);
-            //gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
+            gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
 
-            PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
+            //PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
         }
     }
 

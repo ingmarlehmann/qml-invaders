@@ -92,14 +92,14 @@ var PubSub = (function (){
 		return found;
 	}
 
-    function setTimeout(fnc,time,start) {
-          if (typeof start == "undefined") start = true;
-          var timer = Qt.createQmlObject('import QtQuick 1.0; Timer { repeat: false; running: false; }', Faye.ENV.rootQmlObject, "faye-browser.js");
-          timer.interval = time;
-          timer.triggered.connect(fnc);
-          if (start) timer.start();
-          return timer;
-        }
+//    function setTimeout(fnc,time,start) {
+//          if (typeof start == "undefined") start = true;
+//          var timer = Qt.createQmlObject('import QtQuick 1.0; Timer { repeat: false; running: false; }', Faye.ENV.rootQmlObject, "faye-browser.js");
+//          timer.interval = time;
+//          timer.triggered.connect(fnc);
+//          if (start) timer.start();
+//          return timer;
+//        }
 
 	function publish( message, data, sync, immediateExceptions ){
 		var deliver = createDeliveryFunction( message, data, immediateExceptions ),
