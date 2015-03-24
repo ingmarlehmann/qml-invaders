@@ -25,7 +25,7 @@ Rectangle {
 
     Timer{
         id: moveTimer
-        interval: 16 // 16ms is maximum resolution at 60 fps.
+        interval: 16 // 16ms is maximum resolution for a timer at 60 fps.
         running: (gameRoot.visible)
         repeat: true
         onTriggered: {
@@ -61,6 +61,10 @@ Rectangle {
             color: "white"
             font.pixelSize: 24
             horizontalAlignment: Text.AlignHCenter
+
+            function highScoreChanged(newScore){
+                scoreHeaderText.text = leftPad(newScore, 4);
+            }
         }
         Text{
             id: scoreText
@@ -99,19 +103,12 @@ Rectangle {
         }
     }
 
-    Component.onCompleted: {
-        console.log("widht: " + gameRoot.width + " height: " + gameRoot.height);
-    }
-
     onVisibleChanged: {
         if(visible){
             gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
 
             gameEngine.player.registerPositionObserver(playerShip.positionChanged);
             gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
-
-            console.log("game width: " + width + " height: " + height);
-            console.log(" parent width: " + parent.width + " parent height: " + parent.height);
         }
     }
 
@@ -177,7 +174,6 @@ Rectangle {
     function doQuit(){
 
         if(gameEngine){
-            //Do some cleanup
             gameEngine.clearGameData();
         }
 

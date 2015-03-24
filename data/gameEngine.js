@@ -29,21 +29,25 @@ function createEngine(root, width, height){
         var _score = createScore(0);
         var _player = createPlayer(0, 0, 3);
 
-        console.log("_player.position.x: " + _player.getPosition().x);
-
+        // Access level: Public
+        // Description: Set the content area width for the game engine.
+        // Returns: nothing
         _exports.setWidth = function(width){
             _width = width;
-            console.log("new width: " + _width);
+            //console.log("new width: " + _width);
         }
 
+        // Access level: Public
+        // Description: Set the content area height for the game engine.
+        // Returns: nothing
         _exports.setHeight = function(height){
             _height = height;
-            console.log("new height: " + _height);
+            //console.log("new height: " + _height);
         }
 
         // Access level: Public
         // Description: Initialize a new game
-        // Returns: -
+        // Returns: nothing
         _exports.newGame = function(){
             createEnemyShips();
             _player.setPosition((_width/2)-(PLAYERSHIP_WIDTH/2), _height);
@@ -51,15 +55,15 @@ function createEngine(root, width, height){
         }
 
         // Access level: Public
-        // Description: Get the current score.
-        // Returns: score as integer.
+        // Description: Score object
         _exports.score = _score;
 
-         // Access level: Public
+        // Access level: Public
+        // Description: Player object
         _exports.player = _player;
 
         // Access level: Public
-        // Description: Inject key down events
+        // Description: Method to inject key _down_ events
         _exports.keyDown = function(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
@@ -78,7 +82,7 @@ function createEngine(root, width, height){
         }
 
         // Access level: Public
-        // Description: Inject key up events
+        // Description: Method to inject key _up_ events
         _exports.keyUp = function(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
@@ -114,7 +118,8 @@ function createEngine(root, width, height){
         }
 
         // Access level: Public
-        // Description: Update the game engine one tick.
+        // Description: Update the game engine one tick. Delta time is calculated internally.
+        //  call this method as often as possible to get better animation timing resolutions.
         _exports.update = function () {
             var currentTime = new Date().getTime();
             var dT = (currentTime - _lastUpdateTime);
@@ -128,7 +133,7 @@ function createEngine(root, width, height){
                 _player.setX(Math.min(_width-PLAYERSHIP_WIDTH, _player.getPosition().x + (SHIP_SPEED * dT)));
             }
 
-            // Update player projectiles
+            // Update player projectiles, movement and collision checks.
             for(var i=(_projectiles.length-1); i>=0; --i){
 
                 var projectileDeleted = false;
@@ -143,7 +148,6 @@ function createEngine(root, width, height){
                         if(collides){
                             //console.log(" - enemy ship " + j + " collides with projectile " + i);
                             _enemyShips[j].opacity = 0;
-                            _enemyShips[j].lastCollision = currentTime;
 
                             // update score.
                             _score.setScore(_score.getScore()+10);
@@ -160,6 +164,7 @@ function createEngine(root, width, height){
                     }
                 }
 
+                // Make sure we dont update a deleted projectile.
                 if(projectileDeleted === false){
                     _projectiles[i].y = Math.max(0, _projectiles[i].y - (PROJECTILE_SPEED * dT));
                 }
@@ -261,10 +266,8 @@ function createEngine(root, width, height){
                 _enemyShips[j].destroy();
             }
             _enemyShips = [];
-
             _score.setScore(0);
         }
-
 
         return _exports;
     }(root, width, height));
