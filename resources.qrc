@@ -13,7 +13,6 @@
         <file>data/PlayerShip.qml</file>
         <file>data/PlayerProjectile.qml</file>
         <file>data/EnemyProjectile.qml</file>
-        <file>data/objectFactory.js</file>
         <file>data/EnemyShip1.qml</file>
         <file>data/EnemyShip2.qml</file>
         <file>data/EnemyShip3.qml</file>
