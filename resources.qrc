@@ -20,5 +20,9 @@
         <file>data/FPSMonitor.qml</file>
         <file>data/gameEngine.js</file>
         <file>data/images/ship.png</file>
+        <file>data/player.js</file>
+        <file>data/score.js</file>
+        <file>data/constants.js</file>
+        <file>data/objectFactory.js</file>
     </qresource>
 </RCC>

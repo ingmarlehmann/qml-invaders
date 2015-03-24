@@ -1,11 +1,6 @@
-// Constants
-var MOVEDIR_NONE    = (0<<0);
-var MOVEDIR_LEFT    = (1<<0);
-var MOVEDIR_RIGHT   = (1<<1);
-var SHIP_SPEED      = 0.8;
-var PROJECTILE_SPEED    = 0.8;
-var PLAYERSHIP_WIDTH    = 50; // TODO: Make depend on actual player ship width.
-var PLAYERSHIP_HEIGHT   = 50; // TODO: Make depend on actual player ship height.
+.import "player.js" as Player
+.import "score.js" as Score
+.import "constants.js" as Constants
 
 function createEngine(root, width, height){
     var engine = (function (root, width, height) {
@@ -20,14 +15,20 @@ function createEngine(root, width, height){
         var _projectiles = [];
         var _enemyShips = [];
 
-        var _sprite, _component;
-
         var _width = width;
         var _height = height;
         var _root = root;
 
-        var _score = createScore(0);
-        var _player = createPlayer(0, 0, 3);
+        var _score = Score.createScore(0);
+        var _player = Player.createPlayer(0, 0, 3);
+        var _objectFactory = null;
+
+        // Access level: Public
+        // Description: Set a reference to the object factory instance.
+        // Returns: nothing
+        _exports.setObjectFactory = function(factory){
+            _objectFactory = factory;
+        }
 
         // Access level: Public
         // Description: Set the content area width for the game engine.
@@ -50,7 +51,7 @@ function createEngine(root, width, height){
         // Returns: nothing
         _exports.newGame = function(){
             createEnemyShips();
-            _player.setPosition((_width/2)-(PLAYERSHIP_WIDTH/2), _height);
+            _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
             _player.setLives(3);
         }
 
@@ -67,14 +68,14 @@ function createEngine(root, width, height){
         _exports.keyDown = function(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
-                    _player.moveDir |= MOVEDIR_LEFT;
+                    _player.moveDir |= Constants.MOVEDIR_LEFT;
                 }
 
                 event.accepted = true;
             }
             if(event.key === Qt.Key_Right){
                 if(!event.isAutoRepeat){
-                    _player.moveDir |= MOVEDIR_RIGHT;
+                    _player.moveDir |= Constants.MOVEDIR_RIGHT;
                 }
 
                 event.accepted = true;
@@ -86,21 +87,21 @@ function createEngine(root, width, height){
         _exports.keyUp = function(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
-                    _player.moveDir &= ~(MOVEDIR_LEFT);
+                    _player.moveDir &= ~(Constants.MOVEDIR_LEFT);
                 }
             }
 
             if(event.key === Qt.Key_Right){
                 if(!event.isAutoRepeat){
-                    _player.moveDir &= ~(MOVEDIR_RIGHT);
+                    _player.moveDir &= ~(Constants.MOVEDIR_RIGHT);
                 }
             }
 
             if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
                     var objectName = "playerProjectile";
-                    var projectileStartX = _player.getPosition().x + (PLAYERSHIP_WIDTH/2);
-                    var projectileStartY = _height - (PLAYERSHIP_HEIGHT+30);
+                    var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
+                    var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
                     var completedCallback = function(newObject) {
                         if(newObject) {
                             _projectiles.push(newObject);
@@ -109,7 +110,7 @@ function createEngine(root, width, height){
                         }
                     }
 
-                    createObject( objectName,
+                    _objectFactory.createObject( objectName,
                                  { x: projectileStartX, y: projectileStartY },
                                  _root, // object parent
                                  completedCallback );
@@ -125,12 +126,12 @@ function createEngine(root, width, height){
             var dT = (currentTime - _lastUpdateTime);
 
             // Move player ship.
-            if(_player.moveDir === MOVEDIR_LEFT){
+            if(_player.moveDir === Constants.MOVEDIR_LEFT){
                 // Make sure player does not go out of bounds and move the ship to new position.
-                _player.setX(Math.max(0, _player.getPosition().x - (SHIP_SPEED * dT)));
-            } else if(_player.moveDir === MOVEDIR_RIGHT){
+                _player.setX(Math.max(0, _player.getPosition().x - (Constants.SHIP_SPEED * dT)));
+            } else if(_player.moveDir === Constants.MOVEDIR_RIGHT){
                 // Make sure player does not go out of bounds and move the ship to new position.
-                _player.setX(Math.min(_width-PLAYERSHIP_WIDTH, _player.getPosition().x + (SHIP_SPEED * dT)));
+                _player.setX(Math.min(_width-Constants.PLAYERSHIP_WIDTH, _player.getPosition().x + (Constants.SHIP_SPEED * dT)));
             }
 
             // Update player projectiles, movement and collision checks.
@@ -166,7 +167,7 @@ function createEngine(root, width, height){
 
                 // Make sure we dont update a deleted projectile.
                 if(projectileDeleted === false){
-                    _projectiles[i].y = Math.max(0, _projectiles[i].y - (PROJECTILE_SPEED * dT));
+                    _projectiles[i].y = Math.max(0, _projectiles[i].y - (Constants.PROJECTILE_SPEED * dT));
                 }
             }
 
@@ -182,49 +183,6 @@ function createEngine(root, width, height){
             _lastUpdateTime = new Date().getTime();
         };
 
-        // Access level: Private
-        // Description: Create a QML component.
-        // @param object Type of object to create.
-        // @param params Parameters to set at construction time for object.
-        // @param parent Parent object.
-        // @param completedCallback callback that will be called with instance reference when creation is complete.
-        var createObject = function(object, params, parent, completedCallback) {
-            if(object === "playerProjectile"){
-                _component = Qt.createComponent("PlayerProjectile.qml");
-            }
-            else if(object === "enemyShip1"){
-                _component = Qt.createComponent("EnemyShip1.qml");
-            }
-            else if(object === "enemyShip2"){
-                _component = Qt.createComponent("EnemyShip2.qml");
-            }
-            else if(object === "enemyShip3"){
-                _component = Qt.createComponent("EnemyShip3.qml");
-            }
-
-            if (_component.status === Component.Ready)
-                finishCreation(parent, params, completedCallback);
-            else
-                _component.statusChanged.connect(finishCreation(parent, params, completedCallback));
-        };
-
-        // Access level: Private
-        // Description: Create a qml object instance.
-        var finishCreation = function(parent, params, completedCallback) {
-            if (_component.status === Component.Ready) {
-                _sprite = _component.createObject(parent, params);
-                if(_sprite === null) {
-                    // Error Handling
-                    console.log("Error creating object");
-                    completedCallback(null);
-                }
-                completedCallback(_sprite);
-            } else if (_component.status === Component.Error) {
-                // Error Handling
-                console.log("Error loading _component:", _component.errorString());
-                completedCallback(null);
-            }
-        }
 
         // Access level: Private
         // Description: Create a single enemy ship at specified position.
@@ -240,7 +198,7 @@ function createEngine(root, width, height){
 
             }
 
-            createObject(shipType, { x: posX, y: posY }, root, completedCallback);
+            _objectFactory.createObject(shipType, { x: posX, y: posY }, root, completedCallback);
         }
 
         // Access level: Private
@@ -273,95 +231,4 @@ function createEngine(root, width, height){
     }(root, width, height));
 
     return engine;
-}
-
-
-function createPlayer(initialX, initialY, lives){
-    var player = (function(initialX, initialY, lives){
-
-        var _exports = {};
-        var _position = { _x: initialX, _y: initialY };
-        var _lives = lives;
-        var _positionObservers = [];
-
-        _exports.moveDir = MOVEDIR_NONE;
-
-        _exports.setPosition = function(x, y){
-            _position._x = x;
-            _position._y = y;
-
-            for(var i=0; i< _positionObservers.length; ++i){
-                _positionObservers[i]({ x: _position._x, y: _position._y });
-            }
-        }
-
-        _exports.setX = function(x){
-            _position._x = x;
-            for(var i=0; i< _positionObservers.length; ++i){
-                _positionObservers[i]({ x: _position._x, y: _position._y });
-            }
-        }
-
-        _exports.setY = function(y){
-            _position._y = y;
-            for(var i=0; i< _positionObservers.length; ++i){
-                _positionObservers[i]({ x: _position._x, y: _position._y });
-            }
-        }
-
-        // Return a copy of the position object so
-        // that the original can not be modified.
-        _exports.getPosition = function(){
-            return { x: _position._x, y: _position._y };
-        }
-
-        _exports.setLives = function(lives){
-            _lives = lives;
-        }
-
-        _exports.registerPositionObserver = function(observer){
-            _positionObservers.push(observer);
-        }
-
-        _exports.clearPositionObservers = function(observer){
-           _positionObservers = [];
-        }
-
-        return _exports;
-    }(initialX, initialY, lives));
-
-    return player;
-};
-
-
-function createScore(initialScore){
-    var score = (function(initialScore){
-        var _exports = {};
-        var _score = initialScore;
-        var _scoreObservers = []
-
-        _exports.getScore = function(){
-            return _score;
-        }
-
-        _exports.setScore = function(score){
-            _score = score;
-            for(var i=0; i< _scoreObservers.length; ++i){
-                _scoreObservers[i](_score);
-            }
-        }
-
-        _exports.registerScoreObserver = function(observer){
-            _scoreObservers.push(observer);
-        }
-
-        _exports.clearObservers = function(){
-            _scoreObservers = [];
-        }
-
-        return _exports;
-
-    }(initialScore));
-
-    return score;
 }

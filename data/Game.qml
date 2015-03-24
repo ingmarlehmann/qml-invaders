@@ -1,5 +1,8 @@
 import QtQuick 2.0
+
+import "constants.js" as Constants
 import "gameEngine.js" as Engine
+import "objectFactory.js" as ObjectFactory
 
 Rectangle {
     id: gameRoot
@@ -12,6 +15,7 @@ Rectangle {
     signal quit()
 
     property var gameEngine: null
+    property var objectFactory: null
 
     FPSMonitor{
         id: fpsMonitor
@@ -39,8 +43,8 @@ Rectangle {
         id: playerShip
 
         Component.onCompleted: {
-            Engine.PLAYERSHIP_WIDTH = playerShip.width;
-            Engine.PLAYERSHIP_HEIGHT = playerShip.height;
+            Constants.PLAYERSHIP_WIDTH = playerShip.width;
+            Constants.PLAYERSHIP_HEIGHT = playerShip.height;
         }
 
         function positionChanged(newPosition){
@@ -105,8 +109,10 @@ Rectangle {
 
     onVisibleChanged: {
         if(visible){
+            objectFactory = ObjectFactory.createObjectFactory();
             gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
 
+            gameEngine.setObjectFactory(objectFactory);
             gameEngine.player.registerPositionObserver(playerShip.positionChanged);
             gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
         }
