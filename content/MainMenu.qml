@@ -40,7 +40,7 @@ Rectangle {
             Image{
                 id: topLogo
                 fillMode: Image.PreserveAspectFit
-                source: "qrc:/data/images/space_invaders_logo.png"
+                source: "qrc:/content/images/space_invaders_logo.png"
                 width: 400
             }
 

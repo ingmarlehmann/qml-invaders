@@ -211,7 +211,7 @@ function createEngine(root, width, height){
                 }
             }
         }
-1
+
         // Access level: Public
         // Description: Clear the game data.
         _exports.clearGameData = function(){

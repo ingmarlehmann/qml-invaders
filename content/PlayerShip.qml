@@ -21,7 +21,7 @@ Rectangle{
         asynchronous: true
         smooth: true
 
-        source: "qrc:/data/images/ship.png"
+        source: "qrc:/content/images/ship.png"
     }
 
 

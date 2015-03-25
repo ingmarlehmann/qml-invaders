@@ -1,4 +1,5 @@
 .pragma library
+.import CommonJS 0.1 as CJS
 
 /*
 Copyright (c) 2010,2011,2012,2013,2014 Morgan Roderick http://roderick.dk
@@ -37,7 +38,7 @@ var PubSub = (function (){
 		try {
 			subscriber( message, data );
 		} catch( ex ){
-			setTimeout( throwException( ex ), 0);
+            CJS.CommonJS.setTimeout( throwException( ex ), 0);
 		}
 	}
 
@@ -92,15 +93,6 @@ var PubSub = (function (){
 		return found;
 	}
 
-//    function setTimeout(fnc,time,start) {
-//          if (typeof start == "undefined") start = true;
-//          var timer = Qt.createQmlObject('import QtQuick 1.0; Timer { repeat: false; running: false; }', Faye.ENV.rootQmlObject, "faye-browser.js");
-//          timer.interval = time;
-//          timer.triggered.connect(fnc);
-//          if (start) timer.start();
-//          return timer;
-//        }
-
 	function publish( message, data, sync, immediateExceptions ){
 		var deliver = createDeliveryFunction( message, data, immediateExceptions ),
 			hasSubscribers = messageHasSubscribers( message );
@@ -112,7 +104,7 @@ var PubSub = (function (){
 		if ( sync === true ){
 			deliver();
 		} else {
-			setTimeout( deliver, 0 );
+            CJS.CommonJS.setTimeout( deliver, 0 );
 		}
 		return true;
 	}

@@ -5,7 +5,7 @@ Image{
 
     width: 50
     height: 50
-    source: "qrc:/data/images/invader3.png"
+    source: "qrc:/content/images/invader3.png"
 
     property alias physicsBody: physicsBody
 

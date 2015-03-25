@@ -6,7 +6,7 @@ Image{
     width: 50
     height: 50
 
-    source: "qrc:/data/images/invader1.png"
+    source: "qrc:/content/images/invader1.png"
 
     property string name: "EnemyShip1Root"
 

@@ -48,7 +48,7 @@ Rectangle {
             Constants.PLAYERSHIP_HEIGHT = playerShip.height;
         }
 
-        function positionChanged(newPosition){
+        function positionChanged(topic, newPosition){
             playerShip.x = newPosition.x;
         }
     }
@@ -79,7 +79,7 @@ Rectangle {
             font.pixelSize: 24
             anchors.horizontalCenter: parent.horizontalCenter
 
-            function scoreChanged(newScore){
+            function scoreChanged(topic, newScore){
                 scoreText.text = leftPad(newScore, 4);
             }
         }
@@ -114,10 +114,9 @@ Rectangle {
             gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
 
             gameEngine.setObjectFactory(objectFactory);
-            gameEngine.player.registerPositionObserver(playerShip.positionChanged);
-            gameEngine.score.registerScoreObserver(scoreText.scoreChanged);
 
-            //PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
+            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
+            PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
         }
     }
 

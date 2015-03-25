@@ -2,13 +2,15 @@ TEMPLATE = app
 
 QT += qml quick widgets
 
-SOURCES += main.cpp
+SOURCES += src/*
+
+OTHER_FILES += content/*
 
 RESOURCES += \
     resources.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
+QML_IMPORT_PATH = content/
 
 # Default rules for deployment.
 include(deployment.pri)
