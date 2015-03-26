@@ -10,10 +10,14 @@ function createEngine(root, width, height){
         // will be accessible by caller.
         var _exports = {};
 
-        // Private variables.
+        // ----------------
+        // Private variables
+        // ----------------
+
         var _lastUpdateTime = new Date().getTime();
 
-        var _projectiles = [];
+        var _playerProjectiles = [];
+        var _enemyProjectiles = [];
         var _enemyShips = [];
 
         var _width = width;
@@ -23,6 +27,23 @@ function createEngine(root, width, height){
         var _score = Score.createScore(0);
         var _player = Player.createPlayer(0, 0, 3);
         var _objectFactory = null;
+
+        // ----------------
+        // Public variables
+        // ----------------
+
+        // Access level: Public
+        // Description: Score object
+        _exports.score = _score;
+
+        // Access level: Public
+        // Description: Player object
+        _exports.player = _player;
+
+
+        // ----------------
+        // Public methods
+        // ----------------
 
         // Access level: Public
         // Description: Set a reference to the object factory instance.
@@ -55,14 +76,6 @@ function createEngine(root, width, height){
             _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
             _player.setLives(3);
         }
-
-        // Access level: Public
-        // Description: Score object
-        _exports.score = _score;
-
-        // Access level: Public
-        // Description: Player object
-        _exports.player = _player;
 
         // Access level: Public
         // Description: Method to inject key _down_ events
@@ -122,14 +135,14 @@ function createEngine(root, width, height){
             }
 
             // Update player projectiles, movement and collision checks.
-            for(var i=(_projectiles.length-1); i>=0; --i){
+            for(var i=(_playerProjectiles.length-1); i>=0; --i){
 
                 var projectileDeleted = false;
                 for(var j=0; j< _enemyShips.length; ++j){
                     if(_enemyShips[j].opacity !== 0){
 
                         //console.log("testing enemy ship " + j + " against projectile " + i);
-                        var box1 = _projectiles[i].physicsBody;
+                        var box1 = _playerProjectiles[i].physicsBody;
                         var box2 = _enemyShips[j].physicsBody;
 
                         var collides = box1.testCollision(box2);
@@ -141,10 +154,10 @@ function createEngine(root, width, height){
                             _score.setScore(_score.getScore()+10);
 
                             // destroy qml object.
-                            _projectiles[i].destroy();
+                            _playerProjectiles[i].destroy();
 
                             // remove this projectile reference from the collection.
-                            _projectiles.splice(i, 1);
+                            _playerProjectiles.splice(i, 1);
 
                             projectileDeleted = true;
                             break;
@@ -154,12 +167,12 @@ function createEngine(root, width, height){
 
                 // Make sure we dont update a deleted projectile.
                 if(projectileDeleted === false){
-                    _projectiles[i].y = Math.max(0, _projectiles[i].y - (Constants.PROJECTILE_SPEED * dT));
+                    _playerProjectiles[i].y = Math.max(0, _playerProjectiles[i].y - (Constants.PROJECTILE_SPEED * dT));
                 }
             }
 
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
-            _projectiles = _projectiles.filter( function(value, index, array) {
+            _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
                 if(value.y <= 5){
                     value.destroy();
                 }
@@ -170,6 +183,34 @@ function createEngine(root, width, height){
             _lastUpdateTime = new Date().getTime();
         };
 
+        // Access level: Public
+        // Description: Clear the game data.
+        _exports.clearGameData = function(){
+            var i;
+
+            for(i=0; i< _playerProjectiles.length; ++i){
+                _playerProjectiles[i].destroy();
+            }
+            _playerProjectiles = [];
+
+            for(i=0; j< _enemyShips.length; ++i){
+                _enemyShips[i].destroy();
+            }
+            _enemyShips = [];
+
+
+            for(i=0; j< _enemyProjectiles.length; ++i){
+                _enemyProjectiles[i].destroy();
+            }
+            _enemyProjectiles = [];
+
+            _score.setScore(0);
+        }
+
+        // ----------------
+        // Private methods
+        // ----------------
+
         // Access level: Private
         // Description: Create a new projectile.
         var shoot = function(){
@@ -178,7 +219,7 @@ function createEngine(root, width, height){
             var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
             var completedCallback = function(newObject) {
                 if(newObject) {
-                    _projectiles.push(newObject);
+                    _playerProjectiles.push(newObject);
                 } else {
                     console.log("error creating object" + objectName);
                 }
@@ -251,22 +292,6 @@ function createEngine(root, width, height){
             for(i=0; i<columns; ++i){
                 createEnemyShip("enemyShip2", x + (i*Constants.ENEMYSHIP_WIDTH), y);
             }
-        }
-
-        // Access level: Public
-        // Description: Clear the game data.
-        _exports.clearGameData = function(){
-
-            for(var i=0; i< _projectiles.length; ++i){
-                _projectiles[i].destroy();
-            }
-            _projectiles = [];
-
-            for(var j=0; j< _enemyShips.length; ++j){
-                _enemyShips[j].destroy();
-            }
-            _enemyShips = [];
-            _score.setScore(0);
         }
 
         return _exports;

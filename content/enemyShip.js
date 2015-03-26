@@ -1,8 +1,8 @@
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
 
-function createPlayer(initialX, initialY, lives){
-    var player = (function(initialX, initialY, lives){
+function createEnemyShip(initialX, initialY, lives){
+    var enemyShip = (function(initialX, initialY, lives){
 
         var _exports = {};
 
@@ -10,39 +10,30 @@ function createPlayer(initialX, initialY, lives){
         var _initialLives = lives;
         var _lives = lives;
 
-        _exports.moveDir = Constants.MOVEDIR_NONE;
-
         _exports.setPosition = function(x, y){
 
             _position._x = x;
             _position._y = y;
-
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
         }
 
         _exports.setX = function(x){
 
             _position._x = x;
-
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
         }
 
         _exports.setY = function(y){
 
             _position._y = y;
-
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
         }
 
-        // Return a copy of the position object so
-        // that the original can not be modified.
         _exports.getPosition = function(){
+            // Return a copy of the position object so
+            // that the original can not be modified.
             return { x: _position._x, y: _position._y };
         }
 
         _exports.hit = function(lives){
             setLives(getLives()-lives);
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_HIT, lives);
         }
 
         _exports.isDead = function(){
@@ -51,7 +42,6 @@ function createPlayer(initialX, initialY, lives){
 
         _exports.respawn = function(){
             setLives(_initialLives);
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_RESPAWNED, 1);
         }
 
         _exports.getLives = function(){
@@ -60,16 +50,11 @@ function createPlayer(initialX, initialY, lives){
 
         var setLives = function(lives){
             _lives = lives;
-
-            if(_lives <= 0){
-                PS.PubSub.publish(Constants.TOPIC_PLAYER_DIED, 1);
-            }
         }
-
 
         return _exports;
 
     }(initialX, initialY, lives));
 
-    return player;
+    return enemyShip;
 };
