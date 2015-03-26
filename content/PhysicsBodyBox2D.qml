@@ -3,6 +3,7 @@ import QtQuick 2.0
 Rectangle {
     id: physicsBodyRoot
     anchors.centerIn: parent
+    anchors.fill: parent
 
     visible: false // comment out for debugging
 

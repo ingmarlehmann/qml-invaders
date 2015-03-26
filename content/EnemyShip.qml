@@ -1,12 +1,12 @@
 import QtQuick 2.0
 
-Rectangle{
-    id: playerProjectileRoot
+Image{
+    id: enemyShipRoot
 
-    color: "white"
+    width: 50
+    height: 50
 
-    width: 3
-    height: 20
+    source: "qrc:/content/images/default.gif"
 
     property alias physicsBody: physicsBody
 

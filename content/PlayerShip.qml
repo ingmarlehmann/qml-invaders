@@ -1,29 +1,22 @@
 import QtQuick 2.0
 
-Rectangle{
-    id: shipRoot
+Image{
+    id: playerShipRoot
     anchors.bottom: parent.bottom
-
-    color: "#000000"
 
     width: 50
     height: 25
 
-    Image{
-        id: shipImage
-        anchors.fill: parent
+    source: "qrc:/content/images/ship.png"
 
-        visible: true
+    cache: true
+    asynchronous: true
+    smooth: true
 
-        anchors.margins: 1
+    property alias physicsBody: physicsBody;
 
-        cache: true
-        asynchronous: true
-        smooth: true
-
-        source: "qrc:/content/images/ship.png"
+    PhysicsBodyBox2D{
+        id: physicsBody
     }
-
-
 }
 

@@ -14,3 +14,5 @@ QML_IMPORT_PATH = content/
 
 # Default rules for deployment.
 include(deployment.pri)
+
+DISTFILES +=

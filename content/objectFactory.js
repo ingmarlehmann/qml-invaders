@@ -15,25 +15,25 @@ function createObjectFactory(){
             if(object === "playerProjectile"){
                 _component = Qt.createComponent("PlayerProjectile.qml");
             }
-            else if(object === "enemyShip1"){
-                _component = Qt.createComponent("EnemyShip1.qml");
+            else if(object === "enemyProjectile"){
+                _component = Qt.createComponent("EnemyProjectile.qml");
             }
-            else if(object === "enemyShip2"){
-                _component = Qt.createComponent("EnemyShip2.qml");
+            else if(object === "playerShip"){
+                _component = Qt.createComponent("PlayerShip.qml");
             }
-            else if(object === "enemyShip3"){
-                _component = Qt.createComponent("EnemyShip3.qml");
+            else if(object === "enemyShip1" || object === "enemyShip2" || object === "enemyShip3"){
+                _component = Qt.createComponent("EnemyShip.qml");
             }
 
             if (_component.status === Component.Ready)
-                finishCreation(parent, params, completedCallback);
+                finishCreation(object, params, parent, completedCallback);
             else
-                _component.statusChanged.connect(finishCreation(parent, params, completedCallback));
+                _component.statusChanged.connect(finishCreation(object, params, parent, completedCallback));
         };
 
         // Access level: Private
         // Description: Create a qml object instance.
-        var finishCreation = function(parent, params, completedCallback) {
+        var finishCreation = function(name, params, parent, completedCallback) {
             if (_component.status === Component.Ready) {
                 _sprite = _component.createObject(parent, params);
                 if(_sprite === null) {
@@ -41,6 +41,22 @@ function createObjectFactory(){
                     console.log("Error creating object");
                     completedCallback(null);
                 }
+
+                // Name the object for debugging purposes.
+                _sprite.objectName = name;
+
+                if(_sprite.objectName === "enemyShip1"){
+                    _sprite.source = "qrc:/content/images/invader1.png";
+                }
+
+                if(_sprite.objectName === "enemyShip2"){
+                    _sprite.source = "qrc:/content/images/invader2.png";
+                }
+
+                if(_sprite.objectName === "enemyShip3"){
+                    _sprite.source = "qrc:/content/images/invader3.png";
+                }
+
                 completedCallback(_sprite);
             } else if (_component.status === Component.Error) {
                 // Error Handling

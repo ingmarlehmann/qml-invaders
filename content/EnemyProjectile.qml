@@ -1,8 +1,7 @@
 import QtQuick 2.0
 
 Rectangle{
-    id: root
-    anchors.bottom: parent.bottom
+    id: enemyProjectileRoot
 
     color: "red"
 
@@ -15,12 +14,9 @@ Rectangle{
         }
     }
 
+    property alias physicsBody: physicsBody
+
     PhysicsBodyBox2D{
         id: physicsBody
-
-        x: root.x
-        y: root.y
-        width: root.width
-        height: root.height
     }
 }
