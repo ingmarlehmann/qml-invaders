@@ -100,21 +100,7 @@ function createEngine(root, width, height){
 
             if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
-                    var objectName = "playerProjectile";
-                    var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
-                    var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
-                    var completedCallback = function(newObject) {
-                        if(newObject) {
-                            _projectiles.push(newObject);
-                        } else {
-                            console.log("error creating object" + objectName);
-                        }
-                    }
-
-                    _objectFactory.createObject( objectName,
-                                 { x: projectileStartX, y: projectileStartY },
-                                 _root, // object parent
-                                 completedCallback );
+                    shoot();
                 }
             }
         }
@@ -184,6 +170,26 @@ function createEngine(root, width, height){
             _lastUpdateTime = new Date().getTime();
         };
 
+        // Access level: Private
+        // Description: Create a new projectile.
+        var shoot = function(){
+            var objectName = "playerProjectile";
+            var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
+            var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
+            var completedCallback = function(newObject) {
+                if(newObject) {
+                    _projectiles.push(newObject);
+                } else {
+                    console.log("error creating object" + objectName);
+                }
+            }
+
+            _objectFactory.createObject( objectName,
+                         { x: projectileStartX, y: projectileStartY },
+                         _root, // object parent
+                         completedCallback );
+        }
+
 
         // Access level: Private
         // Description: Create a single enemy ship at specified position.
@@ -205,10 +211,45 @@ function createEngine(root, width, height){
         // Access level: Private
         // Description: Create all enemy ships for a new game.
         var createEnemyShips = function() {
-            for(var x=0; x< 500; x+=50){
-                for(var y=100; y< 400; y+=50){
-                    createEnemyShip("enemyShip1", x + 50, y);
-                }
+            var i, x, y;
+            var columns = 10;
+
+            y = 100;
+
+            // calculate the position to place the first invader.
+            x = (_width/2)-((columns*Constants.ENEMYSHIP_WIDTH)/2);
+
+            // 1st row: 11 "squids"
+            for(i=0; i<columns; ++i){
+                createEnemyShip("enemyShip3", x + (i*Constants.ENEMYSHIP_WIDTH), y);
+            }
+
+            y += Constants.ENEMYSHIP_HEIGHT + 10;
+
+            // 2nd row: 11 "bees"
+            // 3rd row: 11 "bees"
+            for(i=0; i<columns; ++i){
+                createEnemyShip("enemyShip1", x + (i*Constants.ENEMYSHIP_WIDTH), y);
+            }
+
+            y += Constants.ENEMYSHIP_HEIGHT + 10;
+
+            for(i=0; i<columns; ++i){
+                createEnemyShip("enemyShip1", x + (i*Constants.ENEMYSHIP_WIDTH), y);
+            }
+
+            y += Constants.ENEMYSHIP_HEIGHT + 10;
+
+            // 4th row: 11 "jellyfish"
+            // 5th row: 11 "jellyfish"
+            for(i=0; i<columns; ++i){
+                createEnemyShip("enemyShip2", x + (i*Constants.ENEMYSHIP_WIDTH), y);
+            }
+
+            y += Constants.ENEMYSHIP_HEIGHT + 10;
+
+            for(i=0; i<columns; ++i){
+                createEnemyShip("enemyShip2", x + (i*Constants.ENEMYSHIP_WIDTH), y);
             }
         }
 
