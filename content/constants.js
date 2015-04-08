@@ -9,6 +9,9 @@ var PLAYERSHIP_HEIGHT   = 50; // TODO: Make depend on actual player ship height.
 var ENEMYSHIP_WIDTH     = 50; // TODO: Make depend on actual player ship height.
 var ENEMYSHIP_HEIGHT    = 50; // TODO: Make depend on actual player ship height.
 
+var INVADER_ROWS        = 5;
+var INVADER_COLUMNS     = 10;
+
 // Event topics for PubSub
 var TOPIC_PLAYER_POSITION = "player.position";
 var TOPIC_SCORE = "score";
