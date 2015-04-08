@@ -116,7 +116,7 @@ function createEngine(root, width, height){
 
             if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
-                    shoot();
+                    createPlayerProjectile();
                 }
             }
         }
@@ -130,14 +130,7 @@ function createEngine(root, width, height){
             var invaderRow, invaderColumn;
             var currentPlayerProjectile;
 
-            // Move player ship.
-            if(_player.moveDir === Constants.MOVEDIR_LEFT){
-                // Make sure player does not go out of bounds and move the ship to new position.
-                _player.setX(Math.max(0, _player.getPosition().x - (Constants.SHIP_SPEED * dT)));
-            } else if(_player.moveDir === Constants.MOVEDIR_RIGHT){
-                // Make sure player does not go out of bounds and move the ship to new position.
-                _player.setX(Math.min(_width-Constants.PLAYERSHIP_WIDTH, _player.getPosition().x + (Constants.SHIP_SPEED * dT)));
-            }
+            updatePlayer(dT);
 
             // Update player projectiles, movement and collision checks.
             for(currentPlayerProjectile=(_playerProjectiles.length-1); currentPlayerProjectile>=0; --currentPlayerProjectile){
@@ -225,9 +218,20 @@ function createEngine(root, width, height){
         // Private methods
         // ----------------
 
+        var updatePlayer = function(deltaTime){
+            // Move player ship.
+            if(_player.moveDir === Constants.MOVEDIR_LEFT){
+                // Make sure player does not go out of bounds and move the ship to new position.
+                _player.setX(Math.max(0, _player.getPosition().x - (Constants.SHIP_SPEED * deltaTime)));
+            } else if(_player.moveDir === Constants.MOVEDIR_RIGHT){
+                // Make sure player does not go out of bounds and move the ship to new position.
+                _player.setX(Math.min(_width-Constants.PLAYERSHIP_WIDTH, _player.getPosition().x + (Constants.SHIP_SPEED * deltaTime)));
+            }
+        }
+
         // Access level: Private
         // Description: Create a new projectile.
-        var shoot = function(){
+        var createPlayerProjectile = function(){
             var objectName = "playerProjectile";
             var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
             var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
