@@ -13,4 +13,12 @@ Image{
     PhysicsBodyBox2D{
         id: physicsBody
     }
+
+    Rectangle{
+        id: test
+        color: "red"
+
+        width: 5
+        height: 5
+    }
 }

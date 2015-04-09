@@ -28,7 +28,7 @@ function createInvaderAI(invadersToControl){
         var _prevMoveDir = Constants.MOVEDIR_LEFT;
 
         var _moveTimer = 0;
-        var _moveInterval = 5000;
+        var _moveInterval = 1000;
         var _timeElapsed = 0;
 
         var _invaders = invadersToControl;
@@ -48,21 +48,15 @@ function createInvaderAI(invadersToControl){
                         if(_moveDir === Constants.MOVEDIR_RIGHT){
                             _prevMoveDir = _moveDir;
                             _moveDir = Constants.MOVEDIR_DOWN;
-                            if(!_move(_moveDir)){
-                                console.log("ERROR; Can't move invader pack");
-                            }
                         }
                         else if(_moveDir === Constants.MOVEDIR_LEFT){
                             _prevMoveDir = _moveDir;
                             _moveDir = Constants.MOVEDIR_DOWN;
-                            if(!_move(_moveDir)){
-                                console.log("ERROR; Can't move invader pack");
-                            }
                         }
                     }
                 }
                 // Is pack moving down?
-                else if(_moveDir === Constants.MOVEDIR_DOWN){
+                if(_moveDir === Constants.MOVEDIR_DOWN){
                     // move one step down
                     if(!_move(_moveDir)){
                         console.log("ERROR; Can't move invader pack");
@@ -93,6 +87,11 @@ function createInvaderAI(invadersToControl){
         var _moveRight = function(){
             var column = 0, row = 0;
 
+            var bb = _getInvaderPackBoundingBox();
+            if(bb.maxX + 5 >= 690){
+                return false;
+            }
+
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
                     _invaders[row][column].x += Constants.ENEMYSHIP_WIDTH;
@@ -104,8 +103,13 @@ function createInvaderAI(invadersToControl){
         var _moveLeft = function(){
             var column = 0, row = 0;
 
+            var bb = _getInvaderPackBoundingBox();
+            if(Math.max(0, bb.minX - 5) === 0){
+                return false;
+            }
+
             for(row=0; row< _invaders.length; ++row){
-                for(column=0; column< invaders[row].length; ++column){
+                for(column=0; column< _invaders[row].length; ++column){
                     _invaders[row][column].x -= Constants.ENEMYSHIP_WIDTH;
                 }
             }
@@ -116,7 +120,7 @@ function createInvaderAI(invadersToControl){
             var column = 0, row = 0;
 
             for(row=0; row< _invaders.length; ++row){
-                for(column=0; column< invaders[row].length; ++column){
+                for(column=0; column< _invaders[row].length; ++column){
                     _invaders[row][column].y += Constants.ENEMYSHIP_HEIGHT;
                 }
             }
@@ -124,8 +128,38 @@ function createInvaderAI(invadersToControl){
             return true;
         }
 
-        var _getPackBoundingBox = function(){
+        var _getInvaderPackBoundingBox = function(){
+            var bb = {
+                minX:999999,
+                maxX:0,
+                minY:999999,
+                maxY:0
+            };
 
+            var row, column;
+
+            for(row=0; row< _invaders.length; ++row){
+                for(column=0; column< _invaders[row].length; ++column){
+                    if(_invaders[row][column].x < bb.minX){
+                        bb.minX = _invaders[row][column].x;
+                    }
+                    else if(_invaders[row][column].x > bb.maxX){
+                        bb.maxX = _invaders[row][column].x;
+                    }
+
+                    if(_invaders[row][column].y < bb.minY){
+                        bb.minY = _invaders[row][column].y;
+                    }
+                    else if(_invaders[row][column].y > bb.maxY){
+                        bb.maxY = _invaders[row][column].y;
+                    }
+                }
+            }
+
+            bb.maxX += Constants.ENEMYSHIP_WIDTH;
+            bb.maxY += Constants.ENEMYSHIP_HEIGHT;
+
+            return bb;
         }
 
         return _exports;

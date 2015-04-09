@@ -21,8 +21,8 @@ function createEngine(root, width, height){
         var _enemyProjectiles = [];
 
         // 2 dimensional array
-        // _enemyShips[constants.INVADER_ROWS][constants.INVADER_COLUMNS]
-        var _enemyShips = [];
+        // _invaders[constants.INVADER_ROWS][constants.INVADER_COLUMNS]
+        var _invaders = [];
 
         var _width = width;
         var _height = height;
@@ -141,19 +141,19 @@ function createEngine(root, width, height){
 
                 var projectileDeleted = false;
 
-                for(invaderRow=0; invaderRow<_enemyShips.length; ++invaderRow){
-                    for(invaderColumn=0; invaderColumn< _enemyShips[invaderRow].length; ++invaderColumn){
+                for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
+                    for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
 
-                        if(_enemyShips[invaderRow][invaderColumn].opacity !== 0){
+                        if(_invaders[invaderRow][invaderColumn].opacity !== 0){
 
                             //console.log("testing enemy ship " + j + " against projectile " + i);
                             var box1 = _playerProjectiles[currentPlayerProjectile].physicsBody;
-                            var box2 = _enemyShips[invaderRow][invaderColumn].physicsBody;
+                            var box2 = _invaders[invaderRow][invaderColumn].physicsBody;
 
                             var collides = box1.testCollision(box2);
                             if(collides){
                                 //console.log(" - enemy ship " + j + " collides with projectile " + i);
-                                _enemyShips[invaderRow][invaderColumn].opacity = 0;
+                                _invaders[invaderRow][invaderColumn].opacity = 0;
 
                                 // update score.
                                 _score.setScore(_score.getScore()+10);
@@ -201,13 +201,13 @@ function createEngine(root, width, height){
 
             _playerProjectiles = [];
 
-            for(i=0; i< _enemyShips.length; ++i){
-                for(j=0; j< _enemyShips[i].length; ++j){
-                    _enemyShips[i][j].destroy();
+            for(i=0; i< _invaders.length; ++i){
+                for(j=0; j< _invaders[i].length; ++j){
+                    _invaders[i][j].destroy();
                 }
             }
 
-            _enemyShips = [];
+            _invaders = [];
 
 
             for(i=0; i< _enemyProjectiles.length; ++i){
@@ -277,7 +277,7 @@ function createEngine(root, width, height){
             var callback;
             var numInvadersCreated = 0;
 
-            _enemyShips = [];
+            _invaders = [];
 
             y = 100;
 
@@ -286,12 +286,12 @@ function createEngine(root, width, height){
 
             // the create method is asynchronous so we need to define a completion callback.
             callback = function(newObject) {
-                if(newObject) { _enemyShips.push(newObject); currentRow.push(newObject); }
+                if(newObject) { _invaders.push(newObject); currentRow.push(newObject); }
                 else { console.log("ERROR: Error creating object " + shipType); }
 
                 ++numInvadersCreated;
                 if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
-                    _invaderAI = InvaderAI.createInvaderAI(_enemyShips);
+                    _invaderAI = InvaderAI.createInvaderAI(_invaders);
                 }
             }
 
@@ -308,7 +308,7 @@ function createEngine(root, width, height){
                         createEnemyShip("enemyShip2", x + (column*Constants.ENEMYSHIP_WIDTH), y, callback);
                     }
                 }
-                _enemyShips.push(currentRow);
+                _invaders.push(currentRow);
                 y += Constants.ENEMYSHIP_HEIGHT + 10;
             }
         }
