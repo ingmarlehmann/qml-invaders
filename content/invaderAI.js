@@ -137,23 +137,32 @@ function createInvaderAI(invadersToControl){
             };
 
             var row, column;
+            var atLeastOneInvaderAlive = false;
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    if(_invaders[row][column].x < bb.minX){
-                        bb.minX = _invaders[row][column].x;
-                    }
-                    else if(_invaders[row][column].x > bb.maxX){
-                        bb.maxX = _invaders[row][column].x;
-                    }
+                    if(_invaders[row][column].visible !== false){
+                        atLeastOneInvaderAlive = true;
 
-                    if(_invaders[row][column].y < bb.minY){
-                        bb.minY = _invaders[row][column].y;
-                    }
-                    else if(_invaders[row][column].y > bb.maxY){
-                        bb.maxY = _invaders[row][column].y;
+                        if(_invaders[row][column].x < bb.minX){
+                            bb.minX = _invaders[row][column].x;
+                        }
+                        else if(_invaders[row][column].x > bb.maxX){
+                            bb.maxX = _invaders[row][column].x;
+                        }
+
+                        if(_invaders[row][column].y < bb.minY){
+                            bb.minY = _invaders[row][column].y;
+                        }
+                        else if(_invaders[row][column].y > bb.maxY){
+                            bb.maxY = _invaders[row][column].y;
+                        }
                     }
                 }
+            }
+
+            if(!atLeastOneInvaderAlive){
+                return {};
             }
 
             bb.maxX += Constants.ENEMYSHIP_WIDTH;

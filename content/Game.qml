@@ -155,20 +155,12 @@ Rectangle {
         if(event.key === Qt.Key_F && !event.isAutoRepeat){
             fpsMonitor.toggle();
         }
-
-        if(event.key === Qt.Key_P && !event.isAutoRepeat){
-            togglePhysicsDebug();
-        }
     }
 
     function newGame(){
         if(gameEngine){
             gameEngine.newGame();
         }
-    }
-
-    function togglePhysicsDebug(){
-        // TODO: implement
     }
 
     function leftPad(number, targetLength) {

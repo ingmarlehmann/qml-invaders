@@ -100,6 +100,11 @@ function createEngine(root, width, height){
 
                 event.accepted = true;
             }
+            if(event.key === Qt.Key_P){
+                if(!event.isAutoRepeat){
+                    togglePhysicsDebug();
+                }
+            }
         }
 
         // Access level: Public
@@ -144,7 +149,7 @@ function createEngine(root, width, height){
                 for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
                     for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
 
-                        if(_invaders[invaderRow][invaderColumn].opacity !== 0){
+                        if(_invaders[invaderRow][invaderColumn].visible !== false){
 
                             //console.log("testing enemy ship " + j + " against projectile " + i);
                             var box1 = _playerProjectiles[currentPlayerProjectile].physicsBody;
@@ -153,7 +158,7 @@ function createEngine(root, width, height){
                             var collides = box1.testCollision(box2);
                             if(collides){
                                 //console.log(" - enemy ship " + j + " collides with projectile " + i);
-                                _invaders[invaderRow][invaderColumn].opacity = 0;
+                                _invaders[invaderRow][invaderColumn].visible = false;
 
                                 // update score.
                                 _score.setScore(_score.getScore()+10);
@@ -221,6 +226,18 @@ function createEngine(root, width, height){
         // ----------------
         // Private methods
         // ----------------
+
+        var togglePhysicsDebug = function(){
+            var i, j;
+
+            for(i=0; i< _invaders.length; ++i){
+                for(j=0; j< _invaders[i].length; ++j){
+                    if(_invaders[i][j].visible){
+                        _invaders[i][j].physicsBody.visible = !(_invaders[i][j].physicsBody.visible);
+                    }
+                }
+            }
+        }
 
         var updatePlayer = function(deltaTime){
             // Move player ship.
