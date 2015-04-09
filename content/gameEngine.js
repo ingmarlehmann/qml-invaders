@@ -2,6 +2,7 @@
 .import "score.js" as Score
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
+.import "invaderAI.js" as InvaderAI
 
 function createEngine(root, width, height){
     var engine = (function (root, width, height) {
@@ -29,6 +30,8 @@ function createEngine(root, width, height){
 
         var _score = Score.createScore(0);
         var _player = Player.createPlayer(0, 0, 3);
+
+        var _invaderAI = null;
         var _objectFactory = null;
 
         // ----------------
@@ -131,6 +134,7 @@ function createEngine(root, width, height){
             var currentPlayerProjectile;
 
             updatePlayer(dT);
+            updateInvaders(dT);
 
             // Update player projectiles, movement and collision checks.
             for(currentPlayerProjectile=(_playerProjectiles.length-1); currentPlayerProjectile>=0; --currentPlayerProjectile){
@@ -230,6 +234,14 @@ function createEngine(root, width, height){
         }
 
         // Access level: Private
+        // Description: Update all invaders.
+        var updateInvaders = function(deltaTime) {
+            if(_invaderAI !== null){
+                _invaderAI.update(deltaTime);
+            }
+        }
+
+        // Access level: Private
         // Description: Create a new projectile.
         var createPlayerProjectile = function(){
             var objectName = "playerProjectile";
@@ -256,55 +268,6 @@ function createEngine(root, width, height){
             _objectFactory.createObject(shipType, { x: posX, y: posY }, root, completedCallback);
         }
 
-        var foreach = function(array, delegate){
-            for(var i=0; i<array.length; ++i){
-                delegate(array[i]);
-            }
-        }
-
-        // Access level: Private
-        // Description: Update all invaders.
-        var updateInvaders = function(deltaTime) {
-//            var timeToMoveIndaders = 0;
-//            if(timeToMoveInvaders){
-//                moveInvaders();
-//            }
-
-//            var bottomInvaders = [];
-
-//            var findBottomInvaders = function(invader){
-
-//            }
-
-//            foreach(invaders, findBottomInvaders);
-
-//            var updateInvaderCombatSystems = function(invader){
-//                if(invaderIsAtBottom){
-//                    if(invader.timeToShoot()){
-//                        invader.shoot();
-//                    }
-//                }
-//            };
-
-//            var checkForInvaderCollisions = function(invader){
-//                // check collision vs player.
-//                // check collision vs
-//            }
-
-//            foreach(invaders, updateInvaderCombatSystems);
-//            foreach(invaders, checkForInvaderCollisions);
-
-
-            // move all invaders as one collection in steps of invader size
-            // find the leftmost or rightmost invader(s)
-            // do collisionchecks with the bottom invader(s)
-            //
-            //
-            //
-            //
-            //
-        }
-
         // Access level: Private
         // Description: Create all enemy ships for a new game.
         var createEnemyShips = function() {
@@ -312,6 +275,7 @@ function createEngine(root, width, height){
             var row, column;
             var currentRow;
             var callback;
+            var numInvadersCreated = 0;
 
             _enemyShips = [];
 
@@ -324,6 +288,11 @@ function createEngine(root, width, height){
             callback = function(newObject) {
                 if(newObject) { _enemyShips.push(newObject); currentRow.push(newObject); }
                 else { console.log("ERROR: Error creating object " + shipType); }
+
+                ++numInvadersCreated;
+                if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
+                    _invaderAI = InvaderAI.createInvaderAI(_enemyShips);
+                }
             }
 
             for(row=0; row< Constants.INVADER_ROWS; ++row){

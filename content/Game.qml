@@ -66,10 +66,6 @@ Rectangle {
             color: "white"
             font.pixelSize: 24
             horizontalAlignment: Text.AlignHCenter
-
-            function highScoreChanged(newScore){
-                scoreHeaderText.text = leftPad(newScore, 4);
-            }
         }
         Text{
             id: scoreText
@@ -105,6 +101,10 @@ Rectangle {
             color: "white"
             font.pixelSize: 24
             anchors.horizontalCenter: parent.horizontalCenter
+
+            function highScoreChanged(topic, newScore){
+                hiScoreText.text = leftPad(newScore, 4);
+            }
         }
     }
 
