@@ -303,7 +303,7 @@ function createEngine(root, width, height){
 
             // the create method is asynchronous so we need to define a completion callback.
             callback = function(newObject) {
-                if(newObject) { _invaders.push(newObject); currentRow.push(newObject); }
+                if(newObject) { currentRow.push(newObject); }
                 else { console.log("ERROR: Error creating object " + shipType); }
 
                 ++numInvadersCreated;

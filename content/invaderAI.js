@@ -29,6 +29,10 @@ function createInvaderAI(invadersToControl){
 
         var _moveTimer = 0;
         var _moveInterval = 1000;
+
+        var _shootTimer = 0;
+        var _shootInterval = 1000;
+
         var _timeElapsed = 0;
 
         var _invaders = invadersToControl;
@@ -40,35 +44,64 @@ function createInvaderAI(invadersToControl){
             if((_moveTimer + _moveInterval) <= _timeElapsed){
                 _moveTimer = _timeElapsed;
 
-                // Is pack moving left or right?
-                if(_moveDir === Constants.MOVEDIR_RIGHT || _moveDir === Constants.MOVEDIR_LEFT){
-                    // Try moving in the set move direction.
-                    if(!_move(_moveDir)){
-                        // The move failed, we hit a wall, change move direction.
-                        if(_moveDir === Constants.MOVEDIR_RIGHT){
-                            _prevMoveDir = _moveDir;
-                            _moveDir = Constants.MOVEDIR_DOWN;
-                        }
-                        else if(_moveDir === Constants.MOVEDIR_LEFT){
-                            _prevMoveDir = _moveDir;
-                            _moveDir = Constants.MOVEDIR_DOWN;
-                        }
-                    }
-                }
-                // Is pack moving down?
-                if(_moveDir === Constants.MOVEDIR_DOWN){
-                    // move one step down
-                    if(!_move(_moveDir)){
-                        console.log("ERROR; Can't move invader pack");
-                    }
+                _updateInvaderMovement();
+            }
 
-                    if(_prevMoveDir === Constants.MOVEDIR_LEFT){
-                        _moveDir = Constants.MOVEDIR_RIGHT;
+            if((_shootTimer + _shootInterval) <= _timeElapsed){
+                _shootTimer = _timeElapsed;
+
+                _updateInvaderWeaponSystems();
+            }
+        }
+
+        var _updateInvaderMovement = function(){
+            // Is pack moving left or right?
+            if(_moveDir === Constants.MOVEDIR_RIGHT || _moveDir === Constants.MOVEDIR_LEFT){
+                // Try moving in the set move direction.
+                if(!_move(_moveDir)){
+                    // The move failed, we hit a wall, change move direction.
+                    if(_moveDir === Constants.MOVEDIR_RIGHT){
+                        _prevMoveDir = _moveDir;
+                        _moveDir = Constants.MOVEDIR_DOWN;
                     }
-                    else if(_prevMoveDir === Constants.MOVEDIR_RIGHT){
-                        _moveDir = Constants.MOVEDIR_LEFT;
+                    else if(_moveDir === Constants.MOVEDIR_LEFT){
+                        _prevMoveDir = _moveDir;
+                        _moveDir = Constants.MOVEDIR_DOWN;
                     }
                 }
+            }
+            // Is pack moving down?
+            if(_moveDir === Constants.MOVEDIR_DOWN){
+                // move one step down
+                if(!_move(_moveDir)){
+                    console.log("ERROR; Can't move invader pack");
+                }
+
+                if(_prevMoveDir === Constants.MOVEDIR_LEFT){
+                    _moveDir = Constants.MOVEDIR_RIGHT;
+                }
+                else if(_prevMoveDir === Constants.MOVEDIR_RIGHT){
+                    _moveDir = Constants.MOVEDIR_LEFT;
+                }
+            }
+        }
+
+        var _updateInvaderWeaponSystems = function(){
+            // find all the bottom invaders.
+            var row, column;
+            var bottomInvaders = [];
+
+            for(column=0; column< Constants.INVADER_COLUMNS; ++column){
+                for(row=Constants.INVADER_ROWS-1; row>= 0; --row){
+                    if(_invaders[row][column].visible){
+                        bottomInvaders.push(_invaders[row][column]);
+                        break;
+                    }
+                }
+            }
+
+            for(column=0; column< bottomInvaders.length; ++column){
+                //bottomInvaders[column].visible = !(bottomInvaders[column].visible);
             }
         }
 
