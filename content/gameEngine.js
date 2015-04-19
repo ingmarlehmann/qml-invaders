@@ -141,7 +141,7 @@ function createEngine(root, width, height){
             updatePlayer(dT);
             updateInvaders(dT);
 
-            // Update player projectiles, movement and collision checks.
+            // Update player projectiles collision checks.
             for(currentPlayerProjectile=(_playerProjectiles.length-1); currentPlayerProjectile>=0; --currentPlayerProjectile){
 
                 var projectileDeleted = false;
@@ -176,7 +176,7 @@ function createEngine(root, width, height){
                     }
                 }
 
-                // Make sure we dont update a deleted projectile.
+                // Update player projectiles movement.
                 if(projectileDeleted === false){
                     _playerProjectiles[currentPlayerProjectile].y =
                             Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PROJECTILE_SPEED * dT));
@@ -308,7 +308,8 @@ function createEngine(root, width, height){
 
                 ++numInvadersCreated;
                 if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
-                    _invaderAI = InvaderAI.createInvaderAI(_invaders);
+                    _invaderAI = InvaderAI.createInvaderAI(_root, _invaders);
+                    _invaderAI.setObjectFactory(_objectFactory);
                 }
             }
 

@@ -1,3 +1,5 @@
+.pragma library
+
 // Constants
 var MOVEDIR_NONE    = (0<<0);
 var MOVEDIR_LEFT    = (1<<0);
@@ -21,3 +23,9 @@ var TOPIC_SCORE = "score";
 var TOPIC_PLAYER_HIT = "player.hit";
 var TOPIC_PLAYER_RESPAWNED = "player.respawned";
 var TOPIC_PLAYER_DIED = "player.died";
+
+// These will get set up dynamically
+// by Main.qml in Component.onCompleted.
+var COMPONENT_READY;
+var COMPONENT_LOADING;
+var COMPONENT_ERROR;

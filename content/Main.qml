@@ -3,6 +3,8 @@ import QtQuick.Controls 1.1
 import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
+import "constants.js" as Constants
+
 import "."
 
 ApplicationWindow {
@@ -58,6 +60,10 @@ ApplicationWindow {
         menu.menuItemSelected.connect( function(selectedMenuItem){
             menuItemSelected(selectedMenuItem)
         })
+
+        Constants.COMPONENT_READY = Component.Ready;
+        Constants.COMPONENT_ERROR = Component.Error;
+        Constants.COMPONENT_LOADING = Component.Loading;
     }
 
     function exitToMainMenu()

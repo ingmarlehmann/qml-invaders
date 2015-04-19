@@ -1,5 +1,6 @@
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
+.import "objectFactory.js" as ObjectFactory
 
 // Create an invader AI engine.
 // The AI engine needs to be updated each frame with delta time.
@@ -19,8 +20,8 @@
 //   invaderAI.update(deltaTime);
 //
 
-function createInvaderAI(invadersToControl){
-    var invaderAI = (function(invadersToControl){
+function createInvaderAI(qmlCanvasParent, invadersToControl){
+    var invaderAI = (function(qmlCanvasParent, invadersToControl){
 
         var _exports = {};
 
@@ -37,24 +38,41 @@ function createInvaderAI(invadersToControl){
 
         var _invaders = invadersToControl;
 
+        var _enemyProjectiles = [];
+
+        var _rootObject = qmlCanvasParent;
+
+        var _objectFactory = null;
+
+        _exports.setObjectFactory = function(factory){
+            _objectFactory = factory;
+        }
+
         _exports.update = function(deltaTime){
+            var i;
+
             _timeElapsed += deltaTime;
 
             // Time to move pack?
             if((_moveTimer + _moveInterval) <= _timeElapsed){
                 _moveTimer = _timeElapsed;
 
-                _updateInvaderMovement();
+                _moveInvaderPack();
             }
 
             if((_shootTimer + _shootInterval) <= _timeElapsed){
                 _shootTimer = _timeElapsed;
 
-                _updateInvaderWeaponSystems();
+                _fireInvaderWeaponSystems();
+            }
+
+            // update enemy projectile movements.
+            for(i=0; i< _enemyProjectiles.length; ++i){
+                _enemyProjectiles[i].y = Math.max(0, _enemyProjectiles[i].y + (Constants.PROJECTILE_SPEED * 10 * deltaTime));
             }
         }
 
-        var _updateInvaderMovement = function(){
+        var _moveInvaderPack = function(){
             // Is pack moving left or right?
             if(_moveDir === Constants.MOVEDIR_RIGHT || _moveDir === Constants.MOVEDIR_LEFT){
                 // Try moving in the set move direction.
@@ -86,10 +104,11 @@ function createInvaderAI(invadersToControl){
             }
         }
 
-        var _updateInvaderWeaponSystems = function(){
+        var _fireInvaderWeaponSystems = function(){
             // find all the bottom invaders.
             var row, column;
             var bottomInvaders = [];
+            var randomInvader;
 
             for(column=0; column< Constants.INVADER_COLUMNS; ++column){
                 for(row=Constants.INVADER_ROWS-1; row>= 0; --row){
@@ -100,9 +119,31 @@ function createInvaderAI(invadersToControl){
                 }
             }
 
-            for(column=0; column< bottomInvaders.length; ++column){
-                //bottomInvaders[column].visible = !(bottomInvaders[column].visible);
+            // Choose one invader at random out of the bottom invaders
+            // that will fire a missile towards the player.
+            randomInvader = bottomInvaders[Math.floor(Math.random() * bottomInvaders.length)];
+
+            createEnemyProjectile(qmlCanvasParent,
+                                  randomInvader.x + (Constants.ENEMYSHIP_WIDTH/2),
+                                  randomInvader.y + (Constants.ENEMYSHIP_HEIGHT));
+        }
+
+        // Access level: Private
+        // Description: Create a new projectile.
+        var createEnemyProjectile = function(objectParent, positionX, positionY){
+            var objectName = "enemyProjectile";
+            var completedCallback = function(newObject) {
+                if(newObject) {
+                    _enemyProjectiles.push(newObject);
+                } else {
+                    console.log("error creating object" + objectName);
+                }
             }
+
+            _objectFactory.createObject( objectName,
+                         { x: positionX, y: positionY },
+                         objectParent, // object parent
+                         completedCallback );
         }
 
         var _move = function(moveDir){
@@ -206,7 +247,7 @@ function createInvaderAI(invadersToControl){
 
         return _exports;
 
-    }(invadersToControl));
+    }(qmlCanvasParent, invadersToControl));
 
     return invaderAI;
 };

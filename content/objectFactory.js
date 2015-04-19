@@ -1,3 +1,5 @@
+.import "constants.js" as Constants
+
 function createObjectFactory(){
     var objectFactory = (function(){
         var _exports = {};
@@ -5,36 +7,10 @@ function createObjectFactory(){
         var _component;
         var _sprite;
 
-        // Access level: Public
-        // Description: Create a QML component.
-        // @param object Type of object to create.
-        // @param params Parameters to set at construction time for object.
-        // @param parent Parent object.
-        // @param completedCallback callback that will be called with instance reference when creation is complete.
-        _exports.createObject = function(object, params, parent, completedCallback) {
-            if(object === "playerProjectile"){
-                _component = Qt.createComponent("PlayerProjectile.qml");
-            }
-            else if(object === "enemyProjectile"){
-                _component = Qt.createComponent("EnemyProjectile.qml");
-            }
-            else if(object === "playerShip"){
-                _component = Qt.createComponent("PlayerShip.qml");
-            }
-            else if(object === "enemyShip1" || object === "enemyShip2" || object === "enemyShip3"){
-                _component = Qt.createComponent("EnemyShip.qml");
-            }
-
-            if (_component.status === Component.Ready)
-                finishCreation(object, params, parent, completedCallback);
-            else
-                _component.statusChanged.connect(finishCreation(object, params, parent, completedCallback));
-        };
-
         // Access level: Private
-        // Description: Create a qml object instance.
-        var finishCreation = function(name, params, parent, completedCallback) {
-            if (_component.status === Component.Ready) {
+        // Description: Finish qml object instance creation.
+        var _finishCreation = function(name, params, parent, completedCallback) {
+            if (_component.status === Constants.COMPONENT_READY) {
                 _sprite = _component.createObject(parent, params);
                 if(_sprite === null) {
                     // Error Handling
@@ -58,12 +34,40 @@ function createObjectFactory(){
                 }
 
                 completedCallback(_sprite);
-            } else if (_component.status === Component.Error) {
+            } else if (_component.status === Constants.COMPONENT_ERROR) {
                 // Error Handling
                 console.log("Error loading _component:", _component.errorString());
                 completedCallback(null);
             }
         }
+
+        // Access level: Public
+        // Description: Create a QML component.
+        // @param object Type of object to create.
+        // @param params Parameters to set at construction time for object.
+        // @param parent Parent object.
+        // @param completedCallback callback that will be called with instance reference when creation is complete.
+        _exports.createObject = function(object, params, parent, completedCallback) {
+            if(object === "playerProjectile"){
+                _component = Qt.createComponent("PlayerProjectile.qml");
+            }
+            else if(object === "enemyProjectile"){
+                _component = Qt.createComponent("EnemyProjectile.qml");
+            }
+            else if(object === "playerShip"){
+                _component = Qt.createComponent("PlayerShip.qml");
+            }
+            else if(object === "enemyShip1" || object === "enemyShip2" || object === "enemyShip3"){
+                _component = Qt.createComponent("EnemyShip.qml");
+            }
+
+            if (_component.status === Constants.COMPONENT_READY){
+                _finishCreation(object, params, parent, completedCallback);
+            }
+            else{
+                _component.statusChanged.connect(_finishCreation(object, params, parent, completedCallback));
+            }
+        };
 
         return _exports;
 
