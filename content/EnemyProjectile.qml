@@ -5,14 +5,8 @@ Rectangle{
 
     color: "red"
 
-    width: 5
-    height: 30
-
-    Behavior on y {
-        NumberAnimation{
-            duration: 2000
-        }
-    }
+    width: 3
+    height: 20
 
     property alias physicsBody: physicsBody
 

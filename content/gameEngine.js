@@ -125,6 +125,7 @@ function createEngine(root, width, height){
             if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
                     createPlayerProjectile();
+                    PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
                 }
             }
         }
@@ -170,6 +171,9 @@ function createEngine(root, width, height){
                                 _playerProjectiles.splice(currentPlayerProjectile, 1);
 
                                 projectileDeleted = true;
+
+                                PS.PubSub.publish(Constants.TOPIC_ENEMY_DIED, 0);
+
                                 break;
                             }
                         }
@@ -179,7 +183,7 @@ function createEngine(root, width, height){
                 // Update player projectiles movement.
                 if(projectileDeleted === false){
                     _playerProjectiles[currentPlayerProjectile].y =
-                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PROJECTILE_SPEED * dT));
+                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PLAYER_PROJECTILE_SPEED * dT));
                 }
             }
 

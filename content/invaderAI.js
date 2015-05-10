@@ -29,10 +29,10 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
         var _prevMoveDir = Constants.MOVEDIR_LEFT;
 
         var _moveTimer = 0;
-        var _moveInterval = 1000;
+        var _moveInterval = 5000;
 
         var _shootTimer = 0;
-        var _shootInterval = 1000;
+        var _shootInterval = 2000;
 
         var _timeElapsed = 0;
 
@@ -68,7 +68,7 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
 
             // update enemy projectile movements.
             for(i=0; i< _enemyProjectiles.length; ++i){
-                _enemyProjectiles[i].y = Math.max(0, _enemyProjectiles[i].y + (Constants.PROJECTILE_SPEED * 10 * deltaTime));
+                _enemyProjectiles[i].y = Math.max(0, _enemyProjectiles[i].y + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
             }
         }
 
@@ -122,6 +122,8 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
             // Choose one invader at random out of the bottom invaders
             // that will fire a missile towards the player.
             randomInvader = bottomInvaders[Math.floor(Math.random() * bottomInvaders.length)];
+
+            PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);
 
             createEnemyProjectile(qmlCanvasParent,
                                   randomInvader.x + (Constants.ENEMYSHIP_WIDTH/2),

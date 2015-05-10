@@ -1,4 +1,5 @@
 import QtQuick 2.2
+import QtMultimedia 5.0
 
 Rectangle {
     id: root
@@ -13,6 +14,19 @@ Rectangle {
     signal menuItemSelected(string selectedMenuItem)
 
     property int hoveredMenuItem: 99
+
+    Audio{
+        id: menuMusic
+        source: "music/01-title-screen.mp3"
+        Component.onCompleted: {
+            //menuMusic.play();
+        }
+    }
+
+    Audio{
+        id: menuSelectSound
+        source: "sound/menuSelect.wav"
+    }
 
     ListModel{
         id: menuModel
@@ -82,6 +96,8 @@ Rectangle {
                         onHoveredChanged: {
                             if(currentItem.hovered){
                                 hoveredMenuItem = index;
+                                menuSelectSound.stop();
+                                menuSelectSound.play();
                             }
                         }
 
@@ -117,6 +133,8 @@ Rectangle {
     }
 
     Keys.onReturnPressed: {
+        menuMusic.stop();
+
         // Select the current menu choice
         menuItemSelected(menuModel.get(hoveredMenuItem).text);
     }

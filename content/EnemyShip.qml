@@ -14,11 +14,11 @@ Image{
         id: physicsBody
     }
 
-    Rectangle{
-        id: test
-        color: "red"
+//    Rectangle{
+//        id: test
+//        color: "red"
 
-        width: 5
-        height: 5
-    }
+//        width: 5
+//        height: 5
+//    }
 }

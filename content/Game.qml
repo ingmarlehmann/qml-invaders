@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import QtMultimedia 5.0
 
 import "constants.js" as Constants
 import "gameEngine.js" as Engine
@@ -17,6 +18,29 @@ Rectangle {
 
     property var gameEngine: null
     property var objectFactory: null
+
+    Audio{
+        id: gameMusic
+        source: "music/03-mercury.mp3"
+    }
+
+    Audio{
+        id: playerFireSound
+        source: "sound/player_shoot_laser.wav"
+        function restart() { playerFireSound.stop(); playerFireSound.play(); }
+    }
+
+    Audio{
+        id: enemyFireSound
+        source: "sound/enemy_shoot_laser.wav"
+        function restart() { enemyFireSound.stop(); enemyFireSound.play(); }
+    }
+
+    Audio{
+        id: enemyExplosionSound
+        source: "sound/explosion1.aiff"
+        function restart() { enemyExplosionSound.stop(); enemyExplosionSound.play(); }
+    }
 
     FPSMonitor{
         id: fpsMonitor
@@ -117,6 +141,15 @@ Rectangle {
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
             PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
+
+            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);
+            PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
+            PS.PubSub.subscribe(Constants.TOPIC_ENEMY_DIED, enemyExplosionSound.restart);
+
+            gameMusic.play();
+        }
+        else{
+            gameMusic.stop();
         }
     }
 
