@@ -225,6 +225,8 @@ function createEngine(root, width, height){
             _enemyProjectiles = [];
 
             _score.setScore(0);
+
+            _invaderAI.destroy();
         }
 
         // ----------------

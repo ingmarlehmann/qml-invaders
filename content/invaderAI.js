@@ -44,10 +44,23 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
 
         var _objectFactory = null;
 
+        // Clean up all data created by InvaderAI.
+        // Always call this method before releasing the InvaderAI object.
+        _exports.destroy = function(){
+            var i;
+
+            for(i=0; i< _enemyProjectiles.length; ++i){
+                _enemyProjectiles[i].destroy();
+            }
+        }
+
+        // Set the object factory used for creating game objects
+        // such as enemy ships and enemy projectiles.
         _exports.setObjectFactory = function(factory){
             _objectFactory = factory;
         }
 
+        // Update the InvaderAI one step.
         _exports.update = function(deltaTime){
             var i;
 
