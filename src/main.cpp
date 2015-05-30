@@ -8,7 +8,9 @@ int main(int argc, char *argv[])
 
     QQmlApplicationEngine engine;
 
-    engine.load(QUrl(QStringLiteral("content/Main.qml")));
+    engine.addImportPath(QStringLiteral("plugins"));
+
+    engine.load(QStringLiteral("content/Main.qml"));
 
     return app.exec();
 }
