@@ -2,7 +2,7 @@ TEMPLATE = app
 
 QT += qml quick widgets
 
-SOURCES += src/*
+SOURCES += src/main.cpp
 
 OTHER_FILES += content/*
 

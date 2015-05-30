@@ -5,8 +5,6 @@ import QtQuick.Dialogs 1.2
 
 import "constants.js" as Constants
 
-import "."
-
 ApplicationWindow {
     id: mainWindow
 
