@@ -17,4 +17,6 @@ include(deployment.pri)
 
 DISTFILES += \
     content/enemyShip.js \
-    content/invaderAI.js
+    content/invaderAI.js \
+    content/physicsEngine.js \
+    content/aabb.js
