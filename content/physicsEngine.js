@@ -1,19 +1,10 @@
+
 function create(){
 
     var engine = (function(){
 
         var _exports = {};
         var _objects = [];
-
-        _exports.createAABB = function(){
-            var _aabb = {};
-            _aabb.x = 0;
-            _aabb.y = 0;
-            _aabb.width = 0;
-            _aabb.height = 0;
-
-            return 0;
-        };
 
         _exports.applyVisitor = function(visitor){
             var i;
