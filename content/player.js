@@ -1,7 +1,7 @@
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
 
-function createPlayer(initialX, initialY, lives){
+function create(initialX, initialY, lives){
     var player = (function(initialX, initialY, lives){
 
         var _exports = {};

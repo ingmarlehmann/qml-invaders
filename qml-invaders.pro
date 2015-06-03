@@ -19,4 +19,7 @@ DISTFILES += \
     content/enemyShip.js \
     content/invaderAI.js \
     content/physicsEngine.js \
-    content/aabb.js
+    content/aabb.js \
+    content/physicsObject.js \
+    content/vector2d.js \
+    content/invaderController.js

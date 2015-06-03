@@ -303,6 +303,8 @@ function createEngine(root, width, height){
             var numInvadersCreated = 0;
 
             _invaders = [];
+            
+            // Create invader game objects.
 
             y = 100;
 

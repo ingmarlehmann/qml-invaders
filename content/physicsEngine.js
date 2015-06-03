@@ -4,7 +4,7 @@ function create(){
     var engine = (function(){
 
         var _exports = {};
-        var _objects = [];
+        var _physicsObjects = [];
 
         _exports.applyVisitor = function(visitor){
             var i;
@@ -19,8 +19,8 @@ function create(){
             return _objects[index];
         }
 
-        _exports.registerPhysicsBody = function(physicsObject){
-            _objects.push(physicsObject);
+        _exports.registerPhysicsObject = function(physicsObject){
+            _physicsObjects.push(physicsObject);
         };
 
         _exports.step = function(){

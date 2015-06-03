@@ -1,7 +1,8 @@
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
 
-function createScore(initialScore){
+function create(initialScore){
+
     var score = (function(initialScore){
 
         var _exports = {};

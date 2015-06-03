@@ -1,26 +1,27 @@
+.import "vector2d.js" as Vector2d
 
 function create(options) {
-    var aabb = (function(options){
+
+    var aabb = (function(min, max){
         var _exports = {};
 
-        if(options.x_max !== undefined && options.x_max !== null){
-            _exports.x_max = options.x_max;
+        if(options.min !== undefined && options.min !== null){
+            _exports.min = options.min;
+        }
+        else{
+            _exports.min = Vector2d.create(0, 0);
         }
 
-        if(options.x_min !== undefined && options.x_min !== null){
-            _exports.x_min = options.x_min;
+        if(options.max !== undefined && options.max !== null){
+            _exports.max = options.max;
         }
-
-        if(options.y_max !== undefined && options.y_max !== null){
-            _exports.y_max = options.y_max;
-        }
-
-        if(options.y_min !== undefined && options.y_min !== null){
-            _exports.y_min = options.y_min;
+        else{
+            _exports.max = Vector2d.create(0, 0);
         }
 
         return _exports;
-    }(options));
+
+    }(min, max));
 
     return aabb;
 }
