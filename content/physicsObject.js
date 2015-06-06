@@ -1,21 +1,21 @@
 
 function create(physicsBody,
-                objectGroup,
+                collisionGroup,
                 collisionCallback) {
 
     var physicsObject = (function(physicsBody,
-                                  objectGroup,
+                                  collisionGroup,
                                   collisionCallback){
         var _exports = {};
 
         _exports.physicsBody = physicsBody;
-        _exports.objectGroup = objectGroup;
+        _exports.collisionGroup = collisionGroup;
         _exports.collisionCallback = collisionCallback;
 
         return _exports;
 
     }(physicsBody,
-      objectGroup,
+      collisionGroup,
       collisionCallback));
 
     return physicsObject;

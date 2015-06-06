@@ -18,14 +18,10 @@ function createEngine(root, width, height){
         // ----------------
         // Private variables
         // ----------------
-
         var _lastUpdateTime = new Date().getTime();
 
         var _playerProjectiles = [];
         var _enemyProjectiles = [];
-
-        // 2 dimensional array
-        // _invaders[constants.INVADER_ROWS][constants.INVADER_COLUMNS]
         var _invaders = [];
 
         var _width = width;
@@ -140,9 +136,11 @@ function createEngine(root, width, height){
             updateInvaders(dT);
 
             // Update player projectiles collision checks.
-//            for(currentPlayerProjectile=(_playerProjectiles.length-1); currentPlayerProjectile>=0; --currentPlayerProjectile){
-
-//                var projectileDeleted = false;
+            for(currentPlayerProjectile = (_playerProjectiles.length-1);
+                currentPlayerProjectile >= 0;
+                --currentPlayerProjectile)
+            {
+                var projectileDeleted = false;
 
 //                for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
 //                    for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
@@ -177,21 +175,21 @@ function createEngine(root, width, height){
 //                    }
 //                }
 
-//                // Update player projectiles movement.
-//                if(projectileDeleted === false){
-//                    _playerProjectiles[currentPlayerProjectile].y =
-//                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PLAYER_PROJECTILE_SPEED * dT));
-//                }
-//            }
+                // Update player projectiles movement.
+                if(projectileDeleted === false){
+                    _playerProjectiles[currentPlayerProjectile].y =
+                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PLAYER_PROJECTILE_SPEED * dT));
+                }
+            }
 
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
-//            _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
-//                if(value.y <= 5){
-//                    value.destroy();
-//                }
+            _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
+                if(value.y <= 5){
+                    value.destroy();
+                }
 
-//                return value.y > 5;
-//            } );
+                return value.y > 5;
+            } );
 
             _lastUpdateTime = new Date().getTime();
         };
@@ -302,6 +300,7 @@ function createEngine(root, width, height){
             onInvaderCreated = function(invader) {
                 if(invader !== null && invader !== undefined) {
                     currentRow.push(invader);
+                    _physicsEngine.registerPhysicsObject(invader.physicsObject);
                 }
                 else {
                     console.log("ERROR: Error creating invader.");

@@ -8,9 +8,12 @@ function create(width, height, collisionCallback) {
         var _exports = {};
 
         var physicsBody = AABB.create(width, height, Vector2d.create(0, 0));
-        var objectGroup = 'invader';
+        var collisionGroup = 'invader';
+        var physicsObject = PhysicsObject.create(physicsBody, collisionGroup, collisionCallback);
 
-        _exports.physicsBody = PhysicsObject.create(physicsBody, objectGroup, collisionCallback);
+        _exports.physicsBody = physicsObject.physicsBody;
+        _exports.collisionGroup = physicsObject.collisionGroup;
+        _exports.callback = physicsObject.collisionCallback;
 
         return _exports;
 
