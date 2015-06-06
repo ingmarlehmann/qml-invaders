@@ -20,7 +20,7 @@
 //   invaderAI.update(deltaTime);
 //
 
-function createInvaderAI(qmlCanvasParent, invadersToControl){
+function create(qmlCanvasParent, invadersToControl){
     var invaderAI = (function(qmlCanvasParent, invadersToControl){
 
         var _exports = {};

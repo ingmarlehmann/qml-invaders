@@ -6,6 +6,7 @@
 .import "pubsub.js" as PS
 .import "invaderAI.js" as InvaderAI
 .import "physicsEngine.js" as PhysicsEngine
+.import "invader.js" as Invader
 
 function createEngine(root, width, height){
     var engine = (function (root, width, height) {
@@ -74,6 +75,13 @@ function createEngine(root, width, height){
         // Description: Initialize a new game
         // Returns: nothing
         _exports.newGame = function(){
+
+            var onComplete = function(status){
+                console.log("invader created with status: " + status);
+            }
+
+            var newInvader = Invader.create({invadertype: 'invader1'}, onComplete);
+
             createEnemyShips();
             _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
             _player.respawn();
@@ -309,7 +317,7 @@ function createEngine(root, width, height){
 
                 ++numInvadersCreated;
                 if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
-                    _invaderAI = InvaderAI.createInvaderAI(_root, _invaders);
+                    _invaderAI = InvaderAI.create(_root, _invaders);
                 }
             }
 

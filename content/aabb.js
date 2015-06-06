@@ -1,6 +1,6 @@
 .import "vector2d.js" as Vector2d
 
-function create(options) {
+function create(width, height, position) {
 
     var aabb = (function(width, height, position){
 

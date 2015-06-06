@@ -1,5 +1,5 @@
 
-function create(options) {
+function create(x, y) {
 
     var vector2d = (function(x, y){
 
@@ -25,4 +25,3 @@ function create(options) {
 
     return vector2d;
 }
-

@@ -1,5 +1,7 @@
 
-function create(options) {
+function create(physicsBody,
+                objectGroup,
+                collisionCallback) {
 
     var physicsObject = (function(physicsBody,
                                   objectGroup,
