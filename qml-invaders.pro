@@ -22,4 +22,5 @@ DISTFILES += \
     content/aabb.js \
     content/physicsObject.js \
     content/vector2d.js \
-    content/invaderController.js
+    content/invaderController.js \
+    content/invaderPhysicsModel.js

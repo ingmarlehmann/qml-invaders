@@ -42,8 +42,6 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
 
         var _rootObject = qmlCanvasParent;
 
-        var _objectFactory = null;
-
         // Clean up all data created by InvaderAI.
         // Always call this method before releasing the InvaderAI object.
         _exports.destroy = function(){
@@ -52,12 +50,6 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
             for(i=0; i< _enemyProjectiles.length; ++i){
                 _enemyProjectiles[i].destroy();
             }
-        }
-
-        // Set the object factory used for creating game objects
-        // such as enemy ships and enemy projectiles.
-        _exports.setObjectFactory = function(factory){
-            _objectFactory = factory;
         }
 
         // Update the InvaderAI one step.
@@ -136,7 +128,7 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
             // that will fire a missile towards the player.
             randomInvader = bottomInvaders[Math.floor(Math.random() * bottomInvaders.length)];
 
-            PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);
+            PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
 
             createEnemyProjectile(qmlCanvasParent,
                                   randomInvader.x + (Constants.ENEMYSHIP_WIDTH/2),
@@ -155,10 +147,11 @@ function createInvaderAI(qmlCanvasParent, invadersToControl){
                 }
             }
 
-            _objectFactory.createObject( objectName,
-                         { x: positionX, y: positionY },
-                         objectParent, // object parent
-                         completedCallback );
+
+            var qmlparameters = { x: positionX, y: positionY };
+            var options = { qmlfile: 'EnemyProjectile.qml', qmlparameters: qmlparameters };
+
+            ObjectFactory.createObject(options, completedCallback);
         }
 
         var _move = function(moveDir){

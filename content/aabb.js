@@ -2,26 +2,64 @@
 
 function create(options) {
 
-    var aabb = (function(min, max){
+    var aabb = (function(width, height, position){
+
         var _exports = {};
 
-        if(options.min !== undefined && options.min !== null){
-            _exports.min = options.min;
-        }
-        else{
-            _exports.min = Vector2d.create(0, 0);
+        var _min = Vector2d.create(0, 0);
+        var _max = Vector2d.create(0, 0);
+
+        var _width = width;
+        var _height = height;
+        var _position = position;
+
+        _exports.setPosition = function(x, y){
+            _position = Vector2d.create(x, y);
+
+            _min = Vector2d.create(x, y);
+            _max = Vector2d.create(x + width, y + height);
         }
 
-        if(options.max !== undefined && options.max !== null){
-            _exports.max = options.max;
+        _exports.setX = function(x){
+            _position.x = x;
+        }
+
+        _exports.setY = function(y){
+            _position.y = y;
+        }
+
+        _exports.getPosition = function(){
+            return _position;
+        }
+
+        _exports.getMin = function(){
+            return _min;
+        }
+
+        _exports.getMax = function(){
+            return _max;
+        }
+
+        _exports.setWidth = function(width){
+            _width = width;
+            _max = Vector2d.create(_position.x + width, _position.y + height);
+        }
+
+        _exports.setHeight = function(height){
+            _height = height;
+            _max = Vector2d.create(_position.x + width, _position.y + height);
+        }
+
+        if(position !== "undefined" && position !== null){
+            _exports.setPosition(position);
         }
         else{
-            _exports.max = Vector2d.create(0, 0);
+            _exports.setPosition(Vector2d.create(0, 0));
         }
 
         return _exports;
 
-    }(min, max));
+    }(width, height, position));
 
     return aabb;
 }

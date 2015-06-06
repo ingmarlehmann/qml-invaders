@@ -1,77 +1,102 @@
+.pragma library
+
 .import "constants.js" as Constants
 
-function createObjectFactory(){
-    var objectFactory = (function(){
-        var _exports = {};
+var rootObject = null;
 
-        var _component;
-        var _sprite;
+// Set the root QML object
+// all created objects will be children of
+// this object.
+function setRootQmlObject(qmlRootObject){
+    rootObject = qmlRootObject;
+}
 
-        // Access level: Private
-        // Description: Finish qml object instance creation.
-        var _finishCreation = function(name, params, parent, completedCallback) {
-            if (_component.status === Constants.COMPONENT_READY) {
-                _sprite = _component.createObject(parent, params);
-                if(_sprite === null) {
-                    // Error Handling
-                    console.log("Error creating object");
-                    completedCallback(null);
-                }
+//
+// Description:
+//
+// Create a new QML object from an existing QML file, and add it to the
+// QML scene dynamically.
+//
+// Example usage:
+//------------------------------------------------------
+// var qmlObjectParameters = { x: 20, y: 20 };
+// var options = { qmlfile: 'EnemyShip.qml', qmlparameters: qmlObjectParameters };
+//
+// var callback = function(object){
+//    console.log("QML object created.");
+//    object.source = 'qrc:/content/images/invader1.png';
+// }
+//
+// ObjectFactory.createObject(options, callback);
+// ----------------------------------------------------
+//
+// Parameters:
+//
+// options.qmlfile: qml file to instantiate
+// options.qmlparameters: parameters to set on the new object instance.
+//  example: { x: 20, y: 20 }
+// callback: callback that will be called when the object has been instantiated
+//  and added to the qml scene.
+//
+function createObject(options, callback){
+    if(rootObject === null){
+        console.log("Error: You must first set a root object before calling createObject().");
+        return;
+    }
 
-                // Name the object for debugging purposes.
-                _sprite.objectName = name;
+    var component = Qt.createComponent(options.qmlfile);
+    if(component === null){
+        console.log("Failed to create QML Component. File doesn't exist?");
+        return;
+    }
 
-                if(_sprite.objectName === "enemyShip1"){
-                    _sprite.source = "qrc:/content/images/invader1.png";
-                }
+    if (component.status === Constants.COMPONENT_READY){
+        _finishCreation(options, component, callback);
+    }
+    else{
+        component.statusChanged.connect(_finishCreation(options, component, callback));
+    }
+}
 
-                if(_sprite.objectName === "enemyShip2"){
-                    _sprite.source = "qrc:/content/images/invader2.png";
-                }
-
-                if(_sprite.objectName === "enemyShip3"){
-                    _sprite.source = "qrc:/content/images/invader3.png";
-                }
-
-                completedCallback(_sprite);
-            } else if (_component.status === Constants.COMPONENT_ERROR) {
-                // Error Handling
-                console.log("Error loading _component:", _component.errorString());
-                completedCallback(null);
-            }
+function _finishCreation(options, component, callback) {
+    if(component.status !== Constants.COMPONENT_READY){
+        console.log("Error: QML Component failed.");
+        if(callback !== null && callback !== undefined){
+            callback(null);
         }
+        return;
+    }
 
-        // Access level: Public
-        // Description: Create a QML component.
-        // @param object Type of object to create.
-        // @param params Parameters to set at construction time for object.
-        // @param parent Parent object.
-        // @param completedCallback callback that will be called with instance reference when creation is complete.
-        _exports.createObject = function(object, params, parent, completedCallback) {
-            if(object === "playerProjectile"){
-                _component = Qt.createComponent("PlayerProjectile.qml");
-            }
-            else if(object === "enemyProjectile"){
-                _component = Qt.createComponent("EnemyProjectile.qml");
-            }
-            else if(object === "playerShip"){
-                _component = Qt.createComponent("PlayerShip.qml");
-            }
-            else if(object === "enemyShip1" || object === "enemyShip2" || object === "enemyShip3"){
-                _component = Qt.createComponent("EnemyShip.qml");
-            }
+    var sprite;
 
-            if (_component.status === Constants.COMPONENT_READY){
-                _finishCreation(object, params, parent, completedCallback);
-            }
-            else{
-                _component.statusChanged.connect(_finishCreation(object, params, parent, completedCallback));
-            }
-        };
+    if(options.qmlparameters !== null && options.qmlparameters !== undefined){
+        sprite = component.createObject(rootObject, options.qmlparameters);
+    }
+    else{
+        sprite = component.createObject(rootObject);
+    }
 
-        return _exports;
+    if(sprite === null) {
+        console.log("Failed to create QML Object");
+        if(callback !== null && callback !== undefined){
+            callback(null);
+        }
+        return;
+    }
 
-    }());
+    // postcreateparameters:
+    // {a: 'value', b: 'value', c: 'value'}
+    if(options.qmlpostparameters !== null && options.qmlpostparameters !== undefined){
+        for(var key in options.qmlpostparameters){
 
-    return objectFactory;
+            var attrName = key;
+            var attrValue = options.qmlpostparameters[key];
+
+            sprite[attrName] = attrValue;
+        }
+    }
+
+    if(callback !== null && callback !== undefined){
+        callback(sprite);
+    }
 }

@@ -1,3 +1,5 @@
+.import "objectFactory.js" as ObjectFactory
+
 .import "player.js" as Player
 .import "score.js" as Score
 .import "constants.js" as Constants
@@ -34,7 +36,6 @@ function createEngine(root, width, height){
         var _physicsEngine = PhysicsEngine.create();
 
         var _invaderAI = null;
-        var _objectFactory = null;
 
         // ----------------
         // Public variables
@@ -52,13 +53,6 @@ function createEngine(root, width, height){
         // ----------------
         // Public methods
         // ----------------
-
-        // Access level: Public
-        // Description: Set a reference to the object factory instance.
-        // Returns: nothing
-        _exports.setObjectFactory = function(factory){
-            _objectFactory = factory;
-        }
 
         // Access level: Public
         // Description: Set the content area width for the game engine.
@@ -280,17 +274,10 @@ function createEngine(root, width, height){
                 }
             }
 
-            _objectFactory.createObject( objectName,
-                         { x: projectileStartX, y: projectileStartY },
-                         _root, // object parent
-                         completedCallback );
-        }
+            var options = { qmlfile: 'PlayerProjectile.qml',
+                            qmlparameters: { x: projectileStartX, y: projectileStartY }};
 
-
-        // Access level: Private
-        // Description: Create a single enemy ship at specified position.
-        var createEnemyShip = function(shipType, posX, posY, completedCallback) {
-            _objectFactory.createObject(shipType, { x: posX, y: posY }, root, completedCallback);
+            ObjectFactory.createObject(options, completedCallback);
         }
 
         // Access level: Private
@@ -304,35 +291,50 @@ function createEngine(root, width, height){
 
             _invaders = [];
 
+            // Create invader game objects.
+
             y = 100;
 
             // calculate the position to place the first invader.
             x = (_width/2)-((Constants.INVADER_COLUMNS*Constants.ENEMYSHIP_WIDTH)/2);
 
             // the create method is asynchronous so we need to define a completion callback.
-            callback = function(newObject) {
-                if(newObject) { currentRow.push(newObject); }
-                else { console.log("ERROR: Error creating object " + shipType); }
+            callback = function(qmlobject) {
+                if(qmlobject) {
+                    currentRow.push(qmlobject);
+                }
+                else {
+                    console.log("ERROR: Error creating invader.");
+                }
 
                 ++numInvadersCreated;
                 if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
                     _invaderAI = InvaderAI.createInvaderAI(_root, _invaders);
-                    _invaderAI.setObjectFactory(_objectFactory);
                 }
             }
 
             for(row=0; row< Constants.INVADER_ROWS; ++row){
                 currentRow = [];
                 for(column=0; column< Constants.INVADER_COLUMNS; ++column){
+                    var options;
+                    var qmlParameters = { x: x + (column*Constants.ENEMYSHIP_WIDTH), y: y };
+
+                    var qmlPostParameters;
                     if(row === 0){ // 1st row: 11 "squids"
-                        createEnemyShip("enemyShip3", x + (column*Constants.ENEMYSHIP_WIDTH), y, callback);
+                        qmlPostParameters = { source: 'qrc:/content/images/invader1.png' };
                     }
                     else if(row === 1 || row === 2){ // 2nd, 3rd row: 11 "bees"
-                        createEnemyShip("enemyShip1", x + (column*Constants.ENEMYSHIP_WIDTH), y, callback);
+                        qmlPostParameters = { source: 'qrc:/content/images/invader2.png' };
                     }
                     else if(row === 3 || row === 4){ // 4th, 5th row: 11 "jellyfish"
-                        createEnemyShip("enemyShip2", x + (column*Constants.ENEMYSHIP_WIDTH), y, callback);
+                        qmlPostParameters = { source: 'qrc:/content/images/invader3.png' };
                     }
+
+                    options = { qmlfile: 'EnemyShip.qml',
+                        qmlparameters: qmlParameters,
+                        qmlpostparameters: qmlPostParameters };
+
+                    ObjectFactory.createObject(options, callback);
                 }
                 _invaders.push(currentRow);
                 y += Constants.ENEMYSHIP_HEIGHT + 10;

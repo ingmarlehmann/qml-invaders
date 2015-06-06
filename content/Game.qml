@@ -3,8 +3,8 @@ import QtMultimedia 5.0
 
 import "constants.js" as Constants
 import "gameEngine.js" as Engine
-import "objectFactory.js" as ObjectFactory
 import "pubsub.js" as PS
+import "objectFactory.js" as ObjectFactory
 
 Rectangle {
     id: gameRoot
@@ -17,7 +17,6 @@ Rectangle {
     signal quit()
 
     property var gameEngine: null
-    property var objectFactory: null
 
     Audio{
         id: gameMusic
@@ -134,10 +133,9 @@ Rectangle {
 
     onVisibleChanged: {
         if(visible){
-            objectFactory = ObjectFactory.createObjectFactory();
-            gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
+            ObjectFactory.setRootQmlObject(gameRoot);
 
-            gameEngine.setObjectFactory(objectFactory);
+            gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
             PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
