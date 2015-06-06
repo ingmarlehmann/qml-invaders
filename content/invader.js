@@ -17,15 +17,32 @@ function create(options, doneCallback) {
 
         var _onViewObjectCreated = function(object){
             if(object === null || object === undefined){
-                console.log("Failed to create View object for invader.");
-                doneCallback("fail");
+                console.log("Error: Failed to create View object for invader.");
+                doneCallback(null);
                 return;
             }
 
             _view = object;
+            _createPhysicsModel();
+        }
+
+        var _createPhysicsModel = function(){
             _dataModel = InvaderPhysicsModel.create(_view.width, _view.height, _onCollision);
 
-            doneCallback("success");
+            if(_dataModel === null || _dataModel === undefined){
+                console.log("Error: Failed to create Physics model for invader.");
+                doneCallback(null);
+                return;
+            }
+
+            _onFinishedCreation();
+        }
+
+        var _onFinishedCreation = function(){
+            _exports.view = _view;
+            _exports.physicsObject = _dataModel;
+
+            doneCallback(_exports);
         }
 
         var texture;
@@ -43,7 +60,7 @@ function create(options, doneCallback) {
         }
 
         var _options = { qmlfile: 'EnemyShip.qml',
-                        qmlparameters: { x: 0, y: 0 },
+                        qmlparameters: { x: options.x, y: options.y },
                         qmlpostparameters: { source: texture } };
 
         ObjectFactory.createObject(_options, _onViewObjectCreated);

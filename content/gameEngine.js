@@ -75,13 +75,6 @@ function createEngine(root, width, height){
         // Description: Initialize a new game
         // Returns: nothing
         _exports.newGame = function(){
-
-            var onComplete = function(status){
-                console.log("invader created with status: " + status);
-            }
-
-            var newInvader = Invader.create({invadertype: 'invader1'}, onComplete);
-
             createEnemyShips();
             _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
             _player.respawn();
@@ -147,58 +140,58 @@ function createEngine(root, width, height){
             updateInvaders(dT);
 
             // Update player projectiles collision checks.
-            for(currentPlayerProjectile=(_playerProjectiles.length-1); currentPlayerProjectile>=0; --currentPlayerProjectile){
+//            for(currentPlayerProjectile=(_playerProjectiles.length-1); currentPlayerProjectile>=0; --currentPlayerProjectile){
 
-                var projectileDeleted = false;
+//                var projectileDeleted = false;
 
-                for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
-                    for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
+//                for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
+//                    for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
 
-                        if(_invaders[invaderRow][invaderColumn].visible !== false){
+//                        if(_invaders[invaderRow][invaderColumn].visible !== false){
 
-                            //console.log("testing enemy ship " + j + " against projectile " + i);
-                            var box1 = _playerProjectiles[currentPlayerProjectile].physicsBody;
-                            var box2 = _invaders[invaderRow][invaderColumn].physicsBody;
+//                            //console.log("testing enemy ship " + j + " against projectile " + i);
+//                            var box1 = _playerProjectiles[currentPlayerProjectile].physicsBody;
+//                            var box2 = _invaders[invaderRow][invaderColumn].physicsBody;
 
-                            var collides = box1.testCollision(box2);
-                            if(collides){
-                                //console.log(" - enemy ship " + j + " collides with projectile " + i);
-                                _invaders[invaderRow][invaderColumn].visible = false;
+//                            var collides = box1.testCollision(box2);
+//                            if(collides){
+//                                //console.log(" - enemy ship " + j + " collides with projectile " + i);
+//                                _invaders[invaderRow][invaderColumn].visible = false;
 
-                                // update score.
-                                _score.setScore(_score.getScore()+10);
+//                                // update score.
+//                                _score.setScore(_score.getScore()+10);
 
-                                // destroy qml object.
-                                _playerProjectiles[currentPlayerProjectile].destroy();
+//                                // destroy qml object.
+//                                _playerProjectiles[currentPlayerProjectile].destroy();
 
-                                // remove this projectile reference from the collection.
-                                _playerProjectiles.splice(currentPlayerProjectile, 1);
+//                                // remove this projectile reference from the collection.
+//                                _playerProjectiles.splice(currentPlayerProjectile, 1);
 
-                                projectileDeleted = true;
+//                                projectileDeleted = true;
 
-                                PS.PubSub.publish(Constants.TOPIC_ENEMY_DIED, 0);
+//                                PS.PubSub.publish(Constants.TOPIC_ENEMY_DIED, 0);
 
-                                break;
-                            }
-                        }
-                    }
-                }
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
 
-                // Update player projectiles movement.
-                if(projectileDeleted === false){
-                    _playerProjectiles[currentPlayerProjectile].y =
-                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PLAYER_PROJECTILE_SPEED * dT));
-                }
-            }
+//                // Update player projectiles movement.
+//                if(projectileDeleted === false){
+//                    _playerProjectiles[currentPlayerProjectile].y =
+//                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PLAYER_PROJECTILE_SPEED * dT));
+//                }
+//            }
 
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
-            _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
-                if(value.y <= 5){
-                    value.destroy();
-                }
+//            _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
+//                if(value.y <= 5){
+//                    value.destroy();
+//                }
 
-                return value.y > 5;
-            } );
+//                return value.y > 5;
+//            } );
 
             _lastUpdateTime = new Date().getTime();
         };
@@ -216,7 +209,7 @@ function createEngine(root, width, height){
 
             for(i=0; i< _invaders.length; ++i){
                 for(j=0; j< _invaders[i].length; ++j){
-                    _invaders[i][j].destroy();
+                    _invaders[i][j].view.destroy();
                 }
             }
 
@@ -292,24 +285,23 @@ function createEngine(root, width, height){
         // Description: Create all enemy ships for a new game.
         var createEnemyShips = function() {
             var x, y;
-            var row, column;
-            var currentRow;
-            var callback;
+            var row, column, currentRow;
+            var onInvaderCreated;
+            var createOptions;
             var numInvadersCreated = 0;
 
             _invaders = [];
 
             // Create invader game objects.
-
             y = 100;
 
             // calculate the position to place the first invader.
             x = (_width/2)-((Constants.INVADER_COLUMNS*Constants.ENEMYSHIP_WIDTH)/2);
 
             // the create method is asynchronous so we need to define a completion callback.
-            callback = function(qmlobject) {
-                if(qmlobject) {
-                    currentRow.push(qmlobject);
+            onInvaderCreated = function(invader) {
+                if(invader !== null && invader !== undefined) {
+                    currentRow.push(invader);
                 }
                 else {
                     console.log("ERROR: Error creating invader.");
@@ -324,29 +316,34 @@ function createEngine(root, width, height){
             for(row=0; row< Constants.INVADER_ROWS; ++row){
                 currentRow = [];
                 for(column=0; column< Constants.INVADER_COLUMNS; ++column){
-                    var options;
-                    var qmlParameters = { x: x + (column*Constants.ENEMYSHIP_WIDTH), y: y };
 
-                    var qmlPostParameters;
-                    if(row === 0){ // 1st row: 11 "squids"
-                        qmlPostParameters = { source: 'qrc:/content/images/invader1.png' };
-                    }
-                    else if(row === 1 || row === 2){ // 2nd, 3rd row: 11 "bees"
-                        qmlPostParameters = { source: 'qrc:/content/images/invader2.png' };
-                    }
-                    else if(row === 3 || row === 4){ // 4th, 5th row: 11 "jellyfish"
-                        qmlPostParameters = { source: 'qrc:/content/images/invader3.png' };
-                    }
+                    createOptions = {
+                        x: x + (column*Constants.ENEMYSHIP_WIDTH),
+                        y: y,
+                        invadertype: _getInvaderType(row)};
 
-                    options = { qmlfile: 'EnemyShip.qml',
-                        qmlparameters: qmlParameters,
-                        qmlpostparameters: qmlPostParameters };
-
-                    ObjectFactory.createObject(options, callback);
+                    Invader.create(createOptions, onInvaderCreated);
                 }
                 _invaders.push(currentRow);
                 y += Constants.ENEMYSHIP_HEIGHT + 10;
             }
+        }
+
+        // Access level: Private
+        // Description: get what type of invader shall
+        // be created for a given row number.
+        var _getInvaderType = function(row){
+            if(row === 0){ // 1st row: 11 "squids"
+                return 'invader3';
+            }
+            else if(row === 1 || row === 2){ // 2nd, 3rd row: 11 "bees"
+                return 'invader2';
+            }
+            else if(row === 3 || row === 4){ // 4th, 5th row: 11 "jellyfish"
+                return 'invader1';
+            }
+
+            return 'undefined';
         }
 
         return _exports;

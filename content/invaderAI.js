@@ -117,7 +117,7 @@ function create(qmlCanvasParent, invadersToControl){
 
             for(column=0; column< Constants.INVADER_COLUMNS; ++column){
                 for(row=Constants.INVADER_ROWS-1; row>= 0; --row){
-                    if(_invaders[row][column].visible){
+                    if(_invaders[row][column].view.visible){
                         bottomInvaders.push(_invaders[row][column]);
                         break;
                     }
@@ -131,13 +131,16 @@ function create(qmlCanvasParent, invadersToControl){
             PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
 
             createEnemyProjectile(qmlCanvasParent,
-                                  randomInvader.x + (Constants.ENEMYSHIP_WIDTH/2),
-                                  randomInvader.y + (Constants.ENEMYSHIP_HEIGHT));
+                                  randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
+                                  randomInvader.view.y + (Constants.ENEMYSHIP_HEIGHT));
         }
 
         // Access level: Private
         // Description: Create a new projectile.
-        var createEnemyProjectile = function(objectParent, positionX, positionY){
+        var createEnemyProjectile = function(objectParent,
+                                             positionX,
+                                             positionY){
+
             var objectName = "enemyProjectile";
             var completedCallback = function(newObject) {
                 if(newObject) {
@@ -149,7 +152,10 @@ function create(qmlCanvasParent, invadersToControl){
 
 
             var qmlparameters = { x: positionX, y: positionY };
-            var options = { qmlfile: 'EnemyProjectile.qml', qmlparameters: qmlparameters };
+
+            var options = {
+                qmlfile: 'EnemyProjectile.qml',
+                qmlparameters: qmlparameters };
 
             ObjectFactory.createObject(options, completedCallback);
         }

@@ -8,11 +8,11 @@ Image{
 
     source: "qrc:/content/images/default.gif"
 
-    property alias physicsBody: physicsBody
+    //property alias physicsBody: physicsBody
 
-    PhysicsBodyBox2D{
-        id: physicsBody
-    }
+//    PhysicsBodyBox2D{
+//        id: physicsBody
+//    }
 
 //    Rectangle{
 //        id: test
