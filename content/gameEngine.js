@@ -23,13 +23,14 @@ function createEngine(root, width, height){
         var _playerProjectiles = [];
         var _enemyProjectiles = [];
         var _invaders = [];
+        var _physicsDebugBoxes = [];
 
         var _width = width;
         var _height = height;
         var _root = root;
 
         var _score = Score.create(0);
-        var _player = Player.create(0, 0, 3);
+        var _player = Player.create({ x: 0, y: 0, lives: 3 }, null);
         var _physicsEngine = PhysicsEngine.create();
 
         var _invaderAI = null;
@@ -229,14 +230,34 @@ function createEngine(root, width, height){
         // ----------------
 
         var togglePhysicsDebug = function(){
-            var i, j;
+            var i, j, callback, options;
 
-            for(i=0; i< _invaders.length; ++i){
-                for(j=0; j< _invaders[i].length; ++j){
-                    if(_invaders[i][j].visible){
-                        _invaders[i][j].physicsBody.visible = !(_invaders[i][j].physicsBody.visible);
+            if(_physicsDebugBoxes.length === 0){
+                for(i=0; i< _invaders.length; ++i){
+                    for(j=0; j< _invaders[i].length; ++j){
+
+                        callback = function(qmlobject){
+                            _physicsDebugBoxes.push(qmlobject);
+                        }
+
+                        options = { qmlfile: 'PhysicsDebugBox.qml',
+                                    qmlparameters: {
+                                        x: _invaders[i][j].view.x,
+                                        y: _invaders[i][j].view.y,
+                                        width: _invaders[i][j].view.width,
+                                        height: _invaders[i][j].view.height
+                                        }
+                                    };
+
+                        ObjectFactory.createObject(options, callback);
                     }
                 }
+            }
+            else{
+                for(i=0; i< _physicsDebugBoxes.length; ++i){
+                    _physicsDebugBoxes[i].destroy();
+                }
+                _physicsDebugBoxes = [];
             }
         }
 

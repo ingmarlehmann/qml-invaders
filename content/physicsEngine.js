@@ -20,7 +20,7 @@ function create(){
         }
 
         _exports.registerPhysicsObject = function(physicsObject){
-            console.log("INFO: Registering physics object in collision group: " + physicsObject.collisionGroup);
+            //console.log("INFO: Registering physics object in collision group: " + physicsObject.collisionGroup);
             _physicsObjects.push(physicsObject);
         };
 

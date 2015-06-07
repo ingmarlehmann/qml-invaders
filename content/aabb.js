@@ -29,7 +29,7 @@ function create(width, height, position) {
         }
 
         _exports.getPosition = function(){
-            return _position;
+            return { x: _position.x, y: _position.y };
         }
 
         _exports.getMin = function(){

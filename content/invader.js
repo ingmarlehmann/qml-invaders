@@ -12,7 +12,7 @@ function create(options, doneCallback) {
         var _view = null;
 
         var _onCollision = function(collidingObject){
-            console.log("I was hit!");
+            console.log("Invader was hit!");
         }
 
         var _onViewObjectCreated = function(object){

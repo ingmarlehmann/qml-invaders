@@ -4,15 +4,15 @@
 
 function create(width, height, collisionCallback) {
 
-    var invaderPhysicsModel = (function(width, height, collisionCallback){
+    var playerPhysicsModel = (function(width, height, collisionCallback){
         var _exports = {};
 
         var physicsBody = AABB.create(width, height, Vector2d.create(0, 0));
 
         var options = {
             physicsBody: physicsBody,
-            collisionGroup: 'invader',
-            testCollisionsAgainst: ['player_missile', 'player'] };
+            collisionGroup: 'player',
+            testCollisionsAgainst: ['invader', 'invader_missile'] };
 
         var physicsObject = PhysicsObject.create(options, collisionCallback);
 
@@ -24,6 +24,6 @@ function create(width, height, collisionCallback) {
 
     }(width, height, collisionCallback));
 
-    return invaderPhysicsModel;
+    return playerPhysicsModel;
 }
 

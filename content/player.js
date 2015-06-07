@@ -1,43 +1,85 @@
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
+.import "playerPhysicsModel.js" as PlayerPhysicsModel
+.import "objectFactory.js" as ObjectFactory
 
-function create(initialX, initialY, lives){
-    var player = (function(initialX, initialY, lives){
+function create(options, doneCallback){
+    var player = (function(options, doneCallback){
 
         var _exports = {};
 
-        var _position = { _x: initialX, _y: initialY };
-        var _initialLives = lives;
-        var _lives = lives;
+        var _initialLives = options.lives;
+        var _lives = options.lives;
+
+        var _view = null;
+        var _physicsModel = null;
 
         _exports.moveDir = Constants.MOVEDIR_NONE;
 
         _exports.setPosition = function(x, y){
+            if(_physicsModel !== null && _physicsModel !== undefined){
+                _physicsModel.physicsBody.setPosition(x, y);
+            }
+            else {
+                console.log("Error: No physics model created for player. Can't set position for physics model.");
+            }
 
-            _position._x = x;
-            _position._y = y;
+            if(_view !== null && _view !== undefined){
+                _view.x = x;
+                _view.y = y;
+            }
+            else{
+                console.log("Error: No view created for player. Can't set position for view.");
+            }
 
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
+            //PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
         }
 
         _exports.setX = function(x){
+            if(_physicsModel !== null && _physicsModel !== undefined){
+                _physicsModel.physicsBody.setX(x);
+            }
+            else {
+                console.log("Error: No physics model created for player. Can't set position for physics model.");
+            }
 
-            _position._x = x;
+            if(_view !== null && _view !== undefined){
+                _view.x = x;
+            }
+            else{
+                console.log("Error: No view created for player. Can't set position for view.");
+            }
 
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
+            //PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
         }
 
         _exports.setY = function(y){
+            if(_physicsModel !== null && _physicsModel !== undefined){
+                _physicsModel.physicsBody.setY(y);
+            }
+            else {
+                console.log("Error: No physics model created for player. Can't set position for physics model.");
+            }
 
-            _position._y = y;
+            if(_view !== null && _view !== undefined){
+                _view.y = y;
+            }
+            else{
+                console.log("Error: No view created for player. Can't set position for view.");
+            }
 
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
+            //PS.PubSub.publish(Constants.TOPIC_PLAYER_POSITION, { x: _position._x, y: _position._y });
         }
 
         // Return a copy of the position object so
         // that the original can not be modified.
         _exports.getPosition = function(){
-            return { x: _position._x, y: _position._y };
+            if(_physicsModel === null || _physicsModel === undefined){
+                console.log("Error: No physics model created for player. Can't get position.");
+                return null;
+            }
+
+            return _physicsModel.physicsBody.getPosition();
         }
 
         _exports.hit = function(lives){
@@ -66,10 +108,51 @@ function create(initialX, initialY, lives){
             }
         }
 
+        var _onCollision = function(collidingObject){
+            console.log("Player was hit!");
+        }
+
+        var _onViewObjectCreated = function(object){
+            if(object === null || object === undefined){
+                console.log("Error: Failed to create View object for player.");
+                doneCallback(null);
+                return;
+            }
+
+            _view = object;
+            _createPhysicsModel();
+        }
+
+        var _createPhysicsModel = function(){
+            _physicsModel = PlayerPhysicsModel.create(_view.width, _view.height, _onCollision);
+
+            if(_physicsModel === null || _physicsModel === undefined){
+                console.log("Error: Failed to create Physics model for player.");
+                doneCallback(null);
+                return;
+            }
+
+            _onFinishedCreation();
+        }
+
+        var _onFinishedCreation = function(){
+            _exports.view = _view;
+            _exports.physicsObject = _physicsModel;
+
+            if(doneCallback !== null && doneCallback !== undefined){
+                doneCallback(_exports);
+            }
+        }
+
+        // Create view
+        var _options = { qmlfile: 'PlayerShip.qml',
+                        qmlparameters: { x: options.x, y: options.y } };
+
+        ObjectFactory.createObject(_options, _onViewObjectCreated);
 
         return _exports;
 
-    }(initialX, initialY, lives));
+    }(options, doneCallback));
 
     return player;
 };

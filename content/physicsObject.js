@@ -1,21 +1,19 @@
 
-function create(physicsBody,
-                collisionGroup,
+function create(options,
                 collisionCallback) {
 
-    var physicsObject = (function(physicsBody,
-                                  collisionGroup,
+    var physicsObject = (function(options,
                                   collisionCallback){
         var _exports = {};
 
-        _exports.physicsBody = physicsBody;
-        _exports.collisionGroup = collisionGroup;
+        _exports.physicsBody = options.physicsBody;
+        _exports.collisionGroup = options.collisionGroup;
+        _exports.testCollisionsAgainst = options.testCollisionsAgainst;
         _exports.collisionCallback = collisionCallback;
 
         return _exports;
 
-    }(physicsBody,
-      collisionGroup,
+    }(options,
       collisionCallback));
 
     return physicsObject;

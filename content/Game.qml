@@ -63,18 +63,18 @@ Rectangle {
         }
     }
 
-    PlayerShip{
-        id: playerShip
+//    PlayerShip{
+//        id: playerShip
 
-        Component.onCompleted: {
-            Constants.PLAYERSHIP_WIDTH = playerShip.width;
-            Constants.PLAYERSHIP_HEIGHT = playerShip.height;
-        }
+//        Component.onCompleted: {
+//            Constants.PLAYERSHIP_WIDTH = playerShip.width;
+//            Constants.PLAYERSHIP_HEIGHT = playerShip.height;
+//        }
 
-        function positionChanged(topic, newPosition){
-            playerShip.x = newPosition.x;
-        }
-    }
+//        function positionChanged(topic, newPosition){
+//            playerShip.x = newPosition.x;
+//        }
+//    }
 
     Column{
         id: scoreRow
@@ -137,7 +137,7 @@ Rectangle {
 
             gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
 
-            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
+//            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
             PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);

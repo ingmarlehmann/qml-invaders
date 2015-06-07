@@ -12,11 +12,5 @@ Image{
     cache: true
     asynchronous: true
     smooth: true
-
-//    property alias physicsBody: physicsBody;
-
-//    PhysicsBodyBox2D{
-//        id: physicsBody
-//    }
 }
 

@@ -23,4 +23,6 @@ DISTFILES += \
     content/physicsObject.js \
     content/vector2d.js \
     content/invaderPhysicsModel.js \
-    content/invader.js
+    content/invader.js \
+    content/PhysicsDebugBox.qml \
+    content/playerPhysicsModel.js
