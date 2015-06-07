@@ -137,6 +137,7 @@ function createEngine(root, width, height){
 
             updatePlayer(dT);
             updateInvaders(dT);
+            updatePhysicsEngine(dT);
 
             // Update player projectiles collision checks.
             for(currentPlayerProjectile = (_playerProjectiles.length-1);
@@ -248,6 +249,12 @@ function createEngine(root, width, height){
             }
         }
 
+        var updatePhysicsEngine = function(deltaTime){
+            if(_physicsEngine !== null && _physicsEngine !== undefined){
+                _physicsEngine.update();
+            }
+        }
+
         // Access level: Private
         // Description: Update all invaders.
         var updateInvaders = function(deltaTime) {
@@ -282,7 +289,7 @@ function createEngine(root, width, height){
         var createPlayer = function(){
             var onPlayerCreated = function(player){
                 _player = player;
-                _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
+                _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height-(Constants.PLAYERSHIP_HEIGHT/2));
                 _player.respawn();
 
                 _physicsEngine.registerPhysicsObject(_player.physicsObject);

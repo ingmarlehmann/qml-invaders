@@ -6,6 +6,7 @@ Rectangle {
 
     visible: true
 
-    border.color: "blue"
-    color: "transparent"
+    border.color: "green"
+    color: "red"
+    opacity: 0.5
 }

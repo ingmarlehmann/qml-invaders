@@ -2,7 +2,6 @@ import QtQuick 2.0
 
 Image{
     id: playerShipRoot
-    anchors.bottom: parent.bottom
 
     width: 50
     height: 25
@@ -11,6 +10,7 @@ Image{
 
     cache: true
     asynchronous: true
+
     smooth: true
 }
 
