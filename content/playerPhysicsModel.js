@@ -12,7 +12,7 @@ function create(width, height, collisionCallback) {
         var options = {
             physicsBody: physicsBody,
             collisionGroup: 'player',
-            testCollisionsAgainst: ['invader', 'invader_missile'] };
+            testCollisionsAgainst: ['invader', 'invader_laser_projectile'] };
 
         var physicsObject = PhysicsObject.create(options, collisionCallback);
 

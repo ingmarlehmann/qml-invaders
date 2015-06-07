@@ -94,8 +94,26 @@ function create(){
                             _physicsDebugBoxes[i].physicsBody.getPosition().y;
                 }
             }
+
+            _doCollisionTests();
         };
 
+        var _doCollisionTests = function(){
+            var i, j, k;
+            for(i=0; i< _physicsObjects.length; ++i){
+                var myGroup = _physicsObjects[i].collisionGroup;
+                var testAgainst = _physicsObjects[i].testCollisionsAgainst;
+
+                for(j=0; j< _physicsObjects.length; ++j){
+                    for(k=0; k< testAgainst.length; ++k){
+                        if(testAgainst[k] === _physicsObjects[j].collisionGroup){
+                            // do collision test.
+                            console.log("testing collision between object '" + myGroup + "' and '" + testAgainst[k]);
+                        }
+                    }
+                }
+            }
+        }
 
         return _exports;
     }());
