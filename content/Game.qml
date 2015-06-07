@@ -63,19 +63,6 @@ Rectangle {
         }
     }
 
-//    PlayerShip{
-//        id: playerShip
-
-//        Component.onCompleted: {
-//            Constants.PLAYERSHIP_WIDTH = playerShip.width;
-//            Constants.PLAYERSHIP_HEIGHT = playerShip.height;
-//        }
-
-//        function positionChanged(topic, newPosition){
-//            playerShip.x = newPosition.x;
-//        }
-//    }
-
     Column{
         id: scoreRow
 
@@ -144,10 +131,10 @@ Rectangle {
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_DIED, enemyExplosionSound.restart);
 
-            gameMusic.play();
+            //gameMusic.play();
         }
         else{
-            gameMusic.stop();
+            //gameMusic.stop();
         }
     }
 

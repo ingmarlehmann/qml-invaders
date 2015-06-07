@@ -25,4 +25,8 @@ DISTFILES += \
     content/invaderPhysicsModel.js \
     content/invader.js \
     content/PhysicsDebugBox.qml \
-    content/playerPhysicsModel.js
+    content/playerPhysicsModel.js \
+    content/invaderLaserProjectile.js \
+    content/invaderLaserProjectilePhysicsModel.js \
+    content/playerLaserProjectile.js \
+    content/playerLaserProjectilePhysicsModel.js

@@ -1,6 +1,7 @@
 .import "constants.js" as Constants
 .import "pubsub.js" as PS
 .import "objectFactory.js" as ObjectFactory
+.import "invaderLaserProjectile.js" as InvaderLaserProjectile
 
 // Create an invader AI engine.
 // The AI engine needs to be updated each frame with delta time.
@@ -20,8 +21,8 @@
 //   invaderAI.update(deltaTime);
 //
 
-function create(qmlCanvasParent, invadersToControl){
-    var invaderAI = (function(qmlCanvasParent, invadersToControl){
+function create(physicsEngine, invadersToControl){
+    var invaderAI = (function(physicsEngine, invadersToControl){
 
         var _exports = {};
 
@@ -39,8 +40,7 @@ function create(qmlCanvasParent, invadersToControl){
         var _invaders = invadersToControl;
 
         var _enemyProjectiles = [];
-
-        var _rootObject = qmlCanvasParent;
+        var _physicsEngine = physicsEngine;
 
         // Clean up all data created by InvaderAI.
         // Always call this method before releasing the InvaderAI object.
@@ -48,7 +48,7 @@ function create(qmlCanvasParent, invadersToControl){
             var i;
 
             for(i=0; i< _enemyProjectiles.length; ++i){
-                _enemyProjectiles[i].destroy();
+                _enemyProjectiles[i].view.destroy();
             }
         }
 
@@ -73,7 +73,13 @@ function create(qmlCanvasParent, invadersToControl){
 
             // update enemy projectile movements.
             for(i=0; i< _enemyProjectiles.length; ++i){
-                _enemyProjectiles[i].y = Math.max(0, _enemyProjectiles[i].y + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
+                var oldPosition =
+                        _enemyProjectiles[i].getPosition().y;
+
+                var newPosition =
+                        Math.max(0, oldPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
+
+                _enemyProjectiles[i].setY(newPosition);
             }
         }
 
@@ -130,34 +136,28 @@ function create(qmlCanvasParent, invadersToControl){
 
             PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
 
-            createEnemyProjectile(qmlCanvasParent,
-                                  randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
+            createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
                                   randomInvader.view.y + (Constants.ENEMYSHIP_HEIGHT));
         }
 
         // Access level: Private
         // Description: Create a new projectile.
-        var createEnemyProjectile = function(objectParent,
-                                             positionX,
+        var createEnemyProjectile = function(positionX,
                                              positionY){
 
             var objectName = "enemyProjectile";
-            var completedCallback = function(newObject) {
+            var onProjectileCreated = function(newObject) {
                 if(newObject) {
                     _enemyProjectiles.push(newObject);
+                    _physicsEngine.registerPhysicsObject(newObject.physicsObject);
                 } else {
                     console.log("error creating object" + objectName);
                 }
             }
 
-
-            var qmlparameters = { x: positionX, y: positionY };
-
-            var options = {
-                qmlfile: 'EnemyProjectile.qml',
-                qmlparameters: qmlparameters };
-
-            ObjectFactory.createObject(options, completedCallback);
+            InvaderLaserProjectile.create(
+                        { x: positionX, y: positionY },
+                        onProjectileCreated);
         }
 
         var _move = function(moveDir){
@@ -261,7 +261,7 @@ function create(qmlCanvasParent, invadersToControl){
 
         return _exports;
 
-    }(qmlCanvasParent, invadersToControl));
+    }(physicsEngine, invadersToControl));
 
     return invaderAI;
 };

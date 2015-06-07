@@ -7,6 +7,7 @@
 .import "invaderAI.js" as InvaderAI
 .import "physicsEngine.js" as PhysicsEngine
 .import "invader.js" as Invader
+.import "playerLaserProjectile.js" as PlayerLaserProjectile
 
 function createEngine(root, width, height){
     var engine = (function (root, width, height) {
@@ -21,7 +22,6 @@ function createEngine(root, width, height){
         var _lastUpdateTime = new Date().getTime();
 
         var _playerProjectiles = [];
-        var _enemyProjectiles = [];
         var _invaders = [];
         var _physicsDebugBoxes = [];
 
@@ -181,18 +181,19 @@ function createEngine(root, width, height){
 
                 // Update player projectiles movement.
                 if(projectileDeleted === false){
-                    _playerProjectiles[currentPlayerProjectile].y =
-                            Math.max(0, _playerProjectiles[currentPlayerProjectile].y - (Constants.PLAYER_PROJECTILE_SPEED * dT));
+                    _playerProjectiles[currentPlayerProjectile].setY(
+                            Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().y - (Constants.PLAYER_PROJECTILE_SPEED * dT)));
                 }
             }
 
+            // TODO: Remove physics object.
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
             _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
-                if(value.y <= 5){
-                    value.destroy();
+                if(value.getPosition().y <= 5){
+                    value.view.destroy();
                 }
 
-                return value.y > 5;
+                return value.getPosition().y > 5;
             } );
 
             _lastUpdateTime = new Date().getTime();
@@ -206,7 +207,7 @@ function createEngine(root, width, height){
             _player.view.destroy();
 
             for(i=0; i< _playerProjectiles.length; ++i){
-                _playerProjectiles[i].destroy();
+                _playerProjectiles[i].view.destroy();
             }
 
             _playerProjectiles = [];
@@ -218,12 +219,6 @@ function createEngine(root, width, height){
             }
 
             _invaders = [];
-
-
-            for(i=0; i< _enemyProjectiles.length; ++i){
-                _enemyProjectiles[i].destroy();
-            }
-            _enemyProjectiles = [];
 
             _score.setScore(0);
 
@@ -267,20 +262,23 @@ function createEngine(root, width, height){
         // Description: Create a new projectile.
         var createPlayerProjectile = function(){
             var objectName = "playerProjectile";
+
             var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
             var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
+
             var completedCallback = function(newObject) {
                 if(newObject) {
                     _playerProjectiles.push(newObject);
+                    _physicsEngine.registerPhysicsObject(newObject.physicsObject);
                 } else {
                     console.log("error creating object" + objectName);
                 }
             }
 
-            var options = { qmlfile: 'PlayerProjectile.qml',
-                            qmlparameters: { x: projectileStartX, y: projectileStartY }};
+            PlayerLaserProjectile.create(
+                        { x: projectileStartX, y: projectileStartY },
+                        completedCallback);
 
-            ObjectFactory.createObject(options, completedCallback);
         }
 
         // Access level: Private
@@ -327,7 +325,7 @@ function createEngine(root, width, height){
 
                 ++numInvadersCreated;
                 if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
-                    _invaderAI = InvaderAI.create(_root, _invaders);
+                    _invaderAI = InvaderAI.create(_physicsEngine, _invaders);
                 }
             }
 

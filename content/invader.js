@@ -1,6 +1,6 @@
-.import "invaderPhysicsModel.js" as InvaderPhysicsModel
 .import "vector2d.js" as Vector2d
 .import "objectFactory.js" as ObjectFactory
+.import "invaderPhysicsModel.js" as InvaderPhysicsModel
 
 function create(options, doneCallback) {
 
@@ -66,6 +66,8 @@ function create(options, doneCallback) {
                         qmlpostparameters: { source: texture } };
 
         ObjectFactory.createObject(_options, _onViewObjectCreated);
+
+
 
         return _exports;
 
