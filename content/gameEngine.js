@@ -29,9 +29,9 @@ function createEngine(root, width, height){
         var _height = height;
         var _root = root;
 
-        var _score = Score.create(0);
-        var _player = Player.create({ x: 0, y: 0, lives: 3 }, null);
-        var _physicsEngine = PhysicsEngine.create();
+        var _score = null;
+        var _player = null;
+        var _physicsEngine = null;
 
         var _invaderAI = null;
 
@@ -72,9 +72,11 @@ function createEngine(root, width, height){
         // Description: Initialize a new game
         // Returns: nothing
         _exports.newGame = function(){
+            _physicsEngine = PhysicsEngine.create();
+            _score = Score.create(0);
+
+            createPlayer();
             createEnemyShips();
-            _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
-            _player.respawn();
         }
 
         // Access level: Public
@@ -200,6 +202,8 @@ function createEngine(root, width, height){
         _exports.clearGameData = function(){
             var i, j;
 
+            _player.view.destroy();
+
             for(i=0; i< _playerProjectiles.length; ++i){
                 _playerProjectiles[i].destroy();
             }
@@ -230,35 +234,7 @@ function createEngine(root, width, height){
         // ----------------
 
         var togglePhysicsDebug = function(){
-            var i, j, callback, options;
-
-            if(_physicsDebugBoxes.length === 0){
-                for(i=0; i< _invaders.length; ++i){
-                    for(j=0; j< _invaders[i].length; ++j){
-
-                        callback = function(qmlobject){
-                            _physicsDebugBoxes.push(qmlobject);
-                        }
-
-                        options = { qmlfile: 'PhysicsDebugBox.qml',
-                                    qmlparameters: {
-                                        x: _invaders[i][j].view.x,
-                                        y: _invaders[i][j].view.y,
-                                        width: _invaders[i][j].view.width,
-                                        height: _invaders[i][j].view.height
-                                        }
-                                    };
-
-                        ObjectFactory.createObject(options, callback);
-                    }
-                }
-            }
-            else{
-                for(i=0; i< _physicsDebugBoxes.length; ++i){
-                    _physicsDebugBoxes[i].destroy();
-                }
-                _physicsDebugBoxes = [];
-            }
+            _physicsEngine.togglePhysicsDebug();
         }
 
         var updatePlayer = function(deltaTime){
@@ -298,6 +274,21 @@ function createEngine(root, width, height){
                             qmlparameters: { x: projectileStartX, y: projectileStartY }};
 
             ObjectFactory.createObject(options, completedCallback);
+        }
+
+        // Access level: Private
+        // Description: Set up the player object
+        // Returns: nothing
+        var createPlayer = function(){
+            var onPlayerCreated = function(player){
+                _player = player;
+                _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height);
+                _player.respawn();
+
+                _physicsEngine.registerPhysicsObject(_player.physicsObject);
+            }
+
+            Player.create({ x: 0, y: 0, lives: 3 }, onPlayerCreated);
         }
 
         // Access level: Private

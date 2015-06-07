@@ -50,6 +50,14 @@ function create(width, height, position) {
             _max = Vector2d.create(_position.x + width, _position.y + height);
         }
 
+        _exports.getWidth = function(){
+            return _width;
+        }
+
+        _exports.getHeight = function(){
+            return _height;
+        }
+
         if(position !== "undefined" && position !== null){
             _exports.setPosition(position);
         }

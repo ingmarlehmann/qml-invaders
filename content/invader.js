@@ -35,6 +35,8 @@ function create(options, doneCallback) {
                 return;
             }
 
+            _dataModel.physicsBody.setPosition(_view.x, _view.y);
+
             _onFinishedCreation();
         }
 
