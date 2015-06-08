@@ -109,7 +109,7 @@ function create(options, doneCallback){
         }
 
         var _onCollision = function(collidingObject){
-            console.log("Player was hit!");
+            console.log("Player was hit by '" + collidingObject + "'");
         }
 
         var _onViewObjectCreated = function(object){

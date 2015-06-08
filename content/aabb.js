@@ -18,6 +18,8 @@ function create(width, height, position) {
         var _updateMinMax = function(){
             _min = Vector2d.create(_position.x, _position.y);
             _max = Vector2d.create(_position.x + _width, _position.y + _height);
+            _exports.min = _min;
+            _exports.max = _max;
         }
 
         // Public methods

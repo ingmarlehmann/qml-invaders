@@ -78,7 +78,7 @@ function create(options, doneCallback) {
         }
 
         var _onCollision = function(collidingObject){
-            console.log("Invader was hit!");
+            console.log("Invader was hit by '" + collidingObject + "'");
         }
 
         var _onViewObjectCreated = function(object){

@@ -22,7 +22,7 @@ function create(){
         }
 
         _exports.registerPhysicsObject = function(physicsObject){
-            console.log("INFO: Registering physics object in collision group: " + physicsObject.collisionGroup);
+            //console.log("DEBUG: Registering physics object in collision group: " + physicsObject.collisionGroup);
             _physicsObjects.push(physicsObject);
         };
 
@@ -52,7 +52,7 @@ function create(){
                 height = _physicsObjects[i].physicsBody.getHeight();
 
                 callback = function(qmlobject){
-                    //console.log("physics debug object visible: " + qmlobject.visible);
+                    //console.log("DEBUG: Physics debug object visible: " + qmlobject.visible);
 
                     // Also save a reference to the parent physics object so
                     // we can update the position later during runtime.
@@ -61,7 +61,7 @@ function create(){
                         physicsBody: _physicsObjects[i].physicsBody });
                 }
 
-                //console.log("INFO: Creating physics debug box with properties " +
+                //console.log("DEBUG: Creating physics debug box with properties " +
                 //            "x: " + x + " y: " + y + " width: " + width +
                 //            " height: " + height);
 
@@ -112,8 +112,11 @@ function create(){
                                         _physicsObjects[i].physicsBody,
                                         _physicsObjects[j].physicsBody) === true){
 
-                                //_physicsObjects[i].collisionCallback(_physicsObjects[j].collisionGroup);
-                                //_physicsObjects[j].collisionCallback(_physicsObjects[i].collisionGroup);
+                                //console.log("DEBUG: Object A: " + JSON.stringify(_physicsObjects[i]));
+                                //console.log("DEBUG: Object B: " + JSON.stringify(_physicsObjects[j]));
+
+                                _physicsObjects[i].collisionCallback(_physicsObjects[j].collisionGroup);
+                                _physicsObjects[j].collisionCallback(_physicsObjects[i].collisionGroup);
                             }
                         }
                     }
@@ -131,10 +134,10 @@ function create(){
         }
 
         var _testAABBvsAABB = function(a, b){
-            //console.log("a min: x" + a.min.x + " y " + a.min.y);
-            //console.log("a max: x" + a.max.x + " y " + a.max.y);
-            //console.log("b min: x" + b.min.x + " y " + b.min.y);
-            //console.log("b max: x" + b.max.x + " y " + b.max.y);
+            //console.log("DEBUG: a min: x" + a.min.x + " y " + a.min.y);
+            //console.log("DEBUG: a max: x" + a.max.x + " y " + a.max.y);
+            //console.log("DEBUG: b min: x" + b.min.x + " y " + b.min.y);
+            //console.log("DEBUG: b max: x" + b.max.x + " y " + b.max.y);
 
             if (a.max.x < b.min.x)
                 return false; // a is left of b
