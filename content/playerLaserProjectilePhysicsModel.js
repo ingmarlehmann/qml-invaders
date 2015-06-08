@@ -16,9 +16,9 @@ function create(width, height, collisionCallback) {
 
         var physicsObject = PhysicsObject.create(options, collisionCallback);
 
-        _exports.physicsBody = physicsObject.physicsBody;
-        _exports.collisionGroup = physicsObject.collisionGroup;
-        _exports.callback = physicsObject.collisionCallback;
+        for (var attrname in physicsObject){
+            _exports[attrname] = physicsObject[attrname];
+        }
 
         return _exports;
 

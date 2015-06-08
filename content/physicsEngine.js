@@ -106,13 +106,46 @@ function create(){
 
                 for(j=0; j< _physicsObjects.length; ++j){
                     for(k=0; k< testAgainst.length; ++k){
-                        if(testAgainst[k] === _physicsObjects[j].collisionGroup){
-                            // do collision test.
-                            console.log("testing collision between object '" + myGroup + "' and '" + testAgainst[k]);
+                        if(testAgainst[k]
+                                === _physicsObjects[j].collisionGroup){
+                            if(_collides(
+                                        _physicsObjects[i].physicsBody,
+                                        _physicsObjects[j].physicsBody) === true){
+
+                                //_physicsObjects[i].collisionCallback(_physicsObjects[j].collisionGroup);
+                                //_physicsObjects[j].collisionCallback(_physicsObjects[i].collisionGroup);
+                            }
                         }
                     }
                 }
             }
+        }
+
+        var _collides = function(physicsObject1, physicsObject2){
+            if(physicsObject1.type === 'aabb' &&
+                    physicsObject2.type === 'aabb'){
+                return _testAABBvsAABB(physicsObject1, physicsObject2);
+            }
+
+            return undefined;
+        }
+
+        var _testAABBvsAABB = function(a, b){
+            //console.log("a min: x" + a.min.x + " y " + a.min.y);
+            //console.log("a max: x" + a.max.x + " y " + a.max.y);
+            //console.log("b min: x" + b.min.x + " y " + b.min.y);
+            //console.log("b max: x" + b.max.x + " y " + b.max.y);
+
+            if (a.max.x < b.min.x)
+                return false; // a is left of b
+            if (a.min.x > b.max.x)
+                return false; // a is right of b
+            if (a.max.y < b.min.y)
+                return false; // a is above b
+            if (a.min.y > b.max.y)
+                return false; // a is below b
+
+            return true;
         }
 
         return _exports;
