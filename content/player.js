@@ -15,6 +15,12 @@ function create(options, doneCallback){
         var _physicsModel = null;
 
         _exports.moveDir = Constants.MOVEDIR_NONE;
+        _exports._deleteMe = false;
+
+        _exports.deleteLater = function(){
+            _physicsModel.deleteLater();
+            _exports._deleteMe = true;
+        }
 
         _exports.setPosition = function(x, y){
             if(_physicsModel !== null && _physicsModel !== undefined){
@@ -110,6 +116,7 @@ function create(options, doneCallback){
 
         var _onCollision = function(collidingObject){
             console.log("Player was hit by '" + collidingObject + "'");
+            _exports.deleteMe = true;
         }
 
         var _onViewObjectCreated = function(object){

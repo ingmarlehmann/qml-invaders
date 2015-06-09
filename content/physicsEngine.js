@@ -96,6 +96,13 @@ function create(){
             }
 
             _doCollisionTests();
+
+            // Destroy objects marked for deletion.
+            for(i=(_physicsObjects.length-1); i >= 0; --i){
+                if(_physicsObjects[i]._deleteMe){
+                    _physicsObjects.splice(i, 1);
+                }
+            }
         };
 
         var _doCollisionTests = function(){

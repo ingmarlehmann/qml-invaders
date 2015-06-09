@@ -253,8 +253,17 @@ function createEngine(root, width, height){
         // Access level: Private
         // Description: Update all invaders.
         var updateInvaders = function(deltaTime) {
+            var i;
+
             if(_invaderAI !== null){
                 _invaderAI.update(deltaTime);
+            }
+
+            for(i=(_invaders.length-1); i >= 0; --i){
+                if(_invaders[i]._deleteMe === true){
+                    _invaders[i].view.destroy();
+                    _invaders.splice(i, 1);
+                }
             }
         }
 

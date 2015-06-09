@@ -10,6 +10,13 @@ function create(options, doneCallback){
         var _view = null;
         var _physicsModel = null;
 
+        _exports._deleteMe = false;
+
+        _exports.deleteLater = function(){
+            _physicsModel.deleteLater();
+            _exports._deleteMe = true;
+        }
+
         _exports.setPosition = function(x, y){
             if(_physicsModel !== null && _physicsModel !== undefined){
                 _physicsModel.physicsBody.setPosition(x, y);
@@ -71,7 +78,8 @@ function create(options, doneCallback){
         }
 
         var _onCollision = function(collidingObject){
-            console.log("Invader laser projectile was hit!");
+            //console.log("Invader laser projectile was hit!");
+            _exports._deleteMe = true;
         }
 
         var _onViewObjectCreated = function(object){
