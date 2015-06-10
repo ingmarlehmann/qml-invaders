@@ -84,14 +84,18 @@ function createEngine(root, width, height){
         _exports.keyDown = function(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
-                    _player.moveDir |= Constants.MOVEDIR_LEFT;
+                    if(_player !== null && _player !== undefined){
+                        _player.moveDir |= Constants.MOVEDIR_LEFT;
+                    }
                 }
 
                 event.accepted = true;
             }
             if(event.key === Qt.Key_Right){
                 if(!event.isAutoRepeat){
-                    _player.moveDir |= Constants.MOVEDIR_RIGHT;
+                    if(_player !== null && _player !== undefined){
+                        _player.moveDir |= Constants.MOVEDIR_RIGHT;
+                    }
                 }
 
                 event.accepted = true;
@@ -108,20 +112,26 @@ function createEngine(root, width, height){
         _exports.keyUp = function(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
-                    _player.moveDir &= ~(Constants.MOVEDIR_LEFT);
+                    if(_player !== null && _player !== undefined){
+                        _player.moveDir &= ~(Constants.MOVEDIR_LEFT);
+                    }
                 }
             }
 
             if(event.key === Qt.Key_Right){
                 if(!event.isAutoRepeat){
-                    _player.moveDir &= ~(Constants.MOVEDIR_RIGHT);
+                    if(_player !== null && _player !== undefined){
+                        _player.moveDir &= ~(Constants.MOVEDIR_RIGHT);
+                    }
                 }
             }
 
             if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
-                    createPlayerProjectile();
-                    PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
+                    if(_player !== null && _player !== undefined){
+                        createPlayerProjectile();
+                        PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
+                    }
                 }
             }
         }
@@ -190,11 +200,13 @@ function createEngine(root, width, height){
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
             _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
                 if(value.getPosition().y <= 5){
-                    value.view.destroy();
+                    value.deleteLater();
                 }
 
                 return value.getPosition().y > 5;
             } );
+
+            deleteDeadObjects(dT);
 
             _lastUpdateTime = new Date().getTime();
         };
@@ -204,7 +216,9 @@ function createEngine(root, width, height){
         _exports.clearGameData = function(){
             var i, j;
 
-            _player.view.destroy();
+            if(_player !== null && _player !== undefined){
+                _player.view.destroy();
+            }
 
             for(i=0; i< _playerProjectiles.length; ++i){
                 _playerProjectiles[i].view.destroy();
@@ -234,6 +248,10 @@ function createEngine(root, width, height){
         }
 
         var updatePlayer = function(deltaTime){
+            if(_player == null || _player == undefined){
+                return;
+            }
+
             // Move player ship.
             if(_player.moveDir === Constants.MOVEDIR_LEFT){
                 // Make sure player does not go out of bounds and move the ship to new position.
@@ -258,11 +276,31 @@ function createEngine(root, width, height){
             if(_invaderAI !== null){
                 _invaderAI.update(deltaTime);
             }
+        }
 
-            for(i=(_invaders.length-1); i >= 0; --i){
-                if(_invaders[i]._deleteMe === true){
-                    _invaders[i].view.destroy();
-                    _invaders.splice(i, 1);
+        var deleteDeadObjects = function(deltaTime){
+            var i, row, column;
+
+            for(row=(_invaders.length-1); row >= 0; --row){
+                for(column=(_invaders[row].length-1); column >= 0; --column){
+                    if(_invaders[row][column].isToBeDeleted()){
+                        _invaders[row][column].view.destroy();
+                        _invaders[row].splice(column, 1); // WTF?? I can't splice in a 2 dimensional array!!
+                    }
+                }
+            }
+
+            for(i=(_playerProjectiles.length-1); i >= 0; --i){
+                if(_playerProjectiles[i].isToBeDeleted() === true){
+                    _playerProjectiles[i].view.destroy();
+                    _playerProjectiles.splice(i, 1);
+                }
+            }
+
+            if(_player !== undefined && _player !== null){
+                if(_player.isToBeDeleted()){
+                    _player.view.destroy();
+                    _player = null;
                 }
             }
         }

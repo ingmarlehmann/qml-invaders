@@ -81,6 +81,19 @@ function create(physicsEngine, invadersToControl){
 
                 _enemyProjectiles[i].setY(newPosition);
             }
+
+            _deleteDeadObjects(deltaTime);
+        }
+
+        var _deleteDeadObjects = function(deltaTime){
+            var i;
+
+            for(i=(_enemyProjectiles.length-1); i >= 0; --i){
+                if(_enemyProjectiles[i].isToBeDeleted() === true){
+                    _enemyProjectiles[i].view.destroy();
+                    _enemyProjectiles.splice(i, 1);
+                }
+            }
         }
 
         var _moveInvaderPack = function(){
@@ -123,10 +136,12 @@ function create(physicsEngine, invadersToControl){
 
             for(column=0; column< Constants.INVADER_COLUMNS; ++column){
                 for(row=Constants.INVADER_ROWS-1; row>= 0; --row){
-                    if(_invaders[row][column].view.visible){
-                        bottomInvaders.push(_invaders[row][column]);
-                        break;
-                    }
+                   if(_invaders[row][column] !== undefined){
+                       if(_invaders[row][column].view.visible){
+                           bottomInvaders.push(_invaders[row][column]);
+                           break;
+                       }
+                   }
                 }
             }
 

@@ -11,7 +11,16 @@ function create(options, doneCallback) {
         var _dataModel = null;
         var _view = null;
 
-        _exports._deleteMe = false;
+        var _deleteMe = false;
+
+        _exports.deleteLater = function(){
+            _dataModel.deleteLater();
+            _deleteMe = true;
+        }
+
+        _exports.isToBeDeleted = function(){
+            return _deleteMe;
+        }
 
         _exports.setPosition = function(x, y){
             if(_physicsModel !== null && _physicsModel !== undefined){
@@ -77,11 +86,6 @@ function create(options, doneCallback) {
             }
 
             return _physicsModel.physicsBody.getPosition();
-        }
-
-        _exports.deleteLater = function(){
-            _dataModel.deleteLater();
-            _exports._deleteMe = true;
         }
 
         var _onCollision = function(collidingObject){

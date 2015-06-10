@@ -14,12 +14,17 @@ function create(options, doneCallback){
         var _view = null;
         var _physicsModel = null;
 
+        var _deleteMe = false;
+
         _exports.moveDir = Constants.MOVEDIR_NONE;
-        _exports._deleteMe = false;
 
         _exports.deleteLater = function(){
             _physicsModel.deleteLater();
-            _exports._deleteMe = true;
+            _deleteMe = true;
+        }
+
+        _exports.isToBeDeleted = function(){
+            return _deleteMe;
         }
 
         _exports.setPosition = function(x, y){
@@ -115,8 +120,8 @@ function create(options, doneCallback){
         }
 
         var _onCollision = function(collidingObject){
-            console.log("Player was hit by '" + collidingObject + "'");
-            _exports.deleteMe = true;
+            //console.log("Player was hit by '" + collidingObject + "'");
+            _exports.deleteLater();
         }
 
         var _onViewObjectCreated = function(object){

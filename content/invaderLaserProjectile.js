@@ -10,11 +10,15 @@ function create(options, doneCallback){
         var _view = null;
         var _physicsModel = null;
 
-        _exports._deleteMe = false;
+        var _deleteMe = false;
 
         _exports.deleteLater = function(){
             _physicsModel.deleteLater();
-            _exports._deleteMe = true;
+            _deleteMe = true;
+        }
+
+        _exports.isToBeDeleted = function(){
+            return _deleteMe;
         }
 
         _exports.setPosition = function(x, y){

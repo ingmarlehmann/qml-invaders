@@ -6,10 +6,14 @@ function create(options,
                                   collisionCallback){
         var _exports = {};
 
-        _exports._deleteMe = false;
+        var _deleteMe = false;
 
         _exports.deleteLater = function(){
-            _exports._deleteMe = true;
+            _deleteMe = true;
+        }
+
+        _exports.isToBeDeleted = function(){
+            return _deleteMe;
         }
 
         _exports.physicsBody = options.physicsBody;
