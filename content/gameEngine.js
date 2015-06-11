@@ -392,7 +392,10 @@ function createEngine(root, width, height){
             var row, column;
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    _invaders[row][column].on("death", function(data){ console.log("invader died"); });
+                    //_invaders[row][column].on("death", function(data){ console.log("invader died"); });
+                    _invaders[row][column].on("death", function(data){
+                        _score.setScore(_score.getScore()+10);
+                    });
                 }
             }
         }
