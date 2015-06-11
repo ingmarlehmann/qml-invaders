@@ -24,6 +24,10 @@ function create(){
         _exports.registerPhysicsObject = function(physicsObject){
             //console.log("DEBUG: Registering physics object in collision group: " + physicsObject.collisionGroup);
             _physicsObjects.push(physicsObject);
+
+            if(_physicsDebugActive){
+                _createPhysicsDebugBox(physicsObject);
+            }
         };
 
         _exports.clear = function(){
@@ -31,53 +35,62 @@ function create(){
         }
 
         _exports.togglePhysicsDebug = function(){
-            var i, callback, options;
+            var i;
 
             if(_physicsDebugActive){
-                for(i=0; i< _physicsDebugBoxes.length; ++i){
-                    _physicsDebugBoxes[i].view.destroy();
-                }
-                _physicsDebugBoxes = [];
-                _physicsDebugActive = false;
-
+                _clearPhysicsDebugBoxes();
                 return;
             }
 
             for(i=0; i< _physicsObjects.length; ++i){
-                var x, y, width, height;
-
-                x = _physicsObjects[i].physicsBody.getPosition().x;
-                y = _physicsObjects[i].physicsBody.getPosition().y;
-                width = _physicsObjects[i].physicsBody.getWidth();
-                height = _physicsObjects[i].physicsBody.getHeight();
-
-                callback = function(qmlobject){
-                    //console.log("DEBUG: Physics debug object visible: " + qmlobject.visible);
-
-                    // Also save a reference to the parent physics object so
-                    // we can update the position later during runtime.
-                    _physicsDebugBoxes.push({
-                        view: qmlobject,
-                        physicsBody: _physicsObjects[i].physicsBody });
-                }
-
-                //console.log("DEBUG: Creating physics debug box with properties " +
-                //            "x: " + x + " y: " + y + " width: " + width +
-                //            " height: " + height);
-
-                options = { qmlfile: 'PhysicsDebugBox.qml',
-                            qmlparameters: {
-                                x: x,
-                                y: y,
-                                width: width,
-                                height: height
-                                }
-                            };
-
-                ObjectFactory.createObject(options, callback);
+                _createPhysicsDebugBox(_physicsObjects[i]);
             }
 
             _physicsDebugActive = true;
+        }
+
+        var _createPhysicsDebugBox = function(physicsObject){
+            var callback, options;
+
+            var x = physicsObject.physicsBody.getPosition().x;
+            var y = physicsObject.physicsBody.getPosition().y;
+            var width = physicsObject.physicsBody.getWidth();
+            var height = physicsObject.physicsBody.getHeight();
+
+            callback = function(qmlobject){
+                //console.log("DEBUG: Physics debug object visible: " + qmlobject.visible);
+
+                // Also save a reference to the parent physics object so
+                // we can update the position later during runtime.
+                _physicsDebugBoxes.push({
+                    view: qmlobject,
+                    physicsBody: physicsObject.physicsBody });
+            }
+
+            //console.log("DEBUG: Creating physics debug box with properties " +
+            //            "x: " + x + " y: " + y + " width: " + width +
+            //            " height: " + height);
+
+            options = { qmlfile: 'PhysicsDebugBox.qml',
+                        qmlparameters: {
+                            x: x,
+                            y: y,
+                            width: width,
+                            height: height
+                            }
+                        };
+
+            ObjectFactory.createObject(options, callback);
+        }
+
+        var _clearPhysicsDebugBoxes = function(){
+            var i;
+
+            for(i=0; i< _physicsDebugBoxes.length; ++i){
+                _physicsDebugBoxes[i].view.destroy();
+            }
+            _physicsDebugBoxes = [];
+            _physicsDebugActive = false;
         }
 
         _exports.update = function(){
@@ -96,14 +109,23 @@ function create(){
             }
 
             _doCollisionTests();
+            _deleteDeadObjects();
+        };
+
+        var _deleteDeadObjects = function(){
+            var i;
 
             // Destroy objects marked for deletion.
             for(i=(_physicsObjects.length-1); i >= 0; --i){
-                if(_physicsObjects[i]._deleteMe){
+                if(_physicsObjects[i].isToBeDeleted()){
                     _physicsObjects.splice(i, 1);
+                    if(_physicsDebugActive){
+                        _physicsDebugBoxes[i].view.destroy();
+                        _physicsDebugBoxes.splice(i, 1);
+                    }
                 }
             }
-        };
+        }
 
         var _doCollisionTests = function(){
             var i, j, k;

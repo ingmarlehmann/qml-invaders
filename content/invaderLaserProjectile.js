@@ -83,7 +83,7 @@ function create(options, doneCallback){
 
         var _onCollision = function(collidingObject){
             //console.log("Invader laser projectile was hit!");
-            _exports._deleteMe = true;
+            _exports.deleteLater();
         }
 
         var _onViewObjectCreated = function(object){

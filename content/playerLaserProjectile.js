@@ -83,8 +83,7 @@ function create(options, doneCallback){
 
         var _onCollision = function(collidingObject){
             //console.log("player laser projectile was hit!");
-            _physicsModel.deleteLater();
-            _exports._deleteMe = true;
+            _exports.deleteLater();
         }
 
         var _onViewObjectCreated = function(object){
