@@ -13,6 +13,8 @@ function create(options, doneCallback) {
 
         var _deleteMe = false;
 
+        var _eventListeners = {};
+
         _exports.deleteLater = function(){
             _dataModel.deleteLater();
             _deleteMe = true;
@@ -88,8 +90,28 @@ function create(options, doneCallback) {
             return _physicsModel.physicsBody.getPosition();
         }
 
+        _exports.on = function(event, callback){
+            if(_eventListeners[event] === undefined){
+                _eventListeners[event] = [];
+            }
+            _eventListeners[event].push(callback);
+        }
+
+        var _emitEvent = function(event, data){
+            if(_eventListeners[event] === undefined){
+                return;
+            }
+
+            var i;
+            for(i=0; i< _eventListeners[event].length; ++i){
+               //console.log("invader emitting event:  '" + event + "' number of listeners: " + _eventListeners[event].length);
+                _eventListeners[event][i](data);
+            }
+        }
+
         var _onCollision = function(collidingObject){
             //console.log("DEBUG: Invader was hit by '" + collidingObject + "'");
+            _emitEvent("death", null);
             _exports.deleteLater();
         }
 
@@ -144,8 +166,6 @@ function create(options, doneCallback) {
                         qmlpostparameters: { source: texture } };
 
         ObjectFactory.createObject(_options, _onViewObjectCreated);
-
-
 
         return _exports;
 

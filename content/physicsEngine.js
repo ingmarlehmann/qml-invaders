@@ -34,6 +34,16 @@ function create(){
             _physicsObjects = [];
         }
 
+        _exports.update = function(){
+            if(_physicsDebugActive){
+                _updatePhysicsDebugBoxes();
+            }
+
+            _clearCollisionEvents();
+            _doCollisionTests();
+            _deleteDeadObjects();
+        };
+
         _exports.togglePhysicsDebug = function(){
             var i;
 
@@ -93,24 +103,19 @@ function create(){
             _physicsDebugActive = false;
         }
 
-        _exports.update = function(){
+        var _updatePhysicsDebugBoxes = function(){
             var i;
 
             // Update physics debug shapes so they move together with
             // the view objects.
-            if(_physicsDebugActive){
-                for(i=0; i< _physicsDebugBoxes.length; ++i){
-                    _physicsDebugBoxes[i].view.x =
-                            _physicsDebugBoxes[i].physicsBody.getPosition().x;
+            for(i=0; i< _physicsDebugBoxes.length; ++i){
+                _physicsDebugBoxes[i].view.x =
+                        _physicsDebugBoxes[i].physicsBody.getPosition().x;
 
-                    _physicsDebugBoxes[i].view.y =
-                            _physicsDebugBoxes[i].physicsBody.getPosition().y;
-                }
+                _physicsDebugBoxes[i].view.y =
+                        _physicsDebugBoxes[i].physicsBody.getPosition().y;
             }
-
-            _doCollisionTests();
-            _deleteDeadObjects();
-        };
+        }
 
         var _deleteDeadObjects = function(){
             var i;
@@ -127,6 +132,14 @@ function create(){
             }
         }
 
+        var _clearCollisionEvents = function(){
+            var i;
+            for(i=0; i< _physicsObjects.length; ++i){
+                _physicsObjects[i].collisionEventOccurred = false;
+            }
+        }
+
+        // TODO: rewrite this slow shit code!
         var _doCollisionTests = function(){
             var i, j, k;
             for(i=0; i< _physicsObjects.length; ++i){
@@ -135,14 +148,24 @@ function create(){
 
                 for(j=0; j< _physicsObjects.length; ++j){
                     for(k=0; k< testAgainst.length; ++k){
+                        if(_physicsObjects[i].collisionEventOccurred === true
+                                || _physicsObjects[j].collisionEventOccurred === true){
+                            //console.log("skipping collision test of " + i + " vs " + j + ". object has already collided.")
+                            continue;   // dont test B vs A if A vs B was already tested.
+                                        // this lazy implementation disables multiple collisions but
+                                        // it is an ok limitation for this game.
+                        }
+
                         if(testAgainst[k]
                                 === _physicsObjects[j].collisionGroup){
                             if(_collides(
                                         _physicsObjects[i].physicsBody,
                                         _physicsObjects[j].physicsBody) === true){
 
-                                //console.log("DEBUG: Object A: " + JSON.stringify(_physicsObjects[i]));
-                                //console.log("DEBUG: Object B: " + JSON.stringify(_physicsObjects[j]));
+                                //console.log("Collision: Object A: " + i + " object B: " + j);
+
+                                _physicsObjects[i].collisionEventOccurred = true;
+                                _physicsObjects[j].collisionEventOccurred = true;
 
                                 _physicsObjects[i].collisionCallback(_physicsObjects[j].collisionGroup);
                                 _physicsObjects[j].collisionCallback(_physicsObjects[i].collisionGroup);

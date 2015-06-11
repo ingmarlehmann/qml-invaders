@@ -77,6 +77,8 @@ function createEngine(root, width, height){
 
             createPlayer();
             createEnemyShips();
+
+            _setupEventListeners();
         }
 
         // Access level: Public
@@ -154,8 +156,6 @@ function createEngine(root, width, height){
                 currentPlayerProjectile >= 0;
                 --currentPlayerProjectile)
             {
-                var projectileDeleted = false;
-
 //                for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
 //                    for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
 
@@ -190,21 +190,17 @@ function createEngine(root, width, height){
 //                }
 
                 // Update player projectiles movement.
-                if(projectileDeleted === false){
-                    _playerProjectiles[currentPlayerProjectile].setY(
-                            Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().y - (Constants.PLAYER_PROJECTILE_SPEED * dT)));
-                }
+                _playerProjectiles[currentPlayerProjectile].setY(
+                        Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().y - (Constants.PLAYER_PROJECTILE_SPEED * dT)));
             }
 
-            // TODO: Remove physics object.
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
-            _playerProjectiles = _playerProjectiles.filter( function(value, index, array) {
-                if(value.getPosition().y <= 5){
-                    value.deleteLater();
+            var i;
+            for(i=0; i< _playerProjectiles.length; ++i){
+                if(_playerProjectiles[i].getPosition().y <=5){
+                    _playerProjectiles[i].deleteLater();
                 }
-
-                return value.getPosition().y > 5;
-            } );
+            }
 
             deleteDeadObjects(dT);
 
@@ -291,7 +287,7 @@ function createEngine(root, width, height){
             }
 
             for(i=(_playerProjectiles.length-1); i >= 0; --i){
-                if(_playerProjectiles[i].isToBeDeleted() === true){
+                if(_playerProjectiles[i].isToBeDeleted()){
                     _playerProjectiles[i].view.destroy();
                     _playerProjectiles.splice(i, 1);
                 }
@@ -389,6 +385,15 @@ function createEngine(root, width, height){
                 }
                 _invaders.push(currentRow);
                 y += Constants.ENEMYSHIP_HEIGHT + 10;
+            }
+        }
+
+        var _setupEventListeners = function(){
+            var row, column;
+            for(row=0; row< _invaders.length; ++row){
+                for(column=0; column< _invaders[row].length; ++column){
+                    _invaders[row][column].on("death", function(data){ console.log("invader died"); });
+                }
             }
         }
 
