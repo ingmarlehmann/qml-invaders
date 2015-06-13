@@ -82,14 +82,20 @@ Rectangle {
 
     Rectangle{
         id: gameoverOverlay
-        color: "transparent"
+        color: "black"
+        opacity: 0.8
+        visible: false // <<-- Not visible until the game is over
         anchors.fill: parent
         anchors.centerIn: parent
+
+        function playerDied(topic, value){
+            gameoverOverlay.visible = true;
+        }
 
         Text{
             id: gameOverText
 
-            visible: false // <<-- Not visible until the game is over
+            opacity: 1.0
 
             text: "Game Over"
             color: "red"
@@ -99,10 +105,6 @@ Rectangle {
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: -100
             anchors.horizontalCenter: parent.horizontalCenter
-
-            function playerDied(topic, value){
-                gameOverText.visible = true;
-            }
         }
     }
 
@@ -168,7 +170,7 @@ Rectangle {
 
 //            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
             PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
-            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_DIED, gameOverText.playerDied);
+            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_DIED, gameoverOverlay.playerDied);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
