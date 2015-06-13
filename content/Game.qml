@@ -24,6 +24,35 @@ Rectangle {
         anchors.fill: parent
         anchors.centerIn: parent
 
+        Row{
+            id: livesRow
+
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
+            spacing: 10
+
+            Image{
+                id: firstLifeImage
+                source: "qrc:/content/images/ship.png"
+                width: 25
+                height: 12
+            }
+            Image{
+                id: secondLifeImage
+                source: "qrc:/content/images/ship.png"
+                width: 25
+                height: 12
+            }
+            Image{
+                id: thridLifeImage
+                source: "qrc:/content/images/ship.png"
+                width: 25
+                height: 12
+            }
+        }
+
         Column{
             id: scoreRow
 
