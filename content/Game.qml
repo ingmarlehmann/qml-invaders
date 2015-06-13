@@ -18,6 +18,113 @@ Rectangle {
 
     property var gameEngine: null
 
+    Rectangle{
+        id: gameCanvas
+        color: "black"
+        anchors.fill: parent
+        anchors.centerIn: parent
+
+        Column{
+            id: scoreRow
+
+            anchors.left: parent.left
+            anchors.leftMargin: 10
+
+            Text{
+                id: scoreHeaderText
+                text: "SCORE(1)"
+
+                color: "white"
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Text{
+                id: scoreText
+
+                text: "0000"
+                color: "white"
+                font.pixelSize: 24
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                function scoreChanged(topic, newScore){
+                    scoreText.text = leftPad(newScore, 4);
+                }
+            }
+        }
+
+        Column{
+            id: hiScoreRow
+
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            Text{
+                id: hiScoreHeaderText
+                text: "HI-SCORE"
+
+                color: "white"
+                font.pixelSize: 24
+                horizontalAlignment: Text.AlignHCenter
+            }
+            Text{
+                id: hiScoreText
+
+                text: "0000"
+                color: "white"
+                font.pixelSize: 24
+                anchors.horizontalCenter: parent.horizontalCenter
+
+                function highScoreChanged(topic, newScore){
+                    hiScoreText.text = leftPad(newScore, 4);
+                }
+            }
+        }
+    }
+
+    Rectangle{
+        id: gameoverOverlay
+        color: "transparent"
+        anchors.fill: parent
+        anchors.centerIn: parent
+
+        Text{
+            id: gameOverText
+
+            visible: false // <<-- Not visible until the game is over
+
+            text: "Game Over"
+            color: "red"
+
+            font.pixelSize: 48
+
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.verticalCenterOffset: -100
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            function playerDied(topic, value){
+                gameOverText.visible = true;
+            }
+        }
+    }
+
+    Rectangle{
+        id: debugLayer
+        color: "transparent"
+        //opacity: 0.3
+        //visible: false
+        anchors.fill: parent
+        anchors.centerIn: parent
+
+        FPSMonitor{
+            id: fpsMonitor
+
+            color: "white"
+            font.pixelSize: 24
+
+            x: parent.width - (fpsMonitor.contentWidth) - 10
+            y: 10
+        }
+    }
+
     Audio{
         id: gameMusic
         source: "music/03-mercury.mp3"
@@ -41,16 +148,6 @@ Rectangle {
         function restart() { enemyExplosionSound.stop(); enemyExplosionSound.play(); }
     }
 
-    FPSMonitor{
-        id: fpsMonitor
-
-        color: "white"
-        font.pixelSize: 24
-
-        x: parent.width - (fpsMonitor.contentWidth) - 10
-        y: 10
-    }
-
     Timer{
         id: moveTimer
         interval: 16 // 16ms is maximum resolution for a timer at 60 fps.
@@ -63,69 +160,15 @@ Rectangle {
         }
     }
 
-    Column{
-        id: scoreRow
-
-        anchors.left: parent.left
-        anchors.leftMargin: 10
-
-        Text{
-            id: scoreHeaderText
-            text: "SCORE(1)"
-
-            color: "white"
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignHCenter
-        }
-        Text{
-            id: scoreText
-
-            text: "0000"
-            color: "white"
-            font.pixelSize: 24
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            function scoreChanged(topic, newScore){
-                scoreText.text = leftPad(newScore, 4);
-            }
-        }
-    }
-
-    Column{
-        id: hiScoreRow
-
-        anchors.horizontalCenter: parent.horizontalCenter
-
-        Text{
-            id: hiScoreHeaderText
-            text: "HI-SCORE"
-
-            color: "white"
-            font.pixelSize: 24
-            horizontalAlignment: Text.AlignHCenter
-        }
-        Text{
-            id: hiScoreText
-
-            text: "0000"
-            color: "white"
-            font.pixelSize: 24
-            anchors.horizontalCenter: parent.horizontalCenter
-
-            function highScoreChanged(topic, newScore){
-                hiScoreText.text = leftPad(newScore, 4);
-            }
-        }
-    }
-
     onVisibleChanged: {
         if(visible){
-            ObjectFactory.setRootQmlObject(gameRoot);
+            ObjectFactory.setRootQmlObject(gameCanvas);
 
-            gameEngine = Engine.createEngine(gameRoot, parent.width, parent.height);
+            gameEngine = Engine.create(parent.width, parent.height);
 
 //            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
             PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
+            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_DIED, gameOverText.playerDied);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);

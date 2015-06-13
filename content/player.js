@@ -94,7 +94,7 @@ function create(options, doneCallback){
         }
 
         _exports.hit = function(lives){
-            setLives(getLives()-lives);
+            setLives(_exports.getLives()-lives);
             PS.PubSub.publish(Constants.TOPIC_PLAYER_HIT, lives);
         }
 
@@ -116,12 +116,13 @@ function create(options, doneCallback){
 
             if(_lives <= 0){
                 PS.PubSub.publish(Constants.TOPIC_PLAYER_DIED, 1);
+                _exports.deleteLater();
             }
         }
 
         var _onCollision = function(collidingObject){
             //console.log("Player was hit by '" + collidingObject + "'");
-            _exports.deleteLater();
+            _exports.hit(1);
         }
 
         var _onViewObjectCreated = function(object){

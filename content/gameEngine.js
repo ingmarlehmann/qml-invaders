@@ -9,8 +9,8 @@
 .import "invader.js" as Invader
 .import "playerLaserProjectile.js" as PlayerLaserProjectile
 
-function createEngine(root, width, height){
-    var engine = (function (root, width, height) {
+function create(width, height){
+    var engine = (function (width, height) {
 
         // Main export object, every method and property attached to this object
         // will be accessible by caller.
@@ -27,7 +27,6 @@ function createEngine(root, width, height){
 
         var _width = width;
         var _height = height;
-        var _root = root;
 
         var _score = null;
         var _player = null;
@@ -425,7 +424,7 @@ function createEngine(root, width, height){
         }
 
         return _exports;
-    }(root, width, height));
+    }(width, height));
 
     return engine;
 }
