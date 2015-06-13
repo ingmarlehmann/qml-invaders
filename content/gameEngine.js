@@ -144,63 +144,11 @@ function createEngine(root, width, height){
         _exports.update = function () {
             var currentTime = new Date().getTime();
             var dT = (currentTime - _lastUpdateTime);
-            var invaderRow, invaderColumn;
-            var currentPlayerProjectile;
 
             updatePlayer(dT);
+            updatePlayerProjectiles(dT);
             updateInvaders(dT);
             updatePhysicsEngine(dT);
-
-            // Update player projectiles collision checks.
-            for(currentPlayerProjectile = (_playerProjectiles.length-1);
-                currentPlayerProjectile >= 0;
-                --currentPlayerProjectile)
-            {
-//                for(invaderRow=0; invaderRow<_invaders.length; ++invaderRow){
-//                    for(invaderColumn=0; invaderColumn< _invaders[invaderRow].length; ++invaderColumn){
-
-//                        if(_invaders[invaderRow][invaderColumn].visible !== false){
-
-//                            //console.log("testing enemy ship " + j + " against projectile " + i);
-//                            var box1 = _playerProjectiles[currentPlayerProjectile].physicsBody;
-//                            var box2 = _invaders[invaderRow][invaderColumn].physicsBody;
-
-//                            var collides = box1.testCollision(box2);
-//                            if(collides){
-//                                //console.log(" - enemy ship " + j + " collides with projectile " + i);
-//                                _invaders[invaderRow][invaderColumn].visible = false;
-
-//                                // update score.
-//                                _score.setScore(_score.getScore()+10);
-
-//                                // destroy qml object.
-//                                _playerProjectiles[currentPlayerProjectile].destroy();
-
-//                                // remove this projectile reference from the collection.
-//                                _playerProjectiles.splice(currentPlayerProjectile, 1);
-
-//                                projectileDeleted = true;
-
-//                                PS.PubSub.publish(Constants.TOPIC_ENEMY_DIED, 0);
-
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
-
-                // Update player projectiles movement.
-                _playerProjectiles[currentPlayerProjectile].setY(
-                        Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().y - (Constants.PLAYER_PROJECTILE_SPEED * dT)));
-            }
-
-            // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
-            var i;
-            for(i=0; i< _playerProjectiles.length; ++i){
-                if(_playerProjectiles[i].getPosition().y <=5){
-                    _playerProjectiles[i].deleteLater();
-                }
-            }
 
             deleteDeadObjects(dT);
 
@@ -224,7 +172,9 @@ function createEngine(root, width, height){
 
             for(i=0; i< _invaders.length; ++i){
                 for(j=0; j< _invaders[i].length; ++j){
-                    _invaders[i][j].view.destroy();
+                    if(_invaders[i][j] !== null && _invaders[i][j] !== undefined){
+                        _invaders[i][j].view.destroy();
+                    }
                 }
             }
 
@@ -233,16 +183,22 @@ function createEngine(root, width, height){
             _score.setScore(0);
 
             _invaderAI.destroy();
+
+            _physicsEngine.destroy();
         }
 
         // ----------------
         // Private methods
         // ----------------
 
+        // Access level: Private
+        // Description: Enable or disable visual physics debugging.
         var togglePhysicsDebug = function(){
             _physicsEngine.togglePhysicsDebug();
         }
 
+        // Access level: Private
+        // Description: Animate the player object.
         var updatePlayer = function(deltaTime){
             if(_player == null || _player == undefined){
                 return;
@@ -258,6 +214,8 @@ function createEngine(root, width, height){
             }
         }
 
+        // Access level: Private
+        // Description: Update physics engine.
         var updatePhysicsEngine = function(deltaTime){
             if(_physicsEngine !== null && _physicsEngine !== undefined){
                 _physicsEngine.update();
@@ -265,26 +223,58 @@ function createEngine(root, width, height){
         }
 
         // Access level: Private
+        // Description: Animate player projectiles.
+        var updatePlayerProjectiles = function(deltaTime){
+            var currentPlayerProjectile;
+
+            // Update player projectiles movement.
+            for(currentPlayerProjectile = (_playerProjectiles.length-1);
+                currentPlayerProjectile >= 0;
+                --currentPlayerProjectile)
+            {
+                _playerProjectiles[currentPlayerProjectile].setY(
+                        Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().y
+                                 - (Constants.PLAYER_PROJECTILE_SPEED * deltaTime)));
+            }
+
+            // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
+            var i;
+            for(i=0; i< _playerProjectiles.length; ++i){
+                if(_playerProjectiles[i].getPosition().y <=5){
+                    _playerProjectiles[i].deleteLater();
+                }
+            }
+        }
+
+        // Access level: Private
         // Description: Update all invaders.
         var updateInvaders = function(deltaTime) {
-            var i;
-
             if(_invaderAI !== null){
                 _invaderAI.update(deltaTime);
             }
         }
 
-        var deleteDeadObjects = function(deltaTime){
-            var i, row, column;
+        // Access level: Private
+        // Description: delete all invaders that have been marked for deletion.
+        var deleteDeadInvaders = function(){
+            var row, column;
 
-            for(row=(_invaders.length-1); row >= 0; --row){
-                for(column=(_invaders[row].length-1); column >= 0; --column){
-                    if(_invaders[row][column].isToBeDeleted()){
-                        _invaders[row][column].view.destroy();
-                        _invaders[row].splice(column, 1); // WTF?? I can't splice in a 2 dimensional array!!
+            for(row=0; row < _invaders.length; ++row){
+                for(column=0; column < _invaders[row].length; ++column){;
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                        if(_invaders[row][column].isToBeDeleted()){
+                            _invaders[row][column].view.destroy();
+                            _invaders[row][column] = null;
+                        }
                     }
                 }
             }
+        }
+
+        // Access level: Private
+        // Description: delete all player projectiles that have been marked for deletion.
+        var deleteDeadPlayerProjectiles = function(){
+            var i;
 
             for(i=(_playerProjectiles.length-1); i >= 0; --i){
                 if(_playerProjectiles[i].isToBeDeleted()){
@@ -292,13 +282,26 @@ function createEngine(root, width, height){
                     _playerProjectiles.splice(i, 1);
                 }
             }
+        }
 
+        // Access level: Private
+        // Description: delete all player projectiles that have been marked for deletion.
+        var deleteDeadPlayers = function(){
             if(_player !== undefined && _player !== null){
                 if(_player.isToBeDeleted()){
                     _player.view.destroy();
                     _player = null;
                 }
             }
+        }
+
+        // Access level: Private
+        // Description: Delete all objects marked for deletion.
+        var deleteDeadObjects = function(deltaTime){
+
+            deleteDeadInvaders();
+            deleteDeadPlayerProjectiles();
+            deleteDeadPlayers();
         }
 
         // Access level: Private
@@ -388,14 +391,18 @@ function createEngine(root, width, height){
             }
         }
 
+        // Access level: Private
+        // Description: Create all enemy ships for a new game.
         var _setupEventListeners = function(){
             var row, column;
-            for(row=0; row< _invaders.length; ++row){
-                for(column=0; column< _invaders[row].length; ++column){
-                    //_invaders[row][column].on("death", function(data){ console.log("invader died"); });
-                    _invaders[row][column].on("death", function(data){
-                        _score.setScore(_score.getScore()+10);
-                    });
+
+            for(row=0; row < _invaders.length; ++row){
+                for(column=0; column < _invaders[row].length; ++column){
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                        _invaders[row][column].on("death", function(data){
+                            _score.setScore(_score.getScore()+10);
+                        });
+                    }
                 }
             }
         }

@@ -17,6 +17,10 @@ function create(){
             return _objects;
         }
 
+        _exports.destroy = function(){
+            _clearPhysicsDebugBoxes();
+        }
+
         _exports.getPhysicsObject = function(index){
             return _objects[index];
         }
@@ -29,10 +33,6 @@ function create(){
                 _createPhysicsDebugBox(physicsObject);
             }
         };
-
-        _exports.clear = function(){
-            _physicsObjects = [];
-        }
 
         _exports.update = function(){
             if(_physicsDebugActive){
@@ -49,6 +49,7 @@ function create(){
 
             if(_physicsDebugActive){
                 _clearPhysicsDebugBoxes();
+                _physicsDebugActive = false;
                 return;
             }
 
@@ -100,7 +101,6 @@ function create(){
                 _physicsDebugBoxes[i].view.destroy();
             }
             _physicsDebugBoxes = [];
-            _physicsDebugActive = false;
         }
 
         var _updatePhysicsDebugBoxes = function(){

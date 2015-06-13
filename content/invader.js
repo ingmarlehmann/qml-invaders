@@ -15,6 +15,10 @@ function create(options, doneCallback) {
 
         var _eventListeners = {};
 
+        _exports.test = function(){
+            console.log("testing...");
+        }
+
         _exports.deleteLater = function(){
             _dataModel.deleteLater();
             _deleteMe = true;

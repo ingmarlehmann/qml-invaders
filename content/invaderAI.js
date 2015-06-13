@@ -135,12 +135,10 @@ function create(physicsEngine, invadersToControl){
             var randomInvader;
 
             for(column=0; column< Constants.INVADER_COLUMNS; ++column){
-                for(row=Constants.INVADER_ROWS-1; row>= 0; --row){
-                   if(_invaders[row][column] !== undefined){
-                       if(_invaders[row][column].view.visible){
-                           bottomInvaders.push(_invaders[row][column]);
-                           break;
-                       }
+                for(row=(Constants.INVADER_ROWS-1); row>= 0; --row){
+                   if(_invaders[row][column] !== undefined && _invaders[row][column] !== null){
+                       bottomInvaders.push(_invaders[row][column]);
+                       break;
                    }
                 }
             }
@@ -197,7 +195,9 @@ function create(physicsEngine, invadersToControl){
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    _invaders[row][column].x += Constants.ENEMYSHIP_WIDTH;
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                        _invaders[row][column].x += Constants.ENEMYSHIP_WIDTH;
+                    }
                 }
             }
 
@@ -213,18 +213,23 @@ function create(physicsEngine, invadersToControl){
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    _invaders[row][column].x -= Constants.ENEMYSHIP_WIDTH;
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                        _invaders[row][column].x -= Constants.ENEMYSHIP_WIDTH;
+                    }
                 }
             }
 
             return true;
         }
+
         var _moveDown = function(){
             var column = 0, row = 0;
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    _invaders[row][column].y += Constants.ENEMYSHIP_HEIGHT;
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                        _invaders[row][column].y += Constants.ENEMYSHIP_HEIGHT;
+                    }
                 }
             }
 
@@ -244,7 +249,7 @@ function create(physicsEngine, invadersToControl){
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    if(_invaders[row][column].visible !== false){
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
                         atLeastOneInvaderAlive = true;
 
                         if(_invaders[row][column].x < bb.minX){
