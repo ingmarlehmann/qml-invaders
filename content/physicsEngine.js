@@ -140,36 +140,54 @@ function create(){
         }
 
         // TODO: rewrite this slow shit code!
-        var _doCollisionTests = function(){
-            var i, j, k;
-            for(i=0; i< _physicsObjects.length; ++i){
-                var myGroup = _physicsObjects[i].collisionGroup;
-                var testAgainst = _physicsObjects[i].testCollisionsAgainst;
+        var _doCollisionTests = function()
+        {
+            var objA, objB, groupIndex;
 
-                for(j=0; j< _physicsObjects.length; ++j){
-                    for(k=0; k< testAgainst.length; ++k){
-                        if(_physicsObjects[i].collisionEventOccurred === true
-                                || _physicsObjects[j].collisionEventOccurred === true){
-                            //console.log("skipping collision test of " + i + " vs " + j + ". object has already collided.")
+            // for each physics object
+            for(objA=0;
+                objA< _physicsObjects.length;
+                ++objA)
+            {
+                // for each group of other physics objects to be tested against.
+                for(groupIndex=0;
+                    groupIndex < (_physicsObjects[objA]).testCollisionsAgainst.length;
+                    ++groupIndex)
+                {
+                    // for each physics object
+                    for(objB=0;
+                        objB < _physicsObjects.length;
+                        ++objB)
+                    {
+                        // if objB is not a member of one of the groups to test
+                        // collisions against, continue.
+                        if(_physicsObjects[objA].testCollisionsAgainst[groupIndex]
+                                !== _physicsObjects[objB].collisionGroup)
+                        {
+                            continue;
+                        }
+
+                        // Did one of the objects already collide with something this frame?
+                        // If so, skip.
+                        if(_physicsObjects[objA].collisionEventOccurred === true
+                                || _physicsObjects[objB].collisionEventOccurred === true)
+                        {
                             continue;   // dont test B vs A if A vs B was already tested.
                                         // this lazy implementation disables multiple collisions but
                                         // it is an ok limitation for this game.
                         }
 
-                        if(testAgainst[k]
-                                === _physicsObjects[j].collisionGroup){
-                            if(_collides(
-                                        _physicsObjects[i].physicsBody,
-                                        _physicsObjects[j].physicsBody) === true){
+                        var collides = _collides(_physicsObjects[objA].physicsBody,
+                                                 _physicsObjects[objB].physicsBody);
+                        if(collides){
+                            _physicsObjects[objA].collisionEventOccurred = true;
+                            _physicsObjects[objB].collisionEventOccurred = true;
 
-                                //console.log("Collision: Object A: " + i + " object B: " + j);
+                            _physicsObjects[objA].collisionCallback(
+                                        _physicsObjects[objB].collisionGroup);
 
-                                _physicsObjects[i].collisionEventOccurred = true;
-                                _physicsObjects[j].collisionEventOccurred = true;
-
-                                _physicsObjects[i].collisionCallback(_physicsObjects[j].collisionGroup);
-                                _physicsObjects[j].collisionCallback(_physicsObjects[i].collisionGroup);
-                            }
+                            _physicsObjects[objB].collisionCallback(
+                                        _physicsObjects[objA].collisionGroup);
                         }
                     }
                 }

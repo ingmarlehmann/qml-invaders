@@ -2,6 +2,8 @@
 .import "pubsub.js" as PS
 .import "objectFactory.js" as ObjectFactory
 .import "invaderLaserProjectile.js" as InvaderLaserProjectile
+.import "aabb.js" as AABB
+.import "vector2d.js" as Vector2d
 
 // Create an invader AI engine.
 // The AI engine needs to be updated each frame with delta time.
@@ -30,10 +32,10 @@ function create(physicsEngine, invadersToControl){
         var _prevMoveDir = Constants.MOVEDIR_LEFT;
 
         var _moveTimer = 0;
-        var _moveInterval = 5000;
+        var _moveInterval = 2000;
 
         var _shootTimer = 0;
-        var _shootInterval = 2000;
+        var _shootInterval = 1000;
 
         var _timeElapsed = 0;
 
@@ -143,6 +145,11 @@ function create(physicsEngine, invadersToControl){
                 }
             }
 
+            // All invaders are dead.
+            if(bottomInvaders.length === 0){
+                return;
+            }
+
             // Choose one invader at random out of the bottom invaders
             // that will fire a missile towards the player.
             randomInvader = bottomInvaders[Math.floor(Math.random() * bottomInvaders.length)];
@@ -188,15 +195,21 @@ function create(physicsEngine, invadersToControl){
         var _moveRight = function(){
             var column = 0, row = 0;
 
-            var bb = _getInvaderPackBoundingBox();
-            if(bb.maxX + 5 >= 690){
+            var aabb = _getInvaderPackBoundingBox();
+            if(aabb === undefined){
+                return; // all invaders are dead.
+            }
+
+            //console.log("moving right. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
+
+            if((aabb.max.x + 5) >= 690){
                 return false;
             }
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
                     if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
-                        _invaders[row][column].x += Constants.ENEMYSHIP_WIDTH;
+                        _invaders[row][column].appendX(Constants.ENEMYSHIP_WIDTH);
                     }
                 }
             }
@@ -206,15 +219,20 @@ function create(physicsEngine, invadersToControl){
         var _moveLeft = function(){
             var column = 0, row = 0;
 
-            var bb = _getInvaderPackBoundingBox();
-            if(Math.max(0, bb.minX - 5) === 0){
+            var aabb = _getInvaderPackBoundingBox();
+            if(aabb === undefined){
+                return; // all invaders are dead.
+            }
+            //console.log("moving left. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
+
+            if(Math.max(0, aabb.min.x - 5) === 0){
                 return false;
             }
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
                     if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
-                        _invaders[row][column].x -= Constants.ENEMYSHIP_WIDTH;
+                        _invaders[row][column].appendX(-Constants.ENEMYSHIP_WIDTH);
                     }
                 }
             }
@@ -225,10 +243,13 @@ function create(physicsEngine, invadersToControl){
         var _moveDown = function(){
             var column = 0, row = 0;
 
+            //var aabb = _getInvaderPackBoundingBox();
+            //console.log("moving down. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
+
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
                     if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
-                        _invaders[row][column].y += Constants.ENEMYSHIP_HEIGHT;
+                        _invaders[row][column].appendY(Constants.ENEMYSHIP_HEIGHT);
                     }
                 }
             }
@@ -237,12 +258,7 @@ function create(physicsEngine, invadersToControl){
         }
 
         var _getInvaderPackBoundingBox = function(){
-            var bb = {
-                minX:999999,
-                maxX:0,
-                minY:999999,
-                maxY:0
-            };
+            var aabb = AABB.create(0, 0, Vector2d.create(Constants.GAME_WIDTH/2, Constants.GAME_HEIGHT/2));
 
             var row, column;
             var atLeastOneInvaderAlive = false;
@@ -251,32 +267,16 @@ function create(physicsEngine, invadersToControl){
                 for(column=0; column< _invaders[row].length; ++column){
                     if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
                         atLeastOneInvaderAlive = true;
-
-                        if(_invaders[row][column].x < bb.minX){
-                            bb.minX = _invaders[row][column].x;
-                        }
-                        else if(_invaders[row][column].x > bb.maxX){
-                            bb.maxX = _invaders[row][column].x;
-                        }
-
-                        if(_invaders[row][column].y < bb.minY){
-                            bb.minY = _invaders[row][column].y;
-                        }
-                        else if(_invaders[row][column].y > bb.maxY){
-                            bb.maxY = _invaders[row][column].y;
-                        }
+                        aabb.merge(_invaders[row][column].physicsObject.physicsBody);
                     }
                 }
             }
 
             if(!atLeastOneInvaderAlive){
-                return {};
+                return undefined;
             }
 
-            bb.maxX += Constants.ENEMYSHIP_WIDTH;
-            bb.maxY += Constants.ENEMYSHIP_HEIGHT;
-
-            return bb;
+            return aabb;
         }
 
         return _exports;

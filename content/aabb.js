@@ -38,6 +38,26 @@ function create(width, height, position) {
             _updateMinMax();
         }
 
+        _exports.getX = function(){
+            return _position.x;
+        }
+
+        _exports.getY = function(){
+            return _position.y;
+        }
+
+        _exports.merge = function(aabb){
+            _min.x = Math.min(aabb.min.x, _min.x);
+            _max.x = Math.max(aabb.max.x, _max.x);
+            _min.y = Math.min(aabb.min.y, _min.y);
+            _max.y = Math.max(aabb.max.y, _max.y);
+
+            _width = Math.abs(_max.x - _min.x);
+            _height = Math.abs(_max.y - _min.y);
+
+            return this;
+        }
+
         _exports.getPosition = function(){
             return { x: _position.x, y: _position.y };
         }

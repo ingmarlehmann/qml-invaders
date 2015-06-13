@@ -1,6 +1,10 @@
 .pragma library
 
 // Constants
+
+var GAME_WIDTH      = 690;
+var GAME_HEIGHT     = 640;
+
 var MOVEDIR_NONE    = (0<<0);
 var MOVEDIR_LEFT    = (1<<0);
 var MOVEDIR_RIGHT   = (1<<1);
