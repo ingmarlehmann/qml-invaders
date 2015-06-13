@@ -6,19 +6,17 @@ function create(options, doneCallback) {
 
     var _invader = (function(options, doneCallback){
 
+        // Exports object that will
+        // be returned when invoking create
         var _exports = {};
 
+        // Private member variables
         var _physicsModel = null;
         var _view = null;
-
         var _deleteMe = false;
-
         var _eventListeners = {};
 
-        _exports.test = function(){
-            console.log("testing...");
-        }
-
+        // Public methods
         _exports.deleteLater = function(){
             _physicsModel.deleteLater();
             _deleteMe = true;
@@ -137,6 +135,7 @@ function create(options, doneCallback) {
             _eventListeners[event].push(callback);
         }
 
+        // Private methods
         var _emitEvent = function(event, data){
             if(_eventListeners[event] === undefined){
                 return;
@@ -187,6 +186,7 @@ function create(options, doneCallback) {
             doneCallback(_exports);
         }
 
+        // Constructor
         var texture;
         if(options.invadertype === 'invader1'){
             texture = 'qrc:/content/images/invader1.png';

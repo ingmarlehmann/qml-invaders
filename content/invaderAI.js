@@ -28,6 +28,7 @@ function create(physicsEngine, invadersToControl){
 
         var _exports = {};
 
+        // Private member variables
         var _moveDir = Constants.MOVEDIR_RIGHT;
         var _prevMoveDir = Constants.MOVEDIR_LEFT;
 
@@ -44,6 +45,8 @@ function create(physicsEngine, invadersToControl){
         var _enemyProjectiles = [];
         var _physicsEngine = physicsEngine;
 
+        // Public methods
+
         // Clean up all data created by InvaderAI.
         // Always call this method before releasing the InvaderAI object.
         _exports.destroy = function(){
@@ -56,35 +59,47 @@ function create(physicsEngine, invadersToControl){
 
         // Update the InvaderAI one step.
         _exports.update = function(deltaTime){
-            var i;
 
             _timeElapsed += deltaTime;
 
+            _updateInvaderMovement(deltaTime);
+            _updateInvaderWeaponSystems(deltaTime);
+            _updateEnemyProjectiles(deltaTime);
+
+            _deleteDeadObjects(deltaTime);
+        }
+
+        // Private methods
+        var _updateInvaderWeaponSystems = function(deltaTime){
+            if((_shootTimer + _shootInterval) <= _timeElapsed){
+                _shootTimer = _timeElapsed;
+
+                _fireInvaderWeaponSystems();
+            }
+        }
+
+        var _updateInvaderMovement = function(deltaTime){
             // Time to move pack?
             if((_moveTimer + _moveInterval) <= _timeElapsed){
                 _moveTimer = _timeElapsed;
 
                 _moveInvaderPack();
             }
+        }
 
-            if((_shootTimer + _shootInterval) <= _timeElapsed){
-                _shootTimer = _timeElapsed;
-
-                _fireInvaderWeaponSystems();
-            }
+        var _updateEnemyProjectiles = function(deltaTime){
+            var i, oldPosition, newPosition;
 
             // update enemy projectile movements.
             for(i=0; i< _enemyProjectiles.length; ++i){
-                var oldPosition =
+                oldPosition =
                         _enemyProjectiles[i].getPosition().y;
 
-                var newPosition =
+                newPosition =
                         Math.max(0, oldPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
 
                 _enemyProjectiles[i].setY(newPosition);
             }
-
-            _deleteDeadObjects(deltaTime);
         }
 
         var _deleteDeadObjects = function(deltaTime){
@@ -156,13 +171,13 @@ function create(physicsEngine, invadersToControl){
 
             PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
 
-            createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
+            _createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
                                   randomInvader.view.y + (Constants.ENEMYSHIP_HEIGHT));
         }
 
         // Access level: Private
-        // Description: Create a new projectile.
-        var createEnemyProjectile = function(positionX,
+        // Description: Create a new enemy projectile.
+        var _createEnemyProjectile = function(positionX,
                                              positionY){
 
             var objectName = "enemyProjectile";
@@ -216,6 +231,7 @@ function create(physicsEngine, invadersToControl){
 
             return true;
         }
+
         var _moveLeft = function(){
             var column = 0, row = 0;
 
@@ -258,10 +274,15 @@ function create(physicsEngine, invadersToControl){
         }
 
         var _getInvaderPackBoundingBox = function(){
-            var aabb = AABB.create(0, 0, Vector2d.create(Constants.GAME_WIDTH/2, Constants.GAME_HEIGHT/2));
 
             var row, column;
             var atLeastOneInvaderAlive = false;
+
+            var aabb = AABB.create(0,
+                                   0,
+                                   Vector2d.create(
+                                       Constants.GAME_WIDTH/2,
+                                       Constants.GAME_HEIGHT/2));
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
