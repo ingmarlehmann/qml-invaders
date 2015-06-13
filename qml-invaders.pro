@@ -16,7 +16,6 @@ QML_IMPORT_PATH = content/
 include(deployment.pri)
 
 DISTFILES += \
-    content/enemyShip.js \
     content/invaderAI.js \
     content/physicsEngine.js \
     content/aabb.js \

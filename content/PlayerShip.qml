@@ -7,10 +7,5 @@ Image{
     height: 25
 
     source: "qrc:/content/images/ship.png"
-
-    cache: true
-    asynchronous: true
-
-    smooth: true
 }
 

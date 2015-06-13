@@ -7,10 +7,4 @@ Rectangle{
 
     width: 3
     height: 20
-
-    //property alias physicsBody: physicsBody
-
-//    PhysicsBodyBox2D{
-//        id: physicsBody
-//    }
 }

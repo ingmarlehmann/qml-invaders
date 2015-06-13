@@ -39,5 +39,5 @@ Text {
         update() // force continuous animation
         ++frame
     }
-    text: "Frame rate: " + fpsTimer.fps + " Hz"
+    text: "FPS: " + fpsTimer.fps
 }
