@@ -64,7 +64,7 @@ function create(physicsEngine, invadersToControl){
 
             _updateInvaderMovement(deltaTime);
             _updateInvaderWeaponSystems(deltaTime);
-            _updateEnemyProjectiles(deltaTime);
+            _animateInvaderProjectiles(deltaTime);
 
             _deleteDeadObjects(deltaTime);
         }
@@ -87,18 +87,22 @@ function create(physicsEngine, invadersToControl){
             }
         }
 
-        var _updateEnemyProjectiles = function(deltaTime){
-            var i, oldPosition, newPosition;
+        var _animateInvaderProjectiles = function(deltaTime){
+            var i, oldYPosition, newYPosition;
 
             // update enemy projectile movements.
             for(i=0; i< _enemyProjectiles.length; ++i){
-                oldPosition =
+                oldYPosition =
                         _enemyProjectiles[i].getPosition().y;
 
-                newPosition =
-                        Math.max(0, oldPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
+                newYPosition =
+                        Math.min(Constants.GAME_HEIGHT-60, oldYPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
 
-                _enemyProjectiles[i].setY(newPosition);
+                _enemyProjectiles[i].setY(newYPosition);
+
+                if(newYPosition >= Constants.GAME_HEIGHT-60){
+                    _enemyProjectiles[i].deleteLater();
+                }
             }
         }
 
