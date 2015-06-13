@@ -94,8 +94,7 @@ function create(options, doneCallback){
         }
 
         _exports.hit = function(lives){
-            setLives(_exports.getLives()-lives);
-            PS.PubSub.publish(Constants.TOPIC_PLAYER_HIT, lives);
+            _setLives(_exports.getLives()-lives);
         }
 
         _exports.isDead = function(){
@@ -103,7 +102,7 @@ function create(options, doneCallback){
         }
 
         _exports.respawn = function(){
-            setLives(_initialLives);
+            _setLives(_initialLives);
             PS.PubSub.publish(Constants.TOPIC_PLAYER_RESPAWNED, 1);
         }
 
@@ -111,8 +110,10 @@ function create(options, doneCallback){
             return _lives;
         }
 
-        var setLives = function(lives){
+        var _setLives = function(lives){
             _lives = lives;
+
+            PS.PubSub.publish(Constants.TOPIC_PLAYER_NUM_LIVES_CHANGED, lives);
 
             if(_lives <= 0){
                 PS.PubSub.publish(Constants.TOPIC_PLAYER_DIED, 1);
@@ -159,7 +160,7 @@ function create(options, doneCallback){
 
         // Create view
         var _options = { qmlfile: 'PlayerShip.qml',
-                        qmlparameters: { x: options.x, y: options.y } };
+                        qmlparameters: { x: options.x } };
 
         ObjectFactory.createObject(_options, _onViewObjectCreated);
 

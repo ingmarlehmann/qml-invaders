@@ -309,7 +309,7 @@ function create(width, height){
             var objectName = "playerProjectile";
 
             var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
-            var projectileStartY = _height - (Constants.PLAYERSHIP_HEIGHT+30);
+            var projectileStartY = _player.getPosition().y - (Constants.PLAYERSHIP_HEIGHT/2);
 
             var completedCallback = function(newObject) {
                 if(newObject) {
@@ -332,7 +332,11 @@ function create(width, height){
         var createPlayer = function(){
             var onPlayerCreated = function(player){
                 _player = player;
-                _player.setPosition((_width/2)-(Constants.PLAYERSHIP_WIDTH/2), _height-(Constants.PLAYERSHIP_HEIGHT/2));
+
+                _player.setPosition(
+                            (_width/2)-(Constants.PLAYERSHIP_WIDTH/2),
+                            _height-(Constants.PLAYERSHIP_HEIGHT/2)-60);
+
                 _player.respawn();
 
                 _physicsEngine.registerPhysicsObject(_player.physicsObject);

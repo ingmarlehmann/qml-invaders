@@ -33,6 +33,12 @@ Rectangle {
             anchors.bottomMargin: 20
             spacing: 10
 
+            function onNumLivesChanged(topic, numLives){
+                firstLifeImage.visible = (numLives >= 1);
+                secondLifeImage.visible = (numLives >= 2);
+                thridLifeImage.visible = (numLives >= 3);
+            }
+
             Image{
                 id: firstLifeImage
                 source: "qrc:/content/images/ship.png"
@@ -51,6 +57,18 @@ Rectangle {
                 width: 25
                 height: 12
             }
+        }
+
+        Rectangle{
+            id: bottomDividerLine
+
+            width: Constants.GAME_WIDTH
+            height: 3
+
+            color: "green"
+
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 35
         }
 
         Column{
@@ -148,7 +166,7 @@ Rectangle {
         FPSMonitor{
             id: fpsMonitor
 
-            color: "white"
+            color: "red"
             font.pixelSize: 24
 
             x: parent.width - (fpsMonitor.contentWidth) - 10
@@ -197,9 +215,9 @@ Rectangle {
 
             gameEngine = Engine.create(parent.width, parent.height);
 
-//            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_POSITION, playerShip.positionChanged);
             PS.PubSub.subscribe(Constants.TOPIC_SCORE, scoreText.scoreChanged);
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_DIED, gameoverOverlay.playerDied);
+            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_NUM_LIVES_CHANGED, livesRow.onNumLivesChanged);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
@@ -253,6 +271,7 @@ Rectangle {
         if(gameEngine){
             gameEngine.newGame();
         }
+        gameoverOverlay.visible = false;
     }
 
     function leftPad(number, targetLength) {

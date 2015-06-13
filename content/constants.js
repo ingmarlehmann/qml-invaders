@@ -25,6 +25,7 @@ var INVADER_COLUMNS     = 10;
 // Event topics for PubSub
 var TOPIC_SCORE = "score";
 
+var TOPIC_PLAYER_NUM_LIVES_CHANGED = "player.num-lives-changed"
 var TOPIC_PLAYER_POSITION = "player.position";
 var TOPIC_PLAYER_HIT = "player.hit";
 var TOPIC_PLAYER_RESPAWNED = "player.respawned";
