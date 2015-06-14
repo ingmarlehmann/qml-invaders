@@ -3,8 +3,8 @@ import QtQuick 2.0
 Rectangle{
     id: enemyProjectileRoot
 
-    color: "red"
+    color: "#ff0000"
 
     width: 3
-    height: 20
+    height: 15
 }
