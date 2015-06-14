@@ -39,11 +39,19 @@ ApplicationWindow {
             anchors.centerIn: parent
         }
 
-        Credits{
-            id: credits
+        Highscores{
+            id: highscores
             visible: false
             focus: false
-            opacity: 0
+
+            anchors.fill: parent
+            anchors.centerIn: parent
+        }
+
+        Help{
+            id: help
+            visible: false
+            focus: false
 
             anchors.fill: parent
             anchors.centerIn: parent
@@ -52,7 +60,15 @@ ApplicationWindow {
 
     Component.onCompleted: {
         game.quit.connect( function(){
-            exitToMainMenu()
+            exitToMainMenu();
+        })
+
+        help.quit.connect( function(){
+            exitToMainMenu();
+        })
+
+        highscores.quit.connect( function(){
+            exitToMainMenu();
         })
 
         menu.menuItemSelected.connect( function(selectedMenuItem){
@@ -68,11 +84,13 @@ ApplicationWindow {
     {
         game.visible = false
         menu.visible = true
-        credits.visible = false
+        help.visible = false
+        highscores.visible = false;
 
         game.focus = false
-        credits.focus = false
         menu.focus = true
+        help.focus = false
+        highscores.focus = false;
     }
 
     function menuItemSelected(selectedMenuItem)
@@ -82,22 +100,40 @@ ApplicationWindow {
         }
         else if(selectedMenuItem === "New game"){
             menu.visible = false;
+            help.visible = false;
             game.visible = true;
+            highscores.visible = false;
 
             menu.focus = false;
+            help.focus = false;
             game.focus = true;
+            highscores.focus = false;
 
             game.newGame();
 
             //whiteScreen.opacity = 100;
         }
-        else if(selectedMenuItem === "Load game"){
-            // TODO: Implement
-            console.log("TODO: load game")
+        else if(selectedMenuItem === "Help"){
+            menu.visible = false;
+            help.visible = true;
+            game.visible = false;
+            highscores.visible = false;
+
+            menu.focus = false;
+            help.focus = true;
+            game.focus = false;
+            highscores.focus = false;
         }
         else if(selectedMenuItem === "Highscores"){
-            // TODO: Implement
-            console.log("TODO: Highscores")
+            menu.visible = false;
+            help.visible = false;
+            game.visible = false;
+            highscores.visible = true;
+
+            menu.focus = false;
+            help.focus = false;
+            game.focus = false;
+            highscores.focus = true;
         }
     }
 }

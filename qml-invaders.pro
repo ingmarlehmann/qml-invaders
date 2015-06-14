@@ -28,4 +28,5 @@ DISTFILES += \
     content/invaderLaserProjectile.js \
     content/invaderLaserProjectilePhysicsModel.js \
     content/playerLaserProjectile.js \
-    content/playerLaserProjectilePhysicsModel.js
+    content/playerLaserProjectilePhysicsModel.js \
+    content/Highscores.qml

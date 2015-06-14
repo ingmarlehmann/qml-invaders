@@ -32,8 +32,8 @@ Rectangle {
         id: menuModel
 
         ListElement{ text: "New game"; highlighted: false; }
-        ListElement{ text: "Load game"; highlighted: false; }
         ListElement{ text: "Highscores"; highlighted: false; }
+        ListElement{ text: "Help"; highlighted: false; }
         ListElement{ text: "Quit"; highlighted: false; }
     }
 

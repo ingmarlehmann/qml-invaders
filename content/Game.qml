@@ -166,7 +166,7 @@ Rectangle {
         FPSMonitor{
             id: fpsMonitor
 
-            color: "green"
+            color: "#00ff00"
             font.pixelSize: 24
 
             x: parent.width - (fpsMonitor.contentWidth) - 10
