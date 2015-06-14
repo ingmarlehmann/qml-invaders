@@ -22,6 +22,20 @@ Rectangle {
         }
     }
 
+    Text{
+        id: infoText
+
+        anchors.horizontalCenter: parent.horizontalCenter
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 20
+
+        font.pixelSize: 24
+        color: "#00ff00"
+
+        text: "Press ESCAPE to exit"
+    }
+
     Keys.onEscapePressed: {
         quit();
     }
