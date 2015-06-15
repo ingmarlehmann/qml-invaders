@@ -18,6 +18,7 @@ Rectangle{
             id: descriptionText
             anchors.fill: parent
             text: description
+            font.pixelSize: 20
             color: "#00ff00"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
@@ -36,6 +37,7 @@ Rectangle{
             id: keyText
             anchors.fill: parent
             text: key
+            font.pixelSize: 20
             color: "#00ff00"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
