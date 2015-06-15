@@ -30,5 +30,4 @@ DISTFILES += \
     content/playerLaserProjectile.js \
     content/playerLaserProjectilePhysicsModel.js \
     content/Highscores.qml \
-    content/KeyboardShortcutDescription.qml \
-    content/KeyboardShortcutKey.qml
+    content/KeybindingDelegate.qml

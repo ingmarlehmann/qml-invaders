@@ -11,53 +11,24 @@ Rectangle {
 
     signal quit()
 
-    GridView{
+    Column{
         id: grid
-
-        width: parent.width*0.7
-        height: parent.height*0.7
-
         anchors.centerIn: parent
 
-        cellWidth: width/2
-        cellHeight: 28
+        width: parent.width*0.7
 
-        model: ListModel{
-            ListElement { name: "ACTION" }
-            ListElement { name: "KEY" }
-
-            ListElement { name: "Move right" }
-            ListElement { name: "Right" }
-
-            ListElement { name: "Move left" }
-            ListElement { name: "Left" }
-
-            ListElement { name: "Shoot" }
-            ListElement { name: "Space" }
-
-            ListElement { name: "Back" }
-            ListElement { name: "Escape" }
-
-            ListElement { name: "Toggle FPS counter" }
-            ListElement { name: "F" }
-
-            ListElement { name: "Toggle physics debug" }
-            ListElement { name: "P" }
-        }
-
-        delegate: Rectangle{
-            width: grid.cellWidth
-            height: grid.cellHeight
-            border.color: "#00ff00"
-            border.width: 1
-            color: (index === 0 || index === 1) ? "green" : "black"
-
-            Text{
-                anchors.fill: parent
-                text: name
-                color: "#00ff00"
-                horizontalAlignment: Text.AlignHCenter
+        Repeater{
+            model: ListModel{
+                ListElement { description: "ACTION"; key: "KEY" }
+                ListElement { description: "Move right"; key: "Right" }
+                ListElement { description: "Move left"; key: "Left" }
+                ListElement { description: "Shoot"; key: "Space" }
+                ListElement { description: "Back"; key: "Escape" }
+                ListElement { description: "Toggle FPS counter"; key: "F" }
+                ListElement { description: "Toggle physics debug"; key: "P" }
             }
+
+            delegate: KeybindingDelegate{ width: parent.width }
         }
     }
 
