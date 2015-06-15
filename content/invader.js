@@ -151,7 +151,23 @@ function create(options, doneCallback) {
         var _onCollision = function(collidingObject){
             //console.log("DEBUG: Invader was hit by '" + collidingObject + "'");
             _emitEvent("death", null);
+            _animateExplosion();
             _exports.deleteLater();
+        }
+
+        var _animateExplosion = function(){
+            function onExplosionAnimationCreated(object){
+                if(object === undefined || object === null){
+                    console.log("failed to spawn explosion!");
+                }
+            }
+
+            var pos = _physicsModel.physicsBody.getPosition();
+
+            var options = { qmlfile: 'Explosion.qml',
+                            qmlparameters: { x: pos.x, y: pos.y } };
+
+            ObjectFactory.createObject(options, onExplosionAnimationCreated);
         }
 
         var _onViewObjectCreated = function(object){

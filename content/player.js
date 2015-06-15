@@ -116,6 +116,7 @@ function create(options, doneCallback){
             PS.PubSub.publish(Constants.TOPIC_PLAYER_NUM_LIVES_CHANGED, lives);
 
             if(_lives <= 0){
+                _animateExplosion();
                 PS.PubSub.publish(Constants.TOPIC_PLAYER_DIED, 1);
                 _exports.deleteLater();
             }
@@ -124,6 +125,21 @@ function create(options, doneCallback){
         var _onCollision = function(collidingObject){
             //console.log("Player was hit by '" + collidingObject + "'");
             _exports.hit(1);
+        }
+
+        var _animateExplosion = function(){
+            function onExplosionAnimationCreated(object){
+                if(object === undefined || object === null){
+                    console.log("failed to spawn explosion!");
+                }
+            }
+
+            var pos = _physicsModel.physicsBody.getPosition();
+
+            var options = { qmlfile: 'Explosion.qml',
+                            qmlparameters: { x: pos.x, y: pos.y } };
+
+            ObjectFactory.createObject(options, onExplosionAnimationCreated);
         }
 
         var _onViewObjectCreated = function(object){

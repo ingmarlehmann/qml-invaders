@@ -6,5 +6,7 @@
         <file>content/images/space_invaders_logo.png</file>
         <file>content/images/ship.png</file>
         <file>content/images/default.gif</file>
+        <file>content/images/particletexture.jpg</file>
+        <file>content/images/metaball-coloured.png</file>
     </qresource>
 </RCC>

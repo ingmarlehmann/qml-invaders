@@ -68,12 +68,13 @@ function _finishCreation(options, component, callback) {
     }
 
     var sprite;
+    var parent = (options.parent === undefined) ? rootObject : options.parent;
 
     if(options.qmlparameters !== null && options.qmlparameters !== undefined){
-        sprite = component.createObject(rootObject, options.qmlparameters);
+        sprite = component.createObject(parent, options.qmlparameters);
     }
     else{
-        sprite = component.createObject(rootObject);
+        sprite = component.createObject(parent);
     }
 
     if(sprite === null) {
