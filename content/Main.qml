@@ -30,7 +30,7 @@ ApplicationWindow {
             anchors.centerIn: parent
         }
 
-        Game{
+        GameView{
             id: game
             visible: false
             focus: false

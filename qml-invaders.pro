@@ -32,3 +32,8 @@ include(deployment.pri)
 #    content/Highscores.qml \
 #    content/KeybindingDelegate.qml \
 #    content/Explosion.qml
+
+DISTFILES += \
+    content/ActiveGameView.qml \
+    content/GameOverView.qml \
+    content/GameDebugOverlay.qml
