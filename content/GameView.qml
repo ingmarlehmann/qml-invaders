@@ -48,7 +48,6 @@ Rectangle {
 
     GameActiveView{
         id: gameActiveView
-
         visible: false
 
         color: "black"
@@ -59,7 +58,6 @@ Rectangle {
 
     GameWonView{
         id: gameWonView
-
         visible: false
 
         color: "black"
@@ -70,10 +68,9 @@ Rectangle {
 
     GameOverView{
         id: gameOverView
-
         visible: false
 
-        opacity: 0.8
+        color: "black"
 
         anchors.fill: parent
         anchors.centerIn: parent
@@ -81,11 +78,10 @@ Rectangle {
 
     GameDebugOverlay{
         id: gameDebugOverlay
-
         visible: false
 
-        //opacity: 0.3
-        //visible: false
+        color: "transparent"
+
         anchors.fill: parent
         anchors.centerIn: parent
     }
@@ -165,8 +161,12 @@ Rectangle {
     }
 
     Keys.onPressed: {
-        if(gameEngine){
-            gameEngine.keyDown(event);
+        if(gameRoot.state === 'game active'){
+            if(gameEngine){
+                gameEngine.keyDown(event);
+            }
+        } else if(gameRoot.state === 'game over' || gameRoot.state === 'game won'){
+            doQuit();
         }
     }
 
