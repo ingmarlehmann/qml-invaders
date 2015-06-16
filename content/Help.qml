@@ -15,7 +15,7 @@ Rectangle {
         id: grid
         anchors.centerIn: parent
 
-        width: parent.width*0.7
+        width: parent.width*0.8
 
         Repeater{
             model: ListModel{
