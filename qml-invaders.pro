@@ -34,6 +34,7 @@ include(deployment.pri)
 #    content/Explosion.qml
 
 DISTFILES += \
-    content/ActiveGameView.qml \
     content/GameOverView.qml \
-    content/GameDebugOverlay.qml
+    content/GameDebugOverlay.qml \
+    content/GameWonView.qml \
+    content/GameActiveView.qml

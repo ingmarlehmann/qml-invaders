@@ -3,7 +3,7 @@ import QtQuick 2.0
 import "constants.js" as Constants
 
 Rectangle{
-    id: gameCanvas
+    id: root
     color: "black"
 
     function onHighScoreChanged(messageTopic, newScore) { hiScoreText.text = helper.leftPad(newScore, 4); }

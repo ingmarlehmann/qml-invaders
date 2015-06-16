@@ -5,12 +5,11 @@ Rectangle{
     color: "black"
 
     Text{
-        id: gameOverText
+        id: text
 
-        opacity: 1.0
-
-        text: "Game Over"
-        color: "red"
+        text: "Good job! <br>Alien asses have been kicked"
+        horizontalAlignment: Text.AlignHCenter
+        color: "#00ff00"
 
         font.pixelSize: 48
 
@@ -28,7 +27,7 @@ Rectangle{
         anchors.bottomMargin: 20
 
         font.pixelSize: 24
-        color: "red"
+        color: "#00ff00"
 
         text: "Press any key to exit"
     }

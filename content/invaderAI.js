@@ -164,8 +164,9 @@ function create(physicsEngine, invadersToControl){
                 }
             }
 
-            // All invaders are dead.
+            // All invaders are dead. This event needs to be documented better.
             if(bottomInvaders.length === 0){
+                PS.PubSub.publish(Constants.TOPIC_ALL_INVADERS_DEAD, true);
                 return;
             }
 

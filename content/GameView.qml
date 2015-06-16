@@ -21,29 +21,44 @@ Rectangle {
     states: [
         State{
             name: "pre game"
-            PropertyChanges { target: activeGameView; visible: false; }
+            PropertyChanges { target: gameActiveView; visible: false; }
             PropertyChanges { target: gameOverView; visible: false; }
+            PropertyChanges { target: gameWonView; visible: false; }
         },
 
         State{
             name: "game active"
-            PropertyChanges { target: activeGameView; visible: true; }
+            PropertyChanges { target: gameActiveView; visible: true; }
             PropertyChanges { target: gameOverView; visible: false; }
+            PropertyChanges { target: gameWonView; visible: false; }
         },
         State{
             name: "game won"
-            PropertyChanges { target: activeGameView; visible: false; }
+            PropertyChanges { target: gameActiveView; visible: false; }
             PropertyChanges { target: gameOverView; visible: false; }
+            PropertyChanges { target: gameWonView; visible: true; }
         },
         State{
             name: "game over"
-            PropertyChanges { target: activeGameView; visible: false; }
+            PropertyChanges { target: gameActiveView; visible: false; }
             PropertyChanges { target: gameOverView; visible: true; }
+            PropertyChanges { target: gameWonView; visible: false; }
         }
     ]
 
-    ActiveGameView{
-        id: activeGameView
+    GameActiveView{
+        id: gameActiveView
+
+        visible: false
+
+        color: "black"
+
+        anchors.fill: parent
+        anchors.centerIn: parent
+    }
+
+    GameWonView{
+        id: gameWonView
 
         visible: false
 
@@ -59,6 +74,7 @@ Rectangle {
         visible: false
 
         opacity: 0.8
+
         anchors.fill: parent
         anchors.centerIn: parent
     }
@@ -111,14 +127,15 @@ Rectangle {
 
     onVisibleChanged: {
         if(visible){
-            ObjectFactory.setRootQmlObject(activeGameView);
+            ObjectFactory.setRootQmlObject(gameActiveView);
 
             gameEngine = Engine.create(parent.width, parent.height);
 
-            PS.PubSub.subscribe(Constants.TOPIC_SCORE, activeGameView.onScoreChanged);
-            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_NUM_LIVES_CHANGED, activeGameView.onNumLivesChanged);
+            PS.PubSub.subscribe(Constants.TOPIC_SCORE, gameActiveView.onScoreChanged);
+            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_NUM_LIVES_CHANGED, gameActiveView.onNumLivesChanged);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_DIED, gameRoot.onPlayerDied);
+            PS.PubSub.subscribe(Constants.TOPIC_ALL_INVADERS_DEAD, gameRoot.onAllInvadersDead);
 
             PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
@@ -181,6 +198,10 @@ Rectangle {
 
     function onPlayerDied(messageTopic, value){
         gameRoot.state = 'game over';
+    }
+
+    function onAllInvadersDead(messageTopic, value){
+        gameRoot.state = 'game won';
     }
 
     function doQuit(){
