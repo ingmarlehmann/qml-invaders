@@ -7,11 +7,17 @@ function create(options, doneCallback){
 
         var _exports = {};
 
+        // ----------------
+        // Private variables
+        // ----------------
         var _view = null;
         var _physicsModel = null;
 
         var _deleteMe = false;
 
+        // ----------------
+        // Public methods
+        // ----------------
         _exports.deleteLater = function(){
             _physicsModel.deleteLater();
             _deleteMe = true;
@@ -81,6 +87,9 @@ function create(options, doneCallback){
             return _physicsModel.physicsBody.getPosition();
         }
 
+        // ----------------
+        // Private methods
+        // ----------------
         var _onCollision = function(collidingObject){
             //console.log("player laser projectile was hit!");
             _exports.deleteLater();
@@ -123,6 +132,10 @@ function create(options, doneCallback){
                 doneCallback(_exports);
             }
         }
+
+        // ----------------
+        // Constructor
+        // ----------------
 
         // Create view
         var _options = { qmlfile: 'PlayerProjectile.qml',

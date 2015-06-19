@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtQuick.Layouts 1.1
 
 Rectangle {
-    id: helpRoot
+    id: root
 
     anchors.fill: parent
     anchors.centerIn: parent

@@ -4,10 +4,17 @@ function create(){
     var engine = (function(){
 
         var _exports = {};
+
+        // ----------------
+        // Private variables
+        // ----------------
         var _physicsObjects = [];
         var _physicsDebugBoxes = [];
         var _physicsDebugActive = false;
 
+        // ----------------
+        // Public methods
+        // ----------------
         _exports.applyVisitor = function(visitor){
             var i;
             for(i=0;i<_objects.length; ++i){
@@ -60,6 +67,9 @@ function create(){
             _physicsDebugActive = true;
         }
 
+        // ----------------
+        // Private methods
+        // ----------------
         var _createPhysicsDebugBox = function(physicsObject){
             var callback, options;
 

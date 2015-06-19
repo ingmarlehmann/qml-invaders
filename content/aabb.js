@@ -6,7 +6,9 @@ function create(width, height, position) {
 
         var _exports = {};
 
+        // ----------------
         // Private variables
+        // ----------------
         var _min = Vector2d.create(0, 0);
         var _max = Vector2d.create(0, 0);
 
@@ -14,7 +16,9 @@ function create(width, height, position) {
         var _height = height;
         var _position = position;
 
-        // private methods
+        // ----------------
+        // Private methods
+        // ----------------
         var _updateMinMax = function(){
             _min = Vector2d.create(_position.x, _position.y);
             _max = Vector2d.create(_position.x + _width, _position.y + _height);
@@ -22,7 +26,9 @@ function create(width, height, position) {
             _exports.max = _max;
         }
 
+        // ----------------
         // Public methods
+        // ----------------
         _exports.setPosition = function(x, y){
             _position = Vector2d.create(x, y);
             _updateMinMax();
@@ -88,12 +94,16 @@ function create(width, height, position) {
             return _height;
         }
 
+        // ----------------
         // Public variables
+        // ----------------
         _exports.type = 'aabb';
         _exports.max = _max;
         _exports.min = _min;
 
+        // ----------------
         // Constructor
+        // ----------------
         if(position !== "undefined" && position !== null){
             _position = position;
         }

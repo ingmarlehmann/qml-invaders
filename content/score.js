@@ -6,8 +6,15 @@ function create(initialScore){
     var score = (function(initialScore){
 
         var _exports = {};
+
+        // ----------------
+        // Private variables
+        // ----------------
         var _score = initialScore;
 
+        // ----------------
+        // Public methods
+        // ----------------
         _exports.getScore = function(){
             return _score;
         }

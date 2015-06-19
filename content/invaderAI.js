@@ -28,7 +28,9 @@ function create(physicsEngine, invadersToControl){
 
         var _exports = {};
 
-        // Private member variables
+        // ----------------
+        // Private variables
+        // ----------------
         var _moveDir = Constants.MOVEDIR_RIGHT;
         var _prevMoveDir = Constants.MOVEDIR_LEFT;
 
@@ -45,7 +47,9 @@ function create(physicsEngine, invadersToControl){
         var _enemyProjectiles = [];
         var _physicsEngine = physicsEngine;
 
+        // ----------------
         // Public methods
+        // ----------------
 
         // Clean up all data created by InvaderAI.
         // Always call this method before releasing the InvaderAI object.
@@ -69,7 +73,9 @@ function create(physicsEngine, invadersToControl){
             _deleteDeadObjects(deltaTime);
         }
 
+        // ----------------
         // Private methods
+        // ----------------
         var _updateInvaderWeaponSystems = function(deltaTime){
             if((_shootTimer + _shootInterval) <= _timeElapsed){
                 _shootTimer = _timeElapsed;

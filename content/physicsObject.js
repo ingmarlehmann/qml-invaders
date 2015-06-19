@@ -6,8 +6,14 @@ function create(options,
                                   collisionCallback){
         var _exports = {};
 
+        // ----------------
+        // Private variables
+        // ----------------
         var _deleteMe = false;
 
+        // ----------------
+        // Public methods
+        // ----------------
         _exports.deleteLater = function(){
             _deleteMe = true;
         }
@@ -16,6 +22,9 @@ function create(options,
             return _deleteMe;
         }
 
+        // ----------------
+        // Public variables
+        // ----------------
         _exports.physicsBody = options.physicsBody;
         _exports.collisionGroup = options.collisionGroup;
         _exports.testCollisionsAgainst = options.testCollisionsAgainst;

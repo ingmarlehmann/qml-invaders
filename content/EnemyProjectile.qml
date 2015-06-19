@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle{
-    id: enemyProjectileRoot
+    id: root
 
     color: "#ff0000"
 

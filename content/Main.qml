@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.2
 import "constants.js" as Constants
 
 ApplicationWindow {
-    id: mainWindow
+    id: root
 
     title: qsTr("QML Invaders")
 

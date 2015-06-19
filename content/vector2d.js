@@ -5,6 +5,9 @@ function create(x, y) {
 
         var _exports = {};
 
+        // ----------------
+        // Public variables
+        // ----------------
         if(x !== undefined && x !== null){
             _exports.x = x;
         }

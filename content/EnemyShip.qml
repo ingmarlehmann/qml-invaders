@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Image{
-    id: enemyShipRoot
+    id: root
 
     width: 50
     height: 50

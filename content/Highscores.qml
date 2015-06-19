@@ -1,7 +1,7 @@
 import QtQuick 2.0
 
 Rectangle {
-    id: highscoresRoot
+    id: root
 
     anchors.fill: parent
     anchors.centerIn: parent

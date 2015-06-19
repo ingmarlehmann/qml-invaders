@@ -8,6 +8,9 @@ function create(options, doneCallback){
 
         var _exports = {};
 
+        // ----------------
+        // Private variables
+        // ----------------
         var _initialLives = options.lives;
         var _lives = options.lives;
 
@@ -16,8 +19,14 @@ function create(options, doneCallback){
 
         var _deleteMe = false;
 
+        // ----------------
+        // Public variables
+        // ----------------
         _exports.moveDir = Constants.MOVEDIR_NONE;
 
+        // ----------------
+        // Public methods
+        // ----------------
         _exports.deleteLater = function(){
             _physicsModel.deleteLater();
             _deleteMe = true;
@@ -110,6 +119,9 @@ function create(options, doneCallback){
             return _lives;
         }
 
+        // ----------------
+        // Private methods
+        // ----------------
         var _setLives = function(lives){
             _lives = lives;
 
@@ -173,6 +185,10 @@ function create(options, doneCallback){
                 doneCallback(_exports);
             }
         }
+
+        // ----------------
+        // Constructor
+        // ----------------
 
         // Create view
         var _options = { qmlfile: 'PlayerShip.qml',
