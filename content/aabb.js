@@ -4,59 +4,47 @@ function create(width, height, position) {
 
     var aabb = (function(width, height, position){
 
-        var _exports = {};
-
-        // ----------------
-        // Private variables
-        // ----------------
         var _min = Vector2d.create(0, 0);
         var _max = Vector2d.create(0, 0);
 
-        var _width = width;
-        var _height = height;
-        var _position = position;
+        var _width;
+        var _height;
+        var _position;
+        var _type;
 
-        // ----------------
-        // Private methods
-        // ----------------
-        var _updateMinMax = function(){
+        function updateMinMax(){
             _min = Vector2d.create(_position.x, _position.y);
             _max = Vector2d.create(_position.x + _width, _position.y + _height);
-            _exports.min = _min;
-            _exports.max = _max;
         }
 
-        // ----------------
-        // Public methods
-        // ----------------
-        _exports.setPosition = function(x, y){
+        function setPosition(x, y){
             _position = Vector2d.create(x, y);
-            _updateMinMax();
+            updateMinMax();
         }
 
-        _exports.setX = function(x){
+        function setX(x){
             _position.x = x;
-            _updateMinMax();
+            updateMinMax();
         }
 
-        _exports.setY = function(y){
+        function setY(y){
             _position.y = y;
-            _updateMinMax();
+            updateMinMax();
         }
 
-        _exports.getX = function(){
+        function getX(){
             return _position.x;
         }
 
-        _exports.getY = function(){
+        function getY(){
             return _position.y;
         }
 
-        _exports.merge = function(aabb){
-            _min.x = Math.min(aabb.min.x, _min.x);
-            _max.x = Math.max(aabb.max.x, _max.x);
-            _min.y = Math.min(aabb.min.y, _min.y);
-            _max.y = Math.max(aabb.max.y, _max.y);
+        function merge(aabb){
+            _min.x = Math.min(aabb.getMin().x, _min.x);
+            _max.x = Math.max(aabb.getMax().x, _max.x);
+            _min.y = Math.min(aabb.getMin().y, _min.y);
+            _max.y = Math.max(aabb.getMax().y, _max.y);
 
             _width = Math.abs(_max.x - _min.x);
             _height = Math.abs(_max.y - _min.y);
@@ -64,74 +52,93 @@ function create(width, height, position) {
             return this;
         }
 
-        _exports.getPosition = function(){
+        function getPosition(){
             return { x: _position.x, y: _position.y };
         }
 
-        _exports.getMin = function(){
+        function getMin(){
             return _min;
         }
 
-        _exports.getMax = function(){
+        function getMax(){
             return _max;
         }
 
-        _exports.setWidth = function(width){
+        function setWidth(width){
             _width = width;
-            _updateMinMax();
+            updateMinMax();
         }
 
-        _exports.setHeight = function(height){
+        function setHeight(height){
             _height = height;
-            _updateMinMax();
+            updateMinMax();
         }
 
-        _exports.getWidth = function(){
+        function getWidth(){
             return _width;
         }
 
-        _exports.getHeight = function(){
+        function getHeight(){
             return _height;
         }
 
-        // ----------------
-        // Public variables
-        // ----------------
-        _exports.type = 'aabb';
-        _exports.max = _max;
-        _exports.min = _min;
+        function construct(){
+            _type = 'aabb';
+            if(position !== undefined && position !== null){
+                _position = position;
+            }
+            else{
+                _position = Vector2d.create(0, 0);
+            }
 
-        // ----------------
-        // Constructor
-        // ----------------
-        if(position !== "undefined" && position !== null){
-            _position = position;
-        }
-        else{
-            _position = Vector2d.create(0, 0);
-        }
+            if(width !== undefined && width !== null){
+                _width = width;
+            }
+            else{
+                _width = 0;
+            }
 
-        if(width !== undefined && width !== null){
-            _width = width;
-        }
-        else{
-            _width = 0;
-        }
-
-        if(height !== undefined && height !== null){
-            _height = height;
-        }
-        else{
-            _height = 0;
+            if(height !== undefined && height !== null){
+                _height = height;
+            }
+            else{
+                _height = 0;
+            }
         }
 
-        _updateMinMax();
+        construct();
+        updateMinMax();
 
-        // Return self
-        return _exports;
+        return {
+            // Public methods:
+            getPosition: getPosition,
+            setPosition: setPosition,
+
+            getX: getX,
+            getY: getY,
+
+            setX: setX,
+            setY: setY,
+
+            getMin: getMin,
+            getMax: getMax,
+
+            getWidth: getWidth,
+            getHeight: getHeight,
+
+            setWidth: setWidth,
+            setHeight: setHeight,
+
+            merge: merge,
+            
+            type: 'aabb',
+
+            // Public variables:
+            //min: _min,
+            //max: _max,
+        };
 
     }(width, height, position));
 
     return aabb;
 }
-

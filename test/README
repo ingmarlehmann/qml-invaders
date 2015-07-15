@@ -1,0 +1,4 @@
+Run tests by doing:
+$ cd test (this folder)
+$ qmake && make
+$ ./testrunner

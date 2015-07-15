@@ -4,4 +4,4 @@ Makefile
 *.o
 qml-invaders
 qrc_resources.*
-
+testrunner

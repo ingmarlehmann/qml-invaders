@@ -228,7 +228,7 @@ function create(physicsEngine, invadersToControl){
 
             //console.log("moving right. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
 
-            if((aabb.max.x + 5) >= 690){
+            if((aabb.getMax().x + 5) >= 690){
                 return false;
             }
 
@@ -252,7 +252,7 @@ function create(physicsEngine, invadersToControl){
             }
             //console.log("moving left. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
 
-            if(Math.max(0, aabb.min.x - 5) === 0){
+            if(Math.max(0, aabb.getMin().x - 5) === 0){
                 return false;
             }
 
