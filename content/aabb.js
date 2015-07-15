@@ -10,7 +10,6 @@ function create(width, height, position) {
         var _width;
         var _height;
         var _position;
-        var _type;
 
         function updateMinMax(){
             _min = Vector2d.create(_position.x, _position.y);
@@ -82,8 +81,11 @@ function create(width, height, position) {
             return _height;
         }
 
+        function getType(){
+          return 'aabb';
+        }
+
         function construct(){
-            _type = 'aabb';
             if(position !== undefined && position !== null){
                 _position = position;
             }
@@ -130,12 +132,8 @@ function create(width, height, position) {
             setHeight: setHeight,
 
             merge: merge,
-            
-            type: 'aabb',
 
-            // Public variables:
-            //min: _min,
-            //max: _max,
+            getType: getType
         };
 
     }(width, height, position));
