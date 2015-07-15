@@ -40,15 +40,24 @@ function create(width, height, position) {
         }
 
         function merge(aabb){
-            _min.x = Math.min(aabb.getMin().x, _min.x);
-            _max.x = Math.max(aabb.getMax().x, _max.x);
-            _min.y = Math.min(aabb.getMin().y, _min.y);
-            _max.y = Math.max(aabb.getMax().y, _max.y);
+            var ret = create(_width, _height, _position);
 
-            _width = Math.abs(_max.x - _min.x);
-            _height = Math.abs(_max.y - _min.y);
+            var min = Vector2d.create(
+              Math.min(aabb.getMin().x, ret.getMin().x),
+              Math.min(aabb.getMin().y, ret.getMin().y)
+            );
 
-            return this;
+            var max = Vector2d.create(
+              Math.max(aabb.getMax().x, ret.getMax().x),
+              Math.max(aabb.getMax().y, ret.getMax().y)
+            );
+
+            ret.setMin(min);
+            ret.setMax(max);
+            ret.setWidth(Math.abs(max.x - min.x));
+            ret.setHeight(Math.abs(max.y - min.y));
+
+            return ret;
         }
 
         function getPosition(){
@@ -61,6 +70,16 @@ function create(width, height, position) {
 
         function getMax(){
             return _max;
+        }
+
+        function setMin(min){
+            _min = min;
+            updateMinMax();
+        }
+
+        function setMax(max){
+            _max = max;
+            updateMinMax();
         }
 
         function setWidth(width){
@@ -106,10 +125,11 @@ function create(width, height, position) {
             else{
                 _height = 0;
             }
+
+            updateMinMax();
         }
 
         construct();
-        updateMinMax();
 
         return {
             // Public methods:
@@ -121,6 +141,9 @@ function create(width, height, position) {
 
             setX: setX,
             setY: setY,
+
+            setMin: setMin,
+            setMax: setMax,
 
             getMin: getMin,
             getMax: getMax,
