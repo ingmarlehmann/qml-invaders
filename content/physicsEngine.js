@@ -205,8 +205,8 @@ function create(){
         }
 
         var _collides = function(physicsObject1, physicsObject2){
-            if(physicsObject1.type === 'aabb' &&
-                    physicsObject2.type === 'aabb'){
+            if(physicsObject1.getType() === 'aabb' &&
+                    physicsObject2.getType() === 'aabb'){
                 return _testAABBvsAABB(physicsObject1, physicsObject2);
             }
 
@@ -219,13 +219,13 @@ function create(){
             //console.log("DEBUG: b min: x" + b.min.x + " y " + b.min.y);
             //console.log("DEBUG: b max: x" + b.max.x + " y " + b.max.y);
 
-            if (a.max.x < b.min.x)
+            if (a.getMax().x < b.getMin().x)
                 return false; // a is left of b
-            if (a.min.x > b.max.x)
+            if (a.getMin().x > b.getMax().x)
                 return false; // a is right of b
-            if (a.max.y < b.min.y)
+            if (a.getMax().y < b.getMin().y)
                 return false; // a is above b
-            if (a.min.y > b.max.y)
+            if (a.getMin().y > b.getMax().y)
                 return false; // a is below b
 
             return true;
