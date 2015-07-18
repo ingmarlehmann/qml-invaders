@@ -10,6 +10,8 @@ RESOURCES += \
 SOURCES += main.cpp
 
 linux-g++{
+    QMAKE_POST_LINK += $$quote(mkdir -p ../build/plugins/CommonJS ../build/$$escape_expand(\n\t))
+    
     COMMON_JS_FILES += \
         ../external/commonjs/plugin/libplugin.so \
         ../external/commonjs/plugin/qmldir \
