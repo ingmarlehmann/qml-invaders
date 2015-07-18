@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="/">
+    <qresource prefix="">
         <file>content/images/invader1.png</file>
         <file>content/images/invader2.png</file>
         <file>content/images/invader3.png</file>

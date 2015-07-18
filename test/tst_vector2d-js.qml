@@ -1,7 +1,7 @@
 import QtQuick 2.3
 import QtTest 1.0
 
-import "../content/vector2d.js" as Vector2d
+import "../build/content/vector2d.js" as Vector2d
 
 TestCase {
     name: "Vector2d"

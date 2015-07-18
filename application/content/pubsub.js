@@ -1,5 +1,5 @@
 .pragma library
-.import CommonJS 0.1 as CJS
+.import CommonJS 0.2 as CJS
 
 /*
 Copyright (c) 2010,2011,2012,2013,2014 Morgan Roderick http://roderick.dk

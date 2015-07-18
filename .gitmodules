@@ -1,0 +1,3 @@
+[submodule "external/commonjs"]
+	path = external/commonjs
+	url = https://github.com/ingmarolsson/qml-commonjs.git
