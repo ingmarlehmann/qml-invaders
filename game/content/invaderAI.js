@@ -26,8 +26,6 @@
 function create(physicsEngine, invadersToControl){
     var invaderAI = (function(physicsEngine, invadersToControl){
 
-        var _exports = {};
-
         // ----------------
         // Private variables
         // ----------------
@@ -47,13 +45,15 @@ function create(physicsEngine, invadersToControl){
         var _enemyProjectiles = [];
         var _physicsEngine = physicsEngine;
 
+        var _numInvadersAlive = invadersToControl.length;
+
         // ----------------
         // Public methods
         // ----------------
 
         // Clean up all data created by InvaderAI.
         // Always call this method before releasing the InvaderAI object.
-        _exports.destroy = function(){
+        function destroy(){
             var i;
 
             for(i=0; i< _enemyProjectiles.length; ++i){
@@ -62,38 +62,37 @@ function create(physicsEngine, invadersToControl){
         }
 
         // Update the InvaderAI one step.
-        _exports.update = function(deltaTime){
-
+        function update(deltaTime){
             _timeElapsed += deltaTime;
 
-            _updateInvaderMovement(deltaTime);
-            _updateInvaderWeaponSystems(deltaTime);
-            _animateInvaderProjectiles(deltaTime);
+            updateInvaderMovement(deltaTime);
+            updateInvaderWeaponSystems(deltaTime);
+            animateInvaderProjectiles(deltaTime);
 
-            _deleteDeadObjects(deltaTime);
+            deleteDeadObjects(deltaTime);
         }
 
         // ----------------
         // Private methods
         // ----------------
-        var _updateInvaderWeaponSystems = function(deltaTime){
+        function updateInvaderWeaponSystems(deltaTime){
             if((_shootTimer + _shootInterval) <= _timeElapsed){
                 _shootTimer = _timeElapsed;
 
-                _fireInvaderWeaponSystems();
+                fireInvaderWeaponSystems();
             }
         }
 
-        var _updateInvaderMovement = function(deltaTime){
+        function updateInvaderMovement(deltaTime){
             // Time to move pack?
             if((_moveTimer + _moveInterval) <= _timeElapsed){
                 _moveTimer = _timeElapsed;
 
-                _moveInvaderPack();
+                moveInvaderPack();
             }
         }
 
-        var _animateInvaderProjectiles = function(deltaTime){
+        function animateInvaderProjectiles(deltaTime){
             var i, oldYPosition, newYPosition;
 
             // update enemy projectile movements.
@@ -112,7 +111,7 @@ function create(physicsEngine, invadersToControl){
             }
         }
 
-        var _deleteDeadObjects = function(deltaTime){
+        function deleteDeadObjects(deltaTime){
             var i;
 
             for(i=(_enemyProjectiles.length-1); i >= 0; --i){
@@ -123,11 +122,11 @@ function create(physicsEngine, invadersToControl){
             }
         }
 
-        var _moveInvaderPack = function(){
+        function moveInvaderPack(){
             // Is pack moving left or right?
             if(_moveDir === Constants.MOVEDIR_RIGHT || _moveDir === Constants.MOVEDIR_LEFT){
                 // Try moving in the set move direction.
-                if(!_move(_moveDir)){
+                if(!move(_moveDir)){
                     // The move failed, we hit a wall, change move direction.
                     if(_moveDir === Constants.MOVEDIR_RIGHT){
                         _prevMoveDir = _moveDir;
@@ -142,7 +141,7 @@ function create(physicsEngine, invadersToControl){
             // Is pack moving down?
             if(_moveDir === Constants.MOVEDIR_DOWN){
                 // move one step down
-                if(!_move(_moveDir)){
+                if(!move(_moveDir)){
                     console.log("ERROR; Can't move invader pack");
                 }
 
@@ -155,7 +154,7 @@ function create(physicsEngine, invadersToControl){
             }
         }
 
-        var _fireInvaderWeaponSystems = function(){
+        function fireInvaderWeaponSystems(){
             // find all the bottom invaders.
             var row, column;
             var bottomInvaders = [];
@@ -170,9 +169,8 @@ function create(physicsEngine, invadersToControl){
                 }
             }
 
-            // All invaders are dead. This event needs to be documented better.
+            // All invaders are dead.
             if(bottomInvaders.length === 0){
-                PS.PubSub.publish(Constants.TOPIC_ALL_INVADERS_DEAD, true);
                 return;
             }
 
@@ -182,15 +180,13 @@ function create(physicsEngine, invadersToControl){
 
             PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
 
-            _createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
+            createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
                                   randomInvader.view.y + (Constants.ENEMYSHIP_HEIGHT));
         }
 
         // Access level: Private
         // Description: Create a new enemy projectile.
-        var _createEnemyProjectile = function(positionX,
-                                             positionY){
-
+        function createEnemyProjectile(positionX, positionY){
             var objectName = "enemyProjectile";
             var onProjectileCreated = function(newObject) {
                 if(newObject) {
@@ -206,22 +202,22 @@ function create(physicsEngine, invadersToControl){
                         onProjectileCreated);
         }
 
-        var _move = function(moveDir){
+        function move(moveDir){
             if(moveDir === Constants.MOVEDIR_LEFT){
-                return _moveLeft();
+                return moveLeft();
             }
             else if(moveDir === Constants.MOVEDIR_RIGHT){
-                return _moveRight();
+                return moveRight();
             }
             else if(moveDir === Constants.MOVEDIR_DOWN){
-                return _moveDown();
+                return moveDown();
             }
         }
 
-        var _moveRight = function(){
+        function moveRight(){
             var column = 0, row = 0;
 
-            var aabb = _getInvaderPackBoundingBox();
+            var aabb = getInvaderPackBoundingBox();
             if(aabb === undefined){
                 return; // all invaders are dead.
             }
@@ -243,10 +239,10 @@ function create(physicsEngine, invadersToControl){
             return true;
         }
 
-        var _moveLeft = function(){
+        function moveLeft(){
             var column = 0, row = 0;
 
-            var aabb = _getInvaderPackBoundingBox();
+            var aabb = getInvaderPackBoundingBox();
             if(aabb === undefined){
                 return; // all invaders are dead.
             }
@@ -267,7 +263,7 @@ function create(physicsEngine, invadersToControl){
             return true;
         }
 
-        var _moveDown = function(){
+        function moveDown(){
             var column = 0, row = 0;
 
             //var aabb = _getInvaderPackBoundingBox();
@@ -284,8 +280,7 @@ function create(physicsEngine, invadersToControl){
             return true;
         }
 
-        var _getInvaderPackBoundingBox = function(){
-
+        function getInvaderPackBoundingBox(){
             var row, column;
             var atLeastOneInvaderAlive = false;
 
@@ -309,9 +304,43 @@ function create(physicsEngine, invadersToControl){
             }
 
             return aabb;
-        }
+        };
 
-        return _exports;
+        function onInvaderDeath(){
+            if(_numInvadersAlive === 1){
+                PS.PubSub.publish(Constants.TOPIC_ALL_INVADERS_DEAD, true);
+                console.log("all invaders are dead!");
+            }
+
+            --(_numInvadersAlive);
+            console.log("invader died");
+        };
+
+        function setupListeners(){
+            var row, column;
+
+            for(row=0; row< _invaders.length; ++row){
+                for(column=0; column< _invaders[row].length; ++column){
+                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                        _invaders[row][column].on("death",
+                                                  function(data) {
+                                                      onInvaderDeath();
+                                                  } );
+                    }
+                }
+            }
+        };
+
+        function construct(){
+            setupListeners();
+        };
+
+        construct();
+
+        return {
+            destroy: destroy,
+            update: update
+        };
 
     }(physicsEngine, invadersToControl));
 
