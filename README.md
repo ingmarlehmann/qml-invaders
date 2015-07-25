@@ -8,9 +8,9 @@ This game depends on the CommonJS plugin (https://github.com/grassator/qml-commo
 # building & running:
 git clone https://github.com/ingmarolsson/qml-invaders.git  
 cd qml-invaders  
-git submodule update --init  
+./bootstrap.sh (to check out the submodules)  
 qmake  
 make  
-cd build  
+cd game
 ./qml-invaders  
 
