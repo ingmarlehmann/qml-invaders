@@ -11,6 +11,6 @@ cd qml-invaders
 ./bootstrap.sh (to check out the submodules)  
 qmake  
 make  
-cd game
+cd game  
 ./qml-invaders  
 
