@@ -51,9 +51,9 @@ TARGET_PLUGIN_DIR = $${OUT_PWD}/plugins/CommonJS
 
 mkplugindir.commands = $(MKDIR) $$TARGET_PLUGIN_DIR
 
-cppluginmeta.commands = $(COPY) ../external/commonjs/plugin/qmldir \
-				../external/commonjs/LICENSE \
-				../external/commonjs/README.md \
+cppluginmeta.commands = $(COPY) $$PWD/../external/commonjs/plugin/qmldir \
+				$$PWD/../external/commonjs/LICENSE \
+				$$PWD/../external/commonjs/README.md \
 				$$TARGET_PLUGIN_DIR
 
 linux-g++{
@@ -63,13 +63,15 @@ linux-g++{
 
 first.depends = $(first) mkplugindir cppluginmeta cppluginbinary
 export(first.depends)
-export(copyplugin.commands)
+export(mkplugindir.commands)
+export(cppluginmeta.commands)
+export(cppluginbinary.commands)
 QMAKE_EXTRA_TARGETS += first mkplugindir cppluginmeta cppluginbinary 
 
 # The following code is only executed if the build is out of directory (shadow build)
 !equals(PWD, $${OUT_PWD}) {
     copycontent.commands = $(COPY_DIR) $$PWD/content $$OUT_PWD
-    first.depends = $(first) copycontent
+    first.depends += copycontent
     export(first.depends)
     export(copycontent.commands)
     QMAKE_EXTRA_TARGETS += first copycontent
