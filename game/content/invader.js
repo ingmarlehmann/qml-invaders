@@ -1,6 +1,8 @@
 .import "vector2d.js" as Vector2d
 .import "objectFactory.js" as ObjectFactory
 .import "invaderPhysicsModel.js" as InvaderPhysicsModel
+.import "pubsub.js" as PS
+.import "constants.js" as Constants
 
 function create(options, doneCallback) {
 
@@ -16,7 +18,6 @@ function create(options, doneCallback) {
         var _physicsModel = null;
         var _view = null;
         var _deleteMe = false;
-        var _eventListeners = {};
 
         // ----------------
         // Public methods
@@ -132,31 +133,14 @@ function create(options, doneCallback) {
             return _physicsModel.physicsBody.getPosition();
         }
 
-        _exports.on = function(event, callback){
-            if(_eventListeners[event] === undefined){
-                _eventListeners[event] = [];
-            }
-            _eventListeners[event].push(callback);
-        }
-
         // ----------------
         // Private methods
         // ----------------
-        var _emitEvent = function(event, data){
-            if(_eventListeners[event] === undefined){
-                return;
-            }
-
-            var i;
-            for(i=0; i< _eventListeners[event].length; ++i){
-               //console.log("invader emitting event:  '" + event + "' number of listeners: " + _eventListeners[event].length);
-                _eventListeners[event][i](data);
-            }
-        }
-
         var _onCollision = function(collidingObject){
             //console.log("DEBUG: Invader was hit by '" + collidingObject + "'");
-            _emitEvent("death", null);
+
+            PS.PubSub.publish(Constants.TOPIC_INVADER_DIED, null);
+
             _animateExplosion();
             _exports.deleteLater();
         }
@@ -171,7 +155,7 @@ function create(options, doneCallback) {
             var pos = _physicsModel.physicsBody.getPosition();
 
             var options = { qmlfile: 'Explosion.qml',
-                            qmlparameters: { x: pos.x, y: pos.y } };
+                            qmlparameters: { x: pos.getX(), y: pos.getY() } };
 
             ObjectFactory.createObject(options, onExplosionAnimationCreated);
         }

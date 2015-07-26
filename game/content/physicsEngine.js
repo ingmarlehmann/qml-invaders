@@ -73,8 +73,8 @@ function create(){
         var _createPhysicsDebugBox = function(physicsObject){
             var callback, options;
 
-            var x = physicsObject.physicsBody.getPosition().x;
-            var y = physicsObject.physicsBody.getPosition().y;
+            var x = physicsObject.physicsBody.getPosition().getX();
+            var y = physicsObject.physicsBody.getPosition().getY();
             var width = physicsObject.physicsBody.getWidth();
             var height = physicsObject.physicsBody.getHeight();
 
@@ -120,10 +120,10 @@ function create(){
             // the view objects.
             for(i=0; i< _physicsDebugBoxes.length; ++i){
                 _physicsDebugBoxes[i].view.x =
-                        _physicsDebugBoxes[i].physicsBody.getPosition().x;
+                        _physicsDebugBoxes[i].physicsBody.getPosition().getX();
 
                 _physicsDebugBoxes[i].view.y =
-                        _physicsDebugBoxes[i].physicsBody.getPosition().y;
+                        _physicsDebugBoxes[i].physicsBody.getPosition().getY();
             }
         }
 
@@ -219,13 +219,13 @@ function create(){
             //console.log("DEBUG: b min: x" + b.min.x + " y " + b.min.y);
             //console.log("DEBUG: b max: x" + b.max.x + " y " + b.max.y);
 
-            if (a.getMax().x < b.getMin().x)
+            if (a.getMax().getX() < b.getMin().getX())
                 return false; // a is left of b
-            if (a.getMin().x > b.getMax().x)
+            if (a.getMin().getX() > b.getMax().getX())
                 return false; // a is right of b
-            if (a.getMax().y < b.getMin().y)
+            if (a.getMax().getY() < b.getMin().getY())
                 return false; // a is above b
-            if (a.getMin().y > b.getMax().y)
+            if (a.getMin().getY() > b.getMax().getY())
                 return false; // a is below b
 
             return true;

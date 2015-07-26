@@ -45,7 +45,7 @@ function create(physicsEngine, invadersToControl){
         var _enemyProjectiles = [];
         var _physicsEngine = physicsEngine;
 
-        var _numInvadersAlive = invadersToControl.length;
+        var _numInvadersAlive;
 
         // ----------------
         // Public methods
@@ -59,6 +59,8 @@ function create(physicsEngine, invadersToControl){
             for(i=0; i< _enemyProjectiles.length; ++i){
                 _enemyProjectiles[i].view.destroy();
             }
+
+            _numInvadersAlive = 0;
         }
 
         // Update the InvaderAI one step.
@@ -75,6 +77,21 @@ function create(physicsEngine, invadersToControl){
         // ----------------
         // Private methods
         // ----------------
+        function countInvaders(invaders){
+            var row, column;
+            var numInvaders = 0;
+
+            for(row=0; row< invaders.length; ++row){
+                for(column=0; column< invaders[row].length; ++column){
+                    if(invaders[row][column] !== null && invaders[row][column] !== undefined){
+                        ++numInvaders;
+                    }
+                }
+            }
+
+            return numInvaders;
+        }
+
         function updateInvaderWeaponSystems(deltaTime){
             if((_shootTimer + _shootInterval) <= _timeElapsed){
                 _shootTimer = _timeElapsed;
@@ -98,7 +115,7 @@ function create(physicsEngine, invadersToControl){
             // update enemy projectile movements.
             for(i=0; i< _enemyProjectiles.length; ++i){
                 oldYPosition =
-                        _enemyProjectiles[i].getPosition().y;
+                        _enemyProjectiles[i].getPosition().getY();
 
                 newYPosition =
                         Math.min(Constants.GAME_HEIGHT-60, oldYPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
@@ -222,9 +239,7 @@ function create(physicsEngine, invadersToControl){
                 return; // all invaders are dead.
             }
 
-            //console.log("moving right. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
-
-            if((aabb.getMax().x + 5) >= 690){
+            if((aabb.getMax().getX() + 5) >= 690){
                 return false;
             }
 
@@ -246,9 +261,8 @@ function create(physicsEngine, invadersToControl){
             if(aabb === undefined){
                 return; // all invaders are dead.
             }
-            //console.log("moving left. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
 
-            if(Math.max(0, aabb.getMin().x - 5) === 0){
+            if(Math.max(0, aabb.getMin().getX() - 5) === 0){
                 return false;
             }
 
@@ -294,45 +308,34 @@ function create(physicsEngine, invadersToControl){
                 for(column=0; column< _invaders[row].length; ++column){
                     if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
                         atLeastOneInvaderAlive = true;
-                        aabb.merge(_invaders[row][column].physicsObject.physicsBody);
+                        aabb = aabb.merge(_invaders[row][column].physicsObject.physicsBody);
                     }
                 }
             }
 
             if(!atLeastOneInvaderAlive){
+                //console.log("invader pack aabb undefined");
                 return undefined;
             }
 
             return aabb;
         };
 
-        function onInvaderDeath(){
+        function onInvaderDeath(messageTopic, value){
             if(_numInvadersAlive === 1){
                 PS.PubSub.publish(Constants.TOPIC_ALL_INVADERS_DEAD, true);
-                console.log("all invaders are dead!");
             }
 
             --(_numInvadersAlive);
-            console.log("invader died");
         };
 
         function setupListeners(){
-            var row, column;
-
-            for(row=0; row< _invaders.length; ++row){
-                for(column=0; column< _invaders[row].length; ++column){
-                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
-                        _invaders[row][column].on("death",
-                                                  function(data) {
-                                                      onInvaderDeath();
-                                                  } );
-                    }
-                }
-            }
+            PS.PubSub.subscribe(Constants.TOPIC_INVADER_DIED, onInvaderDeath);
         };
 
         function construct(){
             setupListeners();
+            _numInvadersAlive = countInvaders(_invaders);
         };
 
         construct();

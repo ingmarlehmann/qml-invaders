@@ -198,10 +198,10 @@ function create(width, height){
             // Move player ship.
             if(_player.moveDir === Constants.MOVEDIR_LEFT){
                 // Make sure player does not go out of bounds and move the ship to new position.
-                _player.setX(Math.max(0, _player.getPosition().x - (Constants.SHIP_SPEED * deltaTime)));
+                _player.setX(Math.max(0, _player.getPosition().getX() - (Constants.SHIP_SPEED * deltaTime)));
             } else if(_player.moveDir === Constants.MOVEDIR_RIGHT){
                 // Make sure player does not go out of bounds and move the ship to new position.
-                _player.setX(Math.min(_width-Constants.PLAYERSHIP_WIDTH, _player.getPosition().x + (Constants.SHIP_SPEED * deltaTime)));
+                _player.setX(Math.min(_width-Constants.PLAYERSHIP_WIDTH, _player.getPosition().getX() + (Constants.SHIP_SPEED * deltaTime)));
             }
         }
 
@@ -224,14 +224,14 @@ function create(width, height){
                 --currentPlayerProjectile)
             {
                 _playerProjectiles[currentPlayerProjectile].setY(
-                        Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().y
+                        Math.max(0, _playerProjectiles[currentPlayerProjectile].getPosition().getY()
                                  - (Constants.PLAYER_PROJECTILE_SPEED * deltaTime)));
             }
 
             // Remove all projectiles that have a y value under 5 (y=0 is top of screen).
             var i;
             for(i=0; i< _playerProjectiles.length; ++i){
-                if(_playerProjectiles[i].getPosition().y <=5){
+                if(_playerProjectiles[i].getPosition().getY() <=5){
                     _playerProjectiles[i].deleteLater();
                 }
             }
@@ -300,8 +300,8 @@ function create(width, height){
         var _createPlayerProjectile = function(){
             var objectName = "playerProjectile";
 
-            var projectileStartX = _player.getPosition().x + (Constants.PLAYERSHIP_WIDTH/2);
-            var projectileStartY = _player.getPosition().y - (Constants.PLAYERSHIP_HEIGHT/2);
+            var projectileStartX = _player.getPosition().getX() + (Constants.PLAYERSHIP_WIDTH/2);
+            var projectileStartY = _player.getPosition().getY() - (Constants.PLAYERSHIP_HEIGHT/2);
 
             var completedCallback = function(newObject) {
                 if(newObject) {
@@ -344,7 +344,6 @@ function create(width, height){
             var row, column, currentRow;
             var onInvaderCreated;
             var createOptions;
-            var numInvadersCreated = 0;
 
             _invaders = [];
 
@@ -363,11 +362,6 @@ function create(width, height){
                 else {
                     console.log("ERROR: Error creating invader.");
                 }
-
-                ++numInvadersCreated;
-                if(numInvadersCreated === (Constants.INVADER_ROWS*Constants.INVADER_COLUMNS)){
-                    _invaderAI = InvaderAI.create(_physicsEngine, _invaders);
-                }
             }
 
             for(row=0; row< Constants.INVADER_ROWS; ++row){
@@ -382,24 +376,24 @@ function create(width, height){
                     Invader.create(createOptions, onInvaderCreated);
                 }
                 _invaders.push(currentRow);
+
+                if(_invaders.length == Constants.INVADER_ROWS){
+                    _invaderAI = InvaderAI.create(_physicsEngine, _invaders);
+                }
+
                 y += Constants.ENEMYSHIP_HEIGHT + 10;
             }
+        }
+
+        //
+        function onInvaderDeath(messageTopic, value){
+            _score.setScore(_score.getScore()+10);
         }
 
         // Access level: Private
         // Description: Create all enemy ships for a new game.
         var _setupEventListeners = function(){
-            var row, column;
-
-            for(row=0; row < _invaders.length; ++row){
-                for(column=0; column < _invaders[row].length; ++column){
-                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
-                        _invaders[row][column].on("death", function(data){
-                            _score.setScore(_score.getScore()+10);
-                        });
-                    }
-                }
-            }
+            PS.PubSub.subscribe(Constants.TOPIC_INVADER_DIED, onInvaderDeath);
         }
 
         // Access level: Private

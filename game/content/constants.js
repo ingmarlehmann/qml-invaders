@@ -26,6 +26,7 @@ var INVADER_COLUMNS     = 10;
 var TOPIC_SCORE = "score";
 
 var TOPIC_ALL_INVADERS_DEAD = "invaders.all-dead";
+var TOPIC_INVADER_DIED = "invaders.one-dead";
 var TOPIC_PLAYER_NUM_LIVES_CHANGED = "player.num-lives-changed";
 var TOPIC_PLAYER_POSITION = "player.position";
 var TOPIC_PLAYER_HIT = "player.hit";
