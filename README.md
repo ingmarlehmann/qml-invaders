@@ -14,3 +14,4 @@ make
 cd game
 ./qml-invaders  
 
+
