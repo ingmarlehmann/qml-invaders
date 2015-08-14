@@ -3,8 +3,6 @@ function create(){
 
     var engine = (function(){
 
-        var _exports = {};
-
         // ----------------
         // Private variables
         // ----------------
@@ -12,65 +10,60 @@ function create(){
         var _physicsDebugBoxes = [];
         var _physicsDebugActive = false;
 
+        var _objAIndex = 0;
+        var _objBIndex = 0;
+        var _groupIndex = 0;
+
         // ----------------
         // Public methods
         // ----------------
-        _exports.applyVisitor = function(visitor){
-            var i;
-            for(i=0;i<_objects.length; ++i){
-                visitor(_objects[i]);
-            }
+        function destroy(){
+            clearPhysicsDebugBoxes();
+        };
 
-            return _objects;
-        }
-
-        _exports.destroy = function(){
-            _clearPhysicsDebugBoxes();
-        }
-
-        _exports.getPhysicsObject = function(index){
+        function getPhysicsObject(index){
             return _objects[index];
-        }
+        };
 
-        _exports.registerPhysicsObject = function(physicsObject){
+        function registerPhysicsObject(physicsObject){
             //console.log("DEBUG: Registering physics object in collision group: " + physicsObject.collisionGroup);
             _physicsObjects.push(physicsObject);
 
             if(_physicsDebugActive){
-                _createPhysicsDebugBox(physicsObject);
+                createPhysicsDebugBox(physicsObject);
             }
         };
 
-        _exports.update = function(){
+        function update(){
             if(_physicsDebugActive){
-                _updatePhysicsDebugBoxes();
+                updatePhysicsDebugBoxes();
             }
 
-            _clearCollisionEvents();
-            _doCollisionTests();
-            _deleteDeadObjects();
+            clearCollisionEvents();
+            doCollisionTests();
+            deleteDeadObjects();
         };
 
-        _exports.togglePhysicsDebug = function(){
+        function togglePhysicsDebug(){
             var i;
 
             if(_physicsDebugActive){
-                _clearPhysicsDebugBoxes();
+                clearPhysicsDebugBoxes();
                 _physicsDebugActive = false;
                 return;
             }
 
             for(i=0; i< _physicsObjects.length; ++i){
-                _createPhysicsDebugBox(_physicsObjects[i]);
+                createPhysicsDebugBox(_physicsObjects[i]);
             }
 
             _physicsDebugActive = true;
-        }
+        };
 
         // ----------------
         // Private methods
         // ----------------
-        var _createPhysicsDebugBox = function(physicsObject){
+        function createPhysicsDebugBox(physicsObject){
             var callback, options;
 
             var x = physicsObject.physicsBody.getPosition().getX();
@@ -102,18 +95,18 @@ function create(){
                         };
 
             ObjectFactory.createObject(options, callback);
-        }
+        };
 
-        var _clearPhysicsDebugBoxes = function(){
+        function clearPhysicsDebugBoxes(){
             var i;
 
             for(i=0; i< _physicsDebugBoxes.length; ++i){
                 _physicsDebugBoxes[i].view.destroy();
             }
             _physicsDebugBoxes = [];
-        }
+        };
 
-        var _updatePhysicsDebugBoxes = function(){
+        function updatePhysicsDebugBoxes(){
             var i;
 
             // Update physics debug shapes so they move together with
@@ -125,9 +118,9 @@ function create(){
                 _physicsDebugBoxes[i].view.y =
                         _physicsDebugBoxes[i].physicsBody.getPosition().getY();
             }
-        }
+        };
 
-        var _deleteDeadObjects = function(){
+        function deleteDeadObjects(){
             var i;
 
             // Destroy objects marked for deletion.
@@ -140,85 +133,86 @@ function create(){
                     }
                 }
             }
-        }
+        };
 
-        var _clearCollisionEvents = function(){
+        function clearCollisionEvents(){
             var i;
             for(i=0; i< _physicsObjects.length; ++i){
                 _physicsObjects[i].collisionEventOccurred = false;
             }
-        }
+        };
 
-        // TODO: rewrite this slow shit code!
-        var _doCollisionTests = function()
-        {
-            var objA, objB, groupIndex;
+        function doCollisionTests(){
+
+            var numPhysicsObjects = _physicsObjects.length;
+            var numCollisionGroupsObjA;
+            var physicsObjectA, physicsObjectB;
 
             // for each physics object
-            for(objA=0;
-                objA< _physicsObjects.length;
-                ++objA)
+            for(_objAIndex=0;
+                _objAIndex< numPhysicsObjects;
+                ++_objAIndex)
             {
+                numCollisionGroupsObjA = (_physicsObjects[_objAIndex]).testCollisionsAgainst.length;
+                physicsObjectA = _physicsObjects[_objAIndex];
+
                 // for each group of other physics objects to be tested against.
-                for(groupIndex=0;
-                    groupIndex < (_physicsObjects[objA]).testCollisionsAgainst.length;
-                    ++groupIndex)
+                for(_groupIndex=0;
+                    _groupIndex < numCollisionGroupsObjA;
+                    ++_groupIndex)
                 {
                     // for each physics object
-                    for(objB=0;
-                        objB < _physicsObjects.length;
-                        ++objB)
+                    for(_objBIndex=0;
+                        _objBIndex < numPhysicsObjects;
+                        ++_objBIndex)
                     {
+                        physicsObjectB = _physicsObjects[_objBIndex];
+
                         // if objB is not a member of one of the groups to test
                         // collisions against, continue.
-                        if(_physicsObjects[objA].testCollisionsAgainst[groupIndex]
-                                !== _physicsObjects[objB].collisionGroup)
+                        if(physicsObjectA.testCollisionsAgainst[_groupIndex]
+                                !== physicsObjectB.collisionGroup)
                         {
                             continue;
                         }
 
                         // Did one of the objects already collide with something this frame?
                         // If so, skip.
-                        if(_physicsObjects[objA].collisionEventOccurred === true
-                                || _physicsObjects[objB].collisionEventOccurred === true)
+                        if(physicsObjectA.collisionEventOccurred === true
+                                || physicsObjectB.collisionEventOccurred === true)
                         {
                             continue;   // dont test B vs A if A vs B was already tested.
                                         // this lazy implementation disables multiple collisions but
                                         // it is an ok limitation for this game.
                         }
 
-                        var collides = _collides(_physicsObjects[objA].physicsBody,
-                                                 _physicsObjects[objB].physicsBody);
-                        if(collides){
-                            _physicsObjects[objA].collisionEventOccurred = true;
-                            _physicsObjects[objB].collisionEventOccurred = true;
+                        var doesCollide = collides(physicsObjectA.physicsBody,
+                                                 physicsObjectB.physicsBody);
+                        if(doesCollide){
+                            physicsObjectA.collisionEventOccurred = true;
+                            physicsObjectB.collisionEventOccurred = true;
 
-                            _physicsObjects[objA].collisionCallback(
-                                        _physicsObjects[objB].collisionGroup);
+                            physicsObjectA.collisionCallback(
+                                        physicsObjectB.collisionGroup);
 
-                            _physicsObjects[objB].collisionCallback(
-                                        _physicsObjects[objA].collisionGroup);
+                            physicsObjectB.collisionCallback(
+                                        physicsObjectA.collisionGroup);
                         }
                     }
                 }
             }
-        }
+        };
 
-        var _collides = function(physicsObject1, physicsObject2){
+        function collides(physicsObject1, physicsObject2){
             if(physicsObject1.getType() === 'aabb' &&
                     physicsObject2.getType() === 'aabb'){
-                return _testAABBvsAABB(physicsObject1, physicsObject2);
+                return testAABBvsAABB(physicsObject1, physicsObject2);
             }
 
             return undefined;
-        }
+        };
 
-        var _testAABBvsAABB = function(a, b){
-            //console.log("DEBUG: a min: x" + a.min.x + " y " + a.min.y);
-            //console.log("DEBUG: a max: x" + a.max.x + " y " + a.max.y);
-            //console.log("DEBUG: b min: x" + b.min.x + " y " + b.min.y);
-            //console.log("DEBUG: b max: x" + b.max.x + " y " + b.max.y);
-
+        var testAABBvsAABB = function(a, b){
             if (a.getMax().getX() < b.getMin().getX())
                 return false; // a is left of b
             if (a.getMin().getX() > b.getMax().getX())
@@ -229,9 +223,16 @@ function create(){
                 return false; // a is below b
 
             return true;
-        }
+        };
 
-        return _exports;
+        return{
+            destroy: destroy,
+            getPhysicsObject: getPhysicsObject,
+            registerPhysicsObject: registerPhysicsObject,
+            togglePhysicsDebug: togglePhysicsDebug,
+            update: update
+        };
+
     }());
 
     return engine;

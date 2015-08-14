@@ -68,14 +68,12 @@ win32{
     }
 }
 
-# TODO: Add windows support
-
-#first.depends = $(first) mkplugindir cppluginmeta cppluginbinary
 first.depends = $(first) mkplugindir cppluginmeta cppluginbinary
+
 export(first.depends)
-#export(mkplugindir.commands)
 export(cppluginmeta.commands)
 export(cppluginbinary.commands)
+
 QMAKE_EXTRA_TARGETS += first mkplugindir cppluginmeta cppluginbinary 
 
 # The following code is only executed if the build is out of directory (shadow build)
