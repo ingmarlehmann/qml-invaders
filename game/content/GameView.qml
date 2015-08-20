@@ -137,6 +137,31 @@ Rectangle {
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
             PS.PubSub.subscribe(Constants.TOPIC_ENEMY_DIED, enemyExplosionSound.restart);
 
+            gameActiveView.shoot.connect( function(){
+                gameEngine.keyUp(
+                            { key: Qt.Key_Space, isAutoRepeat: false } );
+            } );
+
+            gameActiveView.moveShipLeft.connect( function(){
+                gameEngine.keyDown(
+                            { key: Qt.Key_Left, isAutoRepeat: false } );
+            } );
+
+            gameActiveView.moveShipRight.connect( function(){
+                gameEngine.keyDown(
+                            { key: Qt.Key_Right, isAutoRepeat: false } );
+            } );
+
+            gameActiveView.stopMovingLeft.connect( function(){
+                gameEngine.keyUp(
+                            { key: Qt.Key_Left, isAutoRepeat: false } );
+            } );
+
+            gameActiveView.stopMovingRight.connect( function(){
+                gameEngine.keyUp(
+                            { key: Qt.Key_Right, isAutoRepeat: false } );
+            } );
+
             //gameMusic.play();
         }
         else{

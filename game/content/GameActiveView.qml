@@ -6,6 +6,12 @@ Rectangle{
     id: root
     color: "black"
 
+    signal moveShipLeft();
+    signal moveShipRight();
+    signal stopMovingLeft();
+    signal stopMovingRight();
+    signal shoot();
+
     function onHighScoreChanged(messageTopic, newScore) { hiScoreText.text = helper.leftPad(newScore, 4); }
     function onScoreChanged(messageTopic, newScore) { scoreText.text = helper.leftPad(newScore, 4); }
     function onNumLivesChanged(messageTopic, newNumberOfLives)
@@ -41,6 +47,71 @@ Rectangle{
             source: "qrc:/content/images/ship.png"
             width: 25
             height: 12
+        }
+    }
+
+    TouchButton{
+        id: leftButton
+
+        width: 50
+        height: 50
+
+        anchors.left: parent.left
+        anchors.bottom: parent.bottom
+
+        anchors.leftMargin: 10
+        anchors.bottomMargin: 50
+
+        source: "qrc:/content/images/left.png"
+
+        onPressed: {
+            moveShipLeft();
+        }
+
+        onReleased: {
+            stopMovingLeft();
+        }
+    }
+
+    TouchButton{
+        id: rightButton
+
+        width: 50
+        height: 50
+
+        anchors.left: leftButton.right
+        anchors.bottom: parent.bottom
+
+        anchors.leftMargin: 10
+        anchors.bottomMargin: 50
+
+        source: "qrc:/content/images/right.png"
+
+        onPressed: {
+            moveShipRight();
+        }
+
+        onReleased: {
+            stopMovingRight();
+        }
+    }
+
+    TouchButton{
+        id: shootButton
+
+        width: 50
+        height: 50
+
+        anchors.right: parent.right
+        anchors.rightMargin: 10
+
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+
+        source: "qrc:/content/images/red_button.png"
+
+        onPressed: {
+            shoot();
         }
     }
 

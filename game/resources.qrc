@@ -1,5 +1,5 @@
 <RCC>
-    <qresource prefix="">
+    <qresource prefix="/">
         <file>content/images/invader1.png</file>
         <file>content/images/invader2.png</file>
         <file>content/images/invader3.png</file>
@@ -8,5 +8,8 @@
         <file>content/images/default.gif</file>
         <file>content/images/particletexture.jpg</file>
         <file>content/images/metaball-coloured.png</file>
+        <file>content/images/left.png</file>
+        <file>content/images/right.png</file>
+        <file>content/images/red_button.png</file>
     </qresource>
 </RCC>

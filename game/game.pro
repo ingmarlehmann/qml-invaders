@@ -45,7 +45,8 @@ DISTFILES += \
     content/MenuItem.qml \
     content/PhysicsDebugBox.qml \
     content/PlayerProjectile.qml \
-    content/PlayerShip.qml
+    content/PlayerShip.qml \
+    content/TouchButton.qml
 
 TARGET_PLUGIN_DIR = $${OUT_PWD}/plugins/CommonJS/
 TARGET_PLUGIN_DIR = $$shell_path($$TARGET_PLUGIN_DIR)
