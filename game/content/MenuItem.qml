@@ -1,4 +1,4 @@
-import QtQuick 2.0
+import QtQuick 2.5
 
 Rectangle {
     width: 20
@@ -17,14 +17,28 @@ Rectangle {
     property bool highlighted: false
     property bool hovered: false
 
+    MultiPointTouchArea{
+        id: touchArea
+
+        anchors.fill: parent
+        mouseEnabled: false
+
+        focus: true
+
+        onPressed: {
+            itemClicked();
+            hovered = true;
+        }
+    }
+
     MouseArea{
         anchors.fill: parent
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton
 
-        onClicked:  { itemClicked() }
-        onEntered:  { hovered = true }
-        onExited:   { hovered = false }
+        onClicked:  { itemClicked(); /*console.log("mouse click");*/ }
+        onEntered:  { hovered = true; /*console.log("mouse enter");*/  }
+        onExited:   { hovered = false; /*console.log("mouse exit");*/  }
     }
 
     Text{
