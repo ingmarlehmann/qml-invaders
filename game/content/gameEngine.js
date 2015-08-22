@@ -12,10 +12,6 @@
 function create(width, height){
     var engine = (function (width, height) {
 
-        // Main export object, every method and property attached to this object
-        // will be accessible by caller.
-        var _exports = {};
-
         // ----------------
         // Private variables
         // ----------------
@@ -46,7 +42,7 @@ function create(width, height){
         // Access level: Public
         // Description: Set the content area width for the game engine.
         // Returns: nothing
-        _exports.setWidth = function(width){
+        function setWidth(width){
             _width = width;
             //console.log("new width: " + _width);
         }
@@ -54,7 +50,7 @@ function create(width, height){
         // Access level: Public
         // Description: Set the content area height for the game engine.
         // Returns: nothing
-        _exports.setHeight = function(height){
+        function setHeight(height){
             _height = height;
             //console.log("new height: " + _height);
         }
@@ -62,19 +58,19 @@ function create(width, height){
         // Access level: Public
         // Description: Initialize a new game
         // Returns: nothing
-        _exports.newGame = function(){
+        function newGame(){
             _physicsEngine = PhysicsEngine.create();
             _score = Score.create(0);
 
-            _createPlayer();
-            _createEnemyShips();
+            createPlayer();
+            createEnemyShips();
 
-            _setupEventListeners();
+            setupEventListeners();
         }
 
         // Access level: Public
         // Description: Method to inject key _down_ events
-        _exports.keyDown = function(event){
+        function keyDown(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
                     if(_player !== null && _player !== undefined){
@@ -95,14 +91,14 @@ function create(width, height){
             }
             if(event.key === Qt.Key_P){
                 if(!event.isAutoRepeat){
-                    _togglePhysicsDebug();
+                    togglePhysicsDebug();
                 }
             }
         }
 
         // Access level: Public
         // Description: Method to inject key _up_ events
-        _exports.keyUp = function(event){
+        function keyUp(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
                     if(_player !== null && _player !== undefined){
@@ -122,7 +118,7 @@ function create(width, height){
             if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
                     if(_player !== null && _player !== undefined){
-                        _createPlayerProjectile();
+                        createPlayerProjectile();
                         PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
                     }
                 }
@@ -132,23 +128,23 @@ function create(width, height){
         // Access level: Public
         // Description: Update the game engine one tick. Delta time is calculated internally.
         //  call this method as often as possible to get better animation timing resolutions.
-        _exports.update = function () {
+        function update() {
             var currentTime = new Date().getTime();
             var dT = (currentTime - _lastUpdateTime);
 
-            _updatePlayer(dT);
-            _updatePlayerProjectiles(dT);
-            _updateInvaders(dT);
-            _updatePhysicsEngine(dT);
+            updatePlayer(dT);
+            updatePlayerProjectiles(dT);
+            updateInvaders(dT);
+            updatePhysicsEngine(dT);
 
-            _deleteDeadObjects(dT);
+            deleteDeadObjects(dT);
 
             _lastUpdateTime = new Date().getTime();
         };
 
         // Access level: Public
         // Description: Clear the game data.
-        _exports.clearGameData = function(){
+        function clearGameData(){
             var i, j;
 
             if(_player !== null && _player !== undefined){
@@ -184,13 +180,13 @@ function create(width, height){
 
         // Access level: Private
         // Description: Enable or disable visual physics debugging.
-        var _togglePhysicsDebug = function(){
+        function togglePhysicsDebug(){
             _physicsEngine.togglePhysicsDebug();
         }
 
         // Access level: Private
         // Description: Animate the player object.
-        var _updatePlayer = function(deltaTime){
+        function updatePlayer(deltaTime){
             if(_player == null || _player == undefined){
                 return;
             }
@@ -207,7 +203,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: Update physics engine.
-        var _updatePhysicsEngine = function(deltaTime){
+        function updatePhysicsEngine(deltaTime){
             if(_physicsEngine !== null && _physicsEngine !== undefined){
                 _physicsEngine.update();
             }
@@ -215,7 +211,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: Animate player projectiles.
-        var _updatePlayerProjectiles = function(deltaTime){
+        function updatePlayerProjectiles(deltaTime){
             var currentPlayerProjectile;
 
             // Update player projectiles movement.
@@ -239,7 +235,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: Update all invaders.
-        var _updateInvaders = function(deltaTime) {
+        function updateInvaders(deltaTime) {
             if(_invaderAI !== null){
                 _invaderAI.update(deltaTime);
             }
@@ -247,7 +243,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: delete all invaders that have been marked for deletion.
-        var _deleteDeadInvaders = function(){
+        function deleteDeadInvaders(){
             var row, column;
 
             for(row=0; row < _invaders.length; ++row){
@@ -264,7 +260,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: delete all player projectiles that have been marked for deletion.
-        var _deleteDeadPlayerProjectiles = function(){
+        function deleteDeadPlayerProjectiles(){
             var i;
 
             for(i=(_playerProjectiles.length-1); i >= 0; --i){
@@ -277,7 +273,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: delete all player projectiles that have been marked for deletion.
-        var _deleteDeadPlayers = function(){
+        function deleteDeadPlayers(){
             if(_player !== undefined && _player !== null){
                 if(_player.isToBeDeleted()){
                     _player.view.destroy();
@@ -288,16 +284,16 @@ function create(width, height){
 
         // Access level: Private
         // Description: Delete all objects marked for deletion.
-        var _deleteDeadObjects = function(deltaTime){
+        function deleteDeadObjects(deltaTime){
 
-            _deleteDeadInvaders();
-            _deleteDeadPlayerProjectiles();
-            _deleteDeadPlayers();
+            deleteDeadInvaders();
+            deleteDeadPlayerProjectiles();
+            deleteDeadPlayers();
         }
 
         // Access level: Private
         // Description: Create a new projectile.
-        var _createPlayerProjectile = function(){
+        function createPlayerProjectile(){
             var objectName = "playerProjectile";
 
             var projectileStartX = _player.getPosition().getX() + (Constants.PLAYERSHIP_WIDTH/2);
@@ -321,7 +317,7 @@ function create(width, height){
         // Access level: Private
         // Description: Set up the player object
         // Returns: nothing
-        var _createPlayer = function(){
+        function createPlayer(){
             var onPlayerCreated = function(player){
                 _player = player;
 
@@ -339,7 +335,7 @@ function create(width, height){
 
         // Access level: Private
         // Description: Create all enemy ships for a new game.
-        var _createEnemyShips = function() {
+        function createEnemyShips() {
             var x, y;
             var row, column, currentRow;
             var onInvaderCreated;
@@ -371,7 +367,7 @@ function create(width, height){
                     createOptions = {
                         x: x + (column*Constants.ENEMYSHIP_WIDTH),
                         y: y,
-                        invadertype: _getInvaderType(row)};
+                        invadertype: getInvaderType(row)};
 
                     Invader.create(createOptions, onInvaderCreated);
                 }
@@ -392,14 +388,14 @@ function create(width, height){
 
         // Access level: Private
         // Description: Create all enemy ships for a new game.
-        var _setupEventListeners = function(){
+        function setupEventListeners(){
             PS.PubSub.subscribe(Constants.TOPIC_INVADER_DIED, onInvaderDeath);
         }
 
         // Access level: Private
         // Description: get what type of invader shall
         // be created for a given row number.
-        var _getInvaderType = function(row){
+        function getInvaderType(row){
             if(row === 0){ // 1st row: 11 "squids"
                 return 'invader3';
             }
@@ -413,7 +409,17 @@ function create(width, height){
             return 'undefined';
         }
 
-        return _exports;
+        return {
+            newGame: newGame,
+            update: update,
+            clearGameData: clearGameData,
+
+            keyUp: keyUp,
+            keyDown: keyDown,
+
+            setWidth: setWidth,
+            setHeight: setHeight,
+        };
     }(width, height));
 
     return engine;

@@ -8,10 +8,6 @@ function create(options, doneCallback) {
 
     var _invader = (function(options, doneCallback){
 
-        // Exports object that will
-        // be returned when invoking create
-        var _exports = {};
-
         // ----------------
         // Private variables
         // ----------------
@@ -22,16 +18,16 @@ function create(options, doneCallback) {
         // ----------------
         // Public methods
         // ----------------
-        _exports.deleteLater = function(){
+        function deleteLater(){
             _physicsModel.deleteLater();
             _deleteMe = true;
         }
 
-        _exports.isToBeDeleted = function(){
+        function isToBeDeleted(){
             return _deleteMe;
         }
 
-        _exports.setPosition = function(x, y){
+        function setPosition(x, y){
             if(_physicsModel !== null && _physicsModel !== undefined){
                 _physicsModel.physicsBody.setPosition(x, y);
             }
@@ -50,7 +46,7 @@ function create(options, doneCallback) {
             //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
         }
 
-        _exports.setX = function(x){
+        function setX(x){
             if(_physicsModel !== null && _physicsModel !== undefined){
                 _physicsModel.physicsBody.setX(x);
             }
@@ -68,7 +64,7 @@ function create(options, doneCallback) {
             //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
         }
 
-        _exports.setY = function(y){
+        function setY(y){
             if(_physicsModel !== null && _physicsModel !== undefined){
                 _physicsModel.physicsBody.setY(y);
             }
@@ -86,7 +82,7 @@ function create(options, doneCallback) {
             //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
         }
 
-        _exports.appendX = function(x){
+        function appendX(x){
             if(_physicsModel !== null && _physicsModel !== undefined){
                 _physicsModel.physicsBody.setX(_physicsModel.physicsBody.getX() + x);
             }
@@ -104,7 +100,7 @@ function create(options, doneCallback) {
             //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
         }
 
-        _exports.appendY = function(y){
+        function appendY(y){
             if(_physicsModel !== null && _physicsModel !== undefined){
                 _physicsModel.physicsBody.setY(_physicsModel.physicsBody.getY() + y);
             }
@@ -124,7 +120,7 @@ function create(options, doneCallback) {
 
         // Return a copy of the position object so
         // that the original can not be modified.
-        _exports.getPosition = function(){
+        function getPosition(){
             if(_physicsModel === null || _physicsModel === undefined){
                 console.log("Error: No physics model created for invader. Can't get position.");
                 return null;
@@ -136,16 +132,16 @@ function create(options, doneCallback) {
         // ----------------
         // Private methods
         // ----------------
-        var _onCollision = function(collidingObject){
+        function onCollision(collidingObject){
             //console.log("DEBUG: Invader was hit by '" + collidingObject + "'");
 
             PS.PubSub.publish(Constants.TOPIC_INVADER_DIED, null);
 
-            _animateExplosion();
-            _exports.deleteLater();
+            animateExplosion();
+            deleteLater();
         }
 
-        var _animateExplosion = function(){
+        function animateExplosion(){
             function onExplosionAnimationCreated(object){
                 if(object === undefined || object === null){
                     console.log("failed to spawn explosion!");
@@ -160,7 +156,7 @@ function create(options, doneCallback) {
             ObjectFactory.createObject(options, onExplosionAnimationCreated);
         }
 
-        var _onViewObjectCreated = function(object){
+        function onViewObjectCreated(object){
             if(object === null || object === undefined){
                 console.log("Error: Failed to create View object for invader.");
                 doneCallback(null);
@@ -168,11 +164,11 @@ function create(options, doneCallback) {
             }
 
             _view = object;
-            _createPhysicsModel();
+            createPhysicsModel();
         }
 
-        var _createPhysicsModel = function(){
-            _physicsModel = InvaderPhysicsModel.create(_view.width, _view.height, _onCollision);
+        function createPhysicsModel(){
+            _physicsModel = InvaderPhysicsModel.create(_view.width, _view.height, onCollision);
 
             if(_physicsModel === null || _physicsModel === undefined){
                 console.log("Error: Failed to create Physics model for invader.");
@@ -182,40 +178,61 @@ function create(options, doneCallback) {
 
             _physicsModel.physicsBody.setPosition(_view.x, _view.y);
 
-            _onFinishedCreation();
+            onFinishedCreation();
         }
 
-        var _onFinishedCreation = function(){
-            _exports.view = _view;
-            _exports.physicsObject = _physicsModel;
-
-            doneCallback(_exports);
+        function onFinishedCreation(){
+            doneCallback(publicInvaderInterface());
         }
 
         // ----------------
         // Constructor
         // ----------------
-        var texture;
-        if(options.invadertype === 'invader1'){
-            texture = 'qrc:/content/images/invader1.png';
-        }
-        else if(options.invadertype === 'invader2'){
-            texture = 'qrc:/content/images/invader2.png';
-        }
-        else if(options.invadertype === 'invader3'){
-            texture = 'qrc:/content/images/invader3.png';
-        }
-        else{
-            console.log("Error: options.invadertype not set, aborting creation.");
+        function construct(options){
+            var texture;
+            if(options.invadertype === 'invader1'){
+                texture = 'qrc:/content/images/invader1.png';
+            }
+            else if(options.invadertype === 'invader2'){
+                texture = 'qrc:/content/images/invader2.png';
+            }
+            else if(options.invadertype === 'invader3'){
+                texture = 'qrc:/content/images/invader3.png';
+            }
+            else{
+                console.log("Error: options.invadertype not set, aborting creation.");
+            }
+
+            var createOptions = { qmlfile: 'EnemyShip.qml',
+                            qmlparameters: { x: options.x, y: options.y },
+                            qmlpostparameters: { source: texture } };
+
+            ObjectFactory.createObject(createOptions, onViewObjectCreated);
+        };
+
+        // Run constructor
+        construct(options);
+
+        function publicInvaderInterface(){
+            return {
+                getPosition: getPosition,
+
+                setPosition: setPosition,
+
+                setX: setX,
+                setY: setY,
+
+                appendX: appendX,
+                appendY: appendY,
+
+                view: _view,
+                physicsObject: _physicsModel,
+
+                isToBeDeleted: isToBeDeleted
+            };
         }
 
-        var _options = { qmlfile: 'EnemyShip.qml',
-                        qmlparameters: { x: options.x, y: options.y },
-                        qmlpostparameters: { source: texture } };
-
-        ObjectFactory.createObject(_options, _onViewObjectCreated);
-
-        return _exports;
+        return publicInvaderInterface();
 
     }(options, doneCallback));
 
