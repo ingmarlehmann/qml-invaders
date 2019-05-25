@@ -3,15 +3,18 @@ Space invaders Qt/QML
 
 A simple space invaders clone written in QML in order to learn QML for work.
 
-This game depends on the CommonJS plugin (https://github.com/grassator/qml-commonjs).
-
-# building & running (shadow build/out of source build):
-git clone --recursive https://github.com/ingmarolsson/qml-invaders.git # !! Note the --recursive parameter to checkout submodules.  
+# 1. building & running (shadow build/out of source build):
+git clone https://github.com/ingmarolsson/qml-invaders.git
 mkdir qml-invaders-build  
 cd qml-invaders-build  
-qmake ../qml-invaders/  
+
+# 1.1 Build with QMake
+qmake ../qml-invaders  
 make  
 cd game  
 ./qml-invaders  
 
-
+# 1.2 Build with CMake
+cmake ../qml-invaders  
+make  
+./qml-invaders  
