@@ -4,7 +4,7 @@ Space invaders Qt/QML
 A simple space invaders clone written in QML in order to learn QML for work.
 
 # 1. Building & running (shadow build/out of source build):
-git clone https://github.com/ingmarolsson/qml-invaders.git
+git clone https://github.com/ingmarlehmann/qml-invaders.git
 mkdir qml-invaders-build  
 cd qml-invaders-build  
 
