@@ -1,5 +1,5 @@
 .pragma library
-.import CommonJS 0.2 as CJS
+.import "timerFactory.js" as TimerFactory
 
 /*
 Copyright (c) 2010,2011,2012,2013,2014 Morgan Roderick http://roderick.dk
@@ -34,11 +34,20 @@ var PubSub = (function (){
 		};
 	}
 
+    function setTimeout(callback, timeout)
+    {
+        var timer = TimerFactory.createTimer();
+        timer.interval = timeout;
+        timer.repeat = false;
+        timer.triggered.connect(function(){ throwException(ex) } );
+        timer.start();
+    }
+
 	function callSubscriberWithDelayedExceptions( subscriber, message, data ){
 		try {
 			subscriber( message, data );
 		} catch( ex ){
-            CJS.CommonJS.setTimeout( throwException( ex ), 0);
+            setTimeout(function() { throwException(ex) }, 0);
 		}
 	}
 
@@ -104,8 +113,8 @@ var PubSub = (function (){
 		if ( sync === true ){
 			deliver();
 		} else {
-            CJS.CommonJS.setTimeout( deliver, 0 );
-		}
+            setTimeout(deliver, 0);
+        }
 		return true;
 	}
 

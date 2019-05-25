@@ -4,6 +4,7 @@ import QtQuick.Window 2.2
 import QtQuick.Dialogs 1.2
 
 import "constants.js" as Constants
+import "timerFactory.js" as TimerFactory
 
 ApplicationWindow {
     id: root
@@ -59,6 +60,8 @@ ApplicationWindow {
     }
 
     Component.onCompleted: {
+        TimerFactory.setRootQmlObject(contentRoot);
+
         game.quit.connect( function(){
             exitToMainMenu();
         })

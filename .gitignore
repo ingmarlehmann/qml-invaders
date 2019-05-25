@@ -1,4 +1,5 @@
 # qt files
+build
 *.pro.user
 Makefile
 *.o
