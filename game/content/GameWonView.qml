@@ -11,7 +11,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         color: "#00ff00"
 
-        font.pixelSize: 48
+        font.pixelSize: 32
 
         anchors.verticalCenter: parent.verticalCenter
         anchors.verticalCenterOffset: -100

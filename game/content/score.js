@@ -1,5 +1,4 @@
 .import "constants.js" as Constants
-.import "pubsub.js" as PS
 
 function create(initialScore){
 
@@ -20,10 +19,7 @@ function create(initialScore){
         }
 
         _exports.setScore = function(score){
-
             _score = score;
-
-            PS.PubSub.publish(Constants.TOPIC_SCORE, _score);
         }
 
         return _exports;

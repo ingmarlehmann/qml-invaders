@@ -3,7 +3,6 @@
 .import "player.js" as Player
 .import "score.js" as Score
 .import "constants.js" as Constants
-.import "pubsub.js" as PS
 .import "invaderAI.js" as InvaderAI
 .import "physicsEngine.js" as PhysicsEngine
 .import "invader.js" as Invader
@@ -20,6 +19,11 @@ function create(width, height){
         var _playerProjectiles = [];
         var _invaders = [];
         var _physicsDebugBoxes = [];
+
+        var _onNumLivesChangedCb = null;
+        var _onScoreChangedCb = null;
+        var _onPlayerDiedCb = null;
+        var _onAllInvadersDeadCb = null;
 
         var _width = width;
         var _height = height;
@@ -61,11 +65,26 @@ function create(width, height){
         function newGame(){
             _physicsEngine = PhysicsEngine.create();
             _score = Score.create(0);
+            _onScoreChangedCb(_score.getScore());
 
             createPlayer();
             createEnemyShips();
+        }
 
-            setupEventListeners();
+        function onScoreChanged(cb){
+            _onScoreChangedCb = cb;
+        }
+
+        function onNumLivesChanged(cb){
+            _onNumLivesChangedCb = cb;
+        }
+
+        function onPlayerDied(cb){
+            _onPlayerDiedCb = cb;
+        }
+
+        function onAllInvadersDead(cb){
+            _onAllInvadersDeadCb = cb;
         }
 
         // Access level: Public
@@ -119,7 +138,7 @@ function create(width, height){
                 if(!event.isAutoRepeat){
                     if(_player !== null && _player !== undefined){
                         createPlayerProjectile();
-                        PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
+                        //PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
                     }
                 }
             }
@@ -166,11 +185,8 @@ function create(width, height){
             }
 
             _invaders = [];
-
             _score.setScore(0);
-
             _invaderAI.destroy();
-
             _physicsEngine.destroy();
         }
 
@@ -320,16 +336,16 @@ function create(width, height){
         function createPlayer(){
             var onPlayerCreated = function(player){
                 _player = player;
-
                 _player.setPosition(
                             (_width/2)-(Constants.PLAYERSHIP_WIDTH/2),
                             _height-(Constants.PLAYERSHIP_HEIGHT/2)-60);
 
                 _player.respawn();
-
                 _physicsEngine.registerPhysicsObject(_player.physicsObject);
+                _player.view.died.connect(_onPlayerDiedCb);
+                _player.view.numLivesChanged.connect(_onNumLivesChangedCb);
+                _player.view.numLivesChanged(3);
             }
-
             Player.create({ x: 0, y: 0, lives: 3 }, onPlayerCreated);
         }
 
@@ -354,6 +370,7 @@ function create(width, height){
                 if(invader !== null && invader !== undefined) {
                     currentRow.push(invader);
                     _physicsEngine.registerPhysicsObject(invader.physicsObject);
+                    invader.view.died.connect(onInvaderDeath);
                 }
                 else {
                     console.log("ERROR: Error creating invader.");
@@ -372,24 +389,23 @@ function create(width, height){
                     Invader.create(createOptions, onInvaderCreated);
                 }
                 _invaders.push(currentRow);
-
                 if(_invaders.length == Constants.INVADER_ROWS){
                     _invaderAI = InvaderAI.create(_physicsEngine, _invaders);
+                    if(!_onAllInvadersDeadCb)
+                        throw "_onAllInvadersDeadCb has not been set."
+                    _invaderAI.onAllInvadersDead(_onAllInvadersDeadCb);
                 }
-
                 y += Constants.ENEMYSHIP_HEIGHT + 10;
             }
         }
 
         //
-        function onInvaderDeath(messageTopic, value){
+        function onInvaderDeath(){
             _score.setScore(_score.getScore()+10);
-        }
-
-        // Access level: Private
-        // Description: Create all enemy ships for a new game.
-        function setupEventListeners(){
-            PS.PubSub.subscribe(Constants.TOPIC_INVADER_DIED, onInvaderDeath);
+            if(_onScoreChangedCb){
+                _onScoreChangedCb(_score.getScore());
+            }
+            _invaderAI.onInvaderDeath();
         }
 
         // Access level: Private
@@ -419,6 +435,11 @@ function create(width, height){
 
             setWidth: setWidth,
             setHeight: setHeight,
+
+            onNumLivesChanged: onNumLivesChanged,
+            onScoreChanged: onScoreChanged,
+            onPlayerDied: onPlayerDied,
+            onAllInvadersDead: onAllInvadersDead,
         };
     }(width, height));
 

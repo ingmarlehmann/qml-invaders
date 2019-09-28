@@ -1,5 +1,4 @@
 .import "constants.js" as Constants
-.import "pubsub.js" as PS
 .import "objectFactory.js" as ObjectFactory
 .import "invaderLaserProjectile.js" as InvaderLaserProjectile
 .import "aabb.js" as AABB
@@ -31,6 +30,7 @@ function create(physicsEngine, invadersToControl){
         // ----------------
         var _moveDir = Constants.MOVEDIR_RIGHT;
         var _prevMoveDir = Constants.MOVEDIR_LEFT;
+        var _onAllInvadersDeadCb = null;
 
         var _moveTimer = 0;
         var _moveInterval = 2000;
@@ -111,18 +111,20 @@ function create(physicsEngine, invadersToControl){
 
         function animateInvaderProjectiles(deltaTime){
             var i, oldYPosition, newYPosition;
+            var ymax;
+            var ynext;
 
             // update enemy projectile movements.
             for(i=0; i< _enemyProjectiles.length; ++i){
                 oldYPosition =
                         _enemyProjectiles[i].getPosition().getY();
 
-                newYPosition =
-                        Math.min(Constants.GAME_HEIGHT-60, oldYPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime));
+                ymax = Constants.GAME_HEIGHT-40;
+                ynext = oldYPosition + (Constants.ENEMY_PROJECTILE_SPEED * deltaTime);
+                newYPosition = Math.min(ymax,ynext);
 
                 _enemyProjectiles[i].setY(newYPosition);
-
-                if(newYPosition >= Constants.GAME_HEIGHT-60){
+                if(newYPosition >= ymax){
                     _enemyProjectiles[i].deleteLater();
                 }
             }
@@ -195,7 +197,7 @@ function create(physicsEngine, invadersToControl){
             // that will fire a missile towards the player.
             randomInvader = bottomInvaders[Math.floor(Math.random() * bottomInvaders.length)];
 
-            PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
+            //PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
 
             createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
                                   randomInvader.view.y + (Constants.ENEMYSHIP_HEIGHT));
@@ -321,28 +323,28 @@ function create(physicsEngine, invadersToControl){
             return aabb;
         };
 
-        function onInvaderDeath(messageTopic, value){
+        function onInvaderDeath(){
             if(_numInvadersAlive === 1){
-                PS.PubSub.publish(Constants.TOPIC_ALL_INVADERS_DEAD, true);
+                _onAllInvadersDeadCb();
             }
-
             --(_numInvadersAlive);
         };
 
-        function setupListeners(){
-            PS.PubSub.subscribe(Constants.TOPIC_INVADER_DIED, onInvaderDeath);
-        };
-
         function construct(){
-            setupListeners();
             _numInvadersAlive = countInvaders(_invaders);
         };
+
+        function onAllInvadersDead(cb){
+            _onAllInvadersDeadCb = cb;
+        }
 
         construct();
 
         return {
             destroy: destroy,
-            update: update
+            onInvaderDeath: onInvaderDeath,
+            onAllInvadersDead: onAllInvadersDead,
+            update: update,
         };
 
     }(physicsEngine, invadersToControl));

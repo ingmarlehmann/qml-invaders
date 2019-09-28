@@ -22,21 +22,6 @@ var ENEMYSHIP_HEIGHT    = 50; // TODO: Make depend on actual player ship height.
 var INVADER_ROWS        = 5;
 var INVADER_COLUMNS     = 10;
 
-// Event topics for PubSub
-var TOPIC_SCORE = "score";
-
-var TOPIC_ALL_INVADERS_DEAD = "invaders.all-dead";
-var TOPIC_INVADER_DIED = "invaders.one-dead";
-var TOPIC_PLAYER_NUM_LIVES_CHANGED = "player.num-lives-changed";
-var TOPIC_PLAYER_POSITION = "player.position";
-var TOPIC_PLAYER_HIT = "player.hit";
-var TOPIC_PLAYER_RESPAWNED = "player.respawned";
-var TOPIC_PLAYER_DIED = "player.died";
-var TOPIC_PLAYER_FIRED = "player.fired";
-
-var TOPIC_ENEMY_FIRED = "enemy.fired";
-var TOPIC_ENEMY_DIED = "enemy.died";
-
 // These will get set up dynamically
 // by Main.qml in Component.onCompleted.
 var COMPONENT_READY;

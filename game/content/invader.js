@@ -1,7 +1,6 @@
 .import "vector2d.js" as Vector2d
 .import "objectFactory.js" as ObjectFactory
 .import "invaderPhysicsModel.js" as InvaderPhysicsModel
-.import "pubsub.js" as PS
 .import "constants.js" as Constants
 
 function create(options, doneCallback) {
@@ -28,94 +27,87 @@ function create(options, doneCallback) {
         }
 
         function setPosition(x, y){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setPosition(x, y);
             }
             else {
                 console.log("Error: No physics model created for invader. Can't set position for physics model.");
             }
-
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.x = x;
                 _view.y = y;
             }
             else{
                 console.log("Error: No view created for invader. Can't set position for view.");
             }
-
-            //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
+            emitNewPosition();
         }
 
         function setX(x){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setX(x);
             }
             else {
                 console.log("Error: No physics model created for invader. Can't set position for physics model.");
             }
-
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.x = x;
             }
             else{
                 console.log("Error: No view created for invader. Can't set position for view.");
             }
-
-            //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
+            emitNewPosition();
         }
 
         function setY(y){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setY(y);
             }
             else {
                 console.log("Error: No physics model created for invader. Can't set position for physics model.");
             }
 
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.y = y;
             }
             else{
                 console.log("Error: No view created for invader. Can't set position for view.");
             }
-
-            //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
+            emitNewPosition();
         }
 
         function appendX(x){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setX(_physicsModel.physicsBody.getX() + x);
             }
             else {
                 console.log("Error: No physics model created for invader. Can't set position for physics model.");
             }
 
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.x = _physicsModel.physicsBody.getX();
             }
             else{
                 console.log("Error: No view created for invader. Can't set position for view.");
             }
-
-            //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
+            emitNewPosition();
         }
 
         function appendY(y){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setY(_physicsModel.physicsBody.getY() + y);
             }
             else {
                 console.log("Error: No physics model created for invader. Can't set position for physics model.");
             }
 
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.y = _physicsModel.physicsBody.getY();
             }
             else{
                 console.log("Error: No view created for invader. Can't set position for view.");
             }
-
-            //PS.PubSub.publish(Constants.TOPIC_invader_POSITION, { x: _position._x, y: _position._y });
+            emitNewPosition();
         }
 
         // Return a copy of the position object so
@@ -135,10 +127,14 @@ function create(options, doneCallback) {
         function onCollision(collidingObject){
             //console.log("DEBUG: Invader was hit by '" + collidingObject + "'");
 
-            PS.PubSub.publish(Constants.TOPIC_INVADER_DIED, null);
-
+            _view.died();
             animateExplosion();
             deleteLater();
+        }
+
+        function emitNewPosition(){
+            var pos = getPosition(); 
+            _view.positionChanged(pos.getX(), pos.getY());
         }
 
         function animateExplosion(){

@@ -3,7 +3,6 @@ import QtMultimedia 5.0
 
 import "constants.js" as Constants
 import "gameEngine.js" as Engine
-import "pubsub.js" as PS
 import "objectFactory.js" as ObjectFactory
 
 Rectangle {
@@ -17,6 +16,7 @@ Rectangle {
     signal quit()
 
     property var gameEngine: null
+    property var quitAllowed: true
 
     states: [
         State{
@@ -120,47 +120,31 @@ Rectangle {
             }
         }
     }
+    Timer{
+        id: accidentalQuitTimer
+        interval: 3000
+        running: false 
+        repeat: false
+        onTriggered: {
+            gameRoot.quitAllowed = true
+        }
+    }
 
     onVisibleChanged: {
         if(visible){
-            ObjectFactory.setRootQmlObject(gameActiveView);
+            if(!gameEngine){
+                ObjectFactory.setRootQmlObject(gameActiveView);
 
-            gameEngine = Engine.create(parent.width, parent.height);
+                gameEngine = Engine.create(parent.width, parent.height);
+                gameEngine.onScoreChanged(gameActiveView.onScoreChanged);
+                gameEngine.onNumLivesChanged(gameActiveView.onNumLivesChanged);
+                gameEngine.onPlayerDied(gameRoot.onPlayerDied);
+                gameEngine.onAllInvadersDead(gameRoot.onAllInvadersDead);
+            }
 
-            PS.PubSub.subscribe(Constants.TOPIC_SCORE, gameActiveView.onScoreChanged);
-            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_NUM_LIVES_CHANGED, gameActiveView.onNumLivesChanged);
-
-            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_DIED, gameRoot.onPlayerDied);
-            PS.PubSub.subscribe(Constants.TOPIC_ALL_INVADERS_DEAD, gameRoot.onAllInvadersDead);
-
-            PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);
-            PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);
-            PS.PubSub.subscribe(Constants.TOPIC_ENEMY_DIED, enemyExplosionSound.restart);
-
-            gameActiveView.shoot.connect( function(){
-                gameEngine.keyUp(
-                            { key: Qt.Key_Space, isAutoRepeat: false } );
-            } );
-
-            gameActiveView.moveShipLeft.connect( function(){
-                gameEngine.keyDown(
-                            { key: Qt.Key_Left, isAutoRepeat: false } );
-            } );
-
-            gameActiveView.moveShipRight.connect( function(){
-                gameEngine.keyDown(
-                            { key: Qt.Key_Right, isAutoRepeat: false } );
-            } );
-
-            gameActiveView.stopMovingLeft.connect( function(){
-                gameEngine.keyUp(
-                            { key: Qt.Key_Left, isAutoRepeat: false } );
-            } );
-
-            gameActiveView.stopMovingRight.connect( function(){
-                gameEngine.keyUp(
-                            { key: Qt.Key_Right, isAutoRepeat: false } );
-            } );
+            /*PS.PubSub.subscribe(Constants.TOPIC_PLAYER_FIRED, playerFireSound.restart);*/
+            /*PS.PubSub.subscribe(Constants.TOPIC_ENEMY_FIRED, enemyFireSound.restart);*/
+            /*PS.PubSub.subscribe(Constants.TOPIC_ENEMY_DIED, enemyExplosionSound.restart);*/
 
             //gameMusic.play();
         }
@@ -191,23 +175,25 @@ Rectangle {
                 gameEngine.keyDown(event);
             }
         } else if(gameRoot.state === 'game over' || gameRoot.state === 'game won'){
-            doQuit();
+            if(quitAllowed){
+                doQuit();
+            }
         }
     }
 
     Keys.onReleased: {
-        if(gameEngine){
-            gameEngine.keyUp(event);
-        }
-
-        if(event.key === Qt.Key_Q && !event.isAutoRepeat){
-            event.accepted = true;
-            doQuit();
-        }
-
-        if(event.key === Qt.Key_F && !event.isAutoRepeat){
-            gameDebugOverlay.visible = !gameDebugOverlay.visible;
-            gameDebugOverlay.toggleFPSMonitor();
+        if(gameRoot.state === 'game active'){
+            if(gameEngine){
+                gameEngine.keyUp(event);
+            }
+            if(event.key === Qt.Key_F && !event.isAutoRepeat){
+                gameDebugOverlay.visible = !gameDebugOverlay.visible;
+                gameDebugOverlay.toggleFPSMonitor();
+            }
+            if(event.key === Qt.Key_Q && !event.isAutoRepeat){
+                event.accepted = true;
+                doQuit();
+            }
         }
     }
 
@@ -221,12 +207,16 @@ Rectangle {
         gameRoot.state = 'game active';
     }
 
-    function onPlayerDied(messageTopic, value){
+    function onPlayerDied(){
         gameRoot.state = 'game over';
+        gameRoot.quitAllowed = false;
+        accidentalQuitTimer.running = true;
     }
 
-    function onAllInvadersDead(messageTopic, value){
+    function onAllInvadersDead(){
         gameRoot.state = 'game won';
+        gameRoot.quitAllowed = false;
+        accidentalQuitTimer.running = true;
     }
 
     function doQuit(){
