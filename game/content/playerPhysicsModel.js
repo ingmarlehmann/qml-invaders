@@ -2,8 +2,7 @@
 .import "aabb.js" as AABB
 .import "vector2d.js" as Vector2d
 
-function create(width, height, collisionCallback) {
-
+function create(width, height, collisionCallback){
     var playerPhysicsModel = (function(width, height, collisionCallback){
         var _exports = {};
 

@@ -1,9 +1,7 @@
 .import "vector2d.js" as Vector2d
 
-function create(width, height, position) {
-
+function create(width, height, position){
     var aabb = (function(width, height, position){
-
         var _min;
         var _max;
 
@@ -33,7 +31,6 @@ function create(width, height, position) {
         }
 
         function merge(aabb){
-
             // Create a copy of self
             var ret = create(getWidth(),
                              getHeight(),
@@ -107,21 +104,19 @@ function create(width, height, position) {
         }
 
         function construct(){
-            if(position !== undefined && position !== null){
+            if(position){
                 _min = Vector2d.create(position.getX(), position.getY());
             }
             else{
                 _min = Vector2d.create(0, 0);
             }
-
-            if(width !== undefined && width !== null){
+            if(width){
                 _max = Vector2d.create(_min.getX() + width, _min.getY());
             }
             else{
                 _max = Vector2d.create(_min.getX(), _min.getY());
             }
-
-            if(height !== undefined && height !== null){
+            if(height){
                 _max.setY(_min.getY() + height);
             }
         }
@@ -151,12 +146,11 @@ function create(width, height, position) {
 
             getWidth: getWidth,
             getHeight: getHeight,
+            getType: getType,
 
             merge: merge,
 
             toString: toString,
-
-            getType: getType
         };
 
     }(width, height, position));

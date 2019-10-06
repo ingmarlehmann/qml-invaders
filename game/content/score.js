@@ -1,7 +1,6 @@
 .import "constants.js" as Constants
 
 function create(initialScore){
-
     var score = (function(initialScore){
 
         var _exports = {};

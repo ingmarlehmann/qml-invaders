@@ -28,14 +28,14 @@ function create(options, doneCallback){
         }
 
         _exports.setPosition = function(x, y){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setPosition(x, y);
             }
             else {
                 console.log("Error: No physics model created for player laser projectile. Can't set position for physics model.");
             }
 
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.x = x;
                 _view.y = y;
             }
@@ -45,14 +45,14 @@ function create(options, doneCallback){
         }
 
         _exports.setX = function(x){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setX(x);
             }
             else {
                 console.log("Error: No physics model created for player laser projectile. Can't set position for physics model.");
             }
 
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.x = x;
             }
             else{
@@ -61,14 +61,14 @@ function create(options, doneCallback){
         }
 
         _exports.setY = function(y){
-            if(_physicsModel !== null && _physicsModel !== undefined){
+            if(_physicsModel){
                 _physicsModel.physicsBody.setY(y);
             }
             else {
                 console.log("Error: No physics model created for player laser projectile. Can't set position for physics model.");
             }
 
-            if(_view !== null && _view !== undefined){
+            if(_view){
                 _view.y = y;
             }
             else{
@@ -79,11 +79,10 @@ function create(options, doneCallback){
         // Return a copy of the position object so
         // that the original can not be modified.
         _exports.getPosition = function(){
-            if(_physicsModel === null || _physicsModel === undefined){
+            if(!_physicsModel){
                 console.log("Error: No physics model created for player laser projectile. Can't get position.");
                 return null;
             }
-
             return _physicsModel.physicsBody.getPosition();
         }
 
@@ -91,7 +90,6 @@ function create(options, doneCallback){
         // Private methods
         // ----------------
         var _onCollision = function(collidingObject){
-            //console.log("player laser projectile was hit!");
             _exports.deleteLater();
         }
 
@@ -113,14 +111,13 @@ function create(options, doneCallback){
                         _view.height,
                         _onCollision);
 
-            if(_physicsModel === null || _physicsModel === undefined){
+            if(!_physicsModel){
                 console.log("Error: Failed to create Physics model for player laser projectile.");
                 doneCallback(null);
                 return;
             }
 
             _physicsModel.physicsBody.setPosition(_view.x, _view.y);
-
             _onFinishedCreation();
         }
 

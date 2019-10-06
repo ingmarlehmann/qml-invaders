@@ -6,7 +6,7 @@ import QtQuick.Dialogs 1.2
 import "constants.js" as Constants
 import "timerFactory.js" as TimerFactory
 
-ApplicationWindow {
+ApplicationWindow{
     id: root
 
     title: qsTr("QML Invaders")
@@ -62,29 +62,28 @@ ApplicationWindow {
     Component.onCompleted: {
         TimerFactory.setRootQmlObject(contentRoot);
 
-        game.quit.connect( function(){
+        game.quit.connect(function(){
             exitToMainMenu();
-        })
+        });
 
-        help.quit.connect( function(){
+        help.quit.connect(function(){
             exitToMainMenu();
-        })
+        });
 
-        highscores.quit.connect( function(){
+        highscores.quit.connect(function(){
             exitToMainMenu();
-        })
+        });
 
-        menu.menuItemSelected.connect( function(selectedMenuItem){
+        menu.menuItemSelected.connect(function(selectedMenuItem){
             menuItemSelected(selectedMenuItem)
-        })
+        });
 
         Constants.COMPONENT_READY = Component.Ready;
         Constants.COMPONENT_ERROR = Component.Error;
         Constants.COMPONENT_LOADING = Component.Loading;
     }
 
-    function exitToMainMenu()
-    {
+    function exitToMainMenu(){
         game.visible = false
         menu.visible = true
         help.visible = false
@@ -113,8 +112,6 @@ ApplicationWindow {
             highscores.focus = false;
 
             game.newGame();
-
-            //whiteScreen.opacity = 100;
         }
         else if(selectedMenuItem === "Help"){
             menu.visible = false;

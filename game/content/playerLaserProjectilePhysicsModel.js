@@ -3,7 +3,6 @@
 .import "vector2d.js" as Vector2d
 
 function create(width, height, collisionCallback) {
-
     var playerLaserProjectilePhysicsModel = (function(width, height, collisionCallback){
         var _exports = {};
 

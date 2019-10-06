@@ -131,7 +131,6 @@ function create(options, doneCallback){
         }
 
         var _onCollision = function(collidingObject){
-            //console.log("DEBUG: Player was hit by '" + collidingObject + "'");
             _exports.hit(1);
         }
 

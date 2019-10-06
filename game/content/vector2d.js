@@ -1,8 +1,6 @@
 
 function create(initialX, initialY) {
-
     var vector2d = (function(initialX, initialY){
-
         var _x;
         var _y;
 
@@ -16,12 +14,10 @@ function create(initialX, initialY) {
 
         function setX(newX){
             _x = newX;
-            //console.log("Vector2d: setting x to: " + newX);
         }
 
         function setY(newY){
             _y = newY;
-            //console.log("Vector2d: setting y to: " + newY);
         }
 
         function toString(){
@@ -29,14 +25,14 @@ function create(initialX, initialY) {
         };
 
         function construct(x, y){
-          if(initialX !== undefined && initialX !== null){
+          if(initialX){
               _x = initialX;
           }
           else{
               _x = 0.0;
           }
 
-          if(initialY !== undefined && initialY !== null){
+          if(initialY){
               _y = initialY;
           }
           else{
@@ -47,9 +43,6 @@ function create(initialX, initialY) {
         construct(initialX, initialY);
 
         return {
-//          x: _x,
-//          y: _y,
-
           getX: getX,
           getY: getY,
 

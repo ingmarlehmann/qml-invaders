@@ -1,7 +1,7 @@
 import QtQuick 2.2
 import QtMultimedia 5.0
 
-Rectangle {
+Rectangle{
     id: root
 
     width: parent.width

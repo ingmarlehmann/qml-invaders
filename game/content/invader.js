@@ -4,7 +4,6 @@
 .import "constants.js" as Constants
 
 function create(options, doneCallback) {
-
     var _invader = (function(options, doneCallback){
 
         // ----------------
@@ -113,7 +112,7 @@ function create(options, doneCallback) {
         // Return a copy of the position object so
         // that the original can not be modified.
         function getPosition(){
-            if(_physicsModel === null || _physicsModel === undefined){
+            if(!_physicsModel){
                 console.log("Error: No physics model created for invader. Can't get position.");
                 return null;
             }
@@ -125,15 +124,13 @@ function create(options, doneCallback) {
         // Private methods
         // ----------------
         function onCollision(collidingObject){
-            //console.log("DEBUG: Invader was hit by '" + collidingObject + "'");
-
             _view.died();
             animateExplosion();
             deleteLater();
         }
 
         function emitNewPosition(){
-            var pos = getPosition(); 
+            var pos = getPosition();
             _view.positionChanged(pos.getX(), pos.getY());
         }
 
@@ -145,7 +142,6 @@ function create(options, doneCallback) {
             }
 
             var pos = _physicsModel.physicsBody.getPosition();
-
             var options = { qmlfile: 'Explosion.qml',
                             qmlparameters: { x: pos.getX(), y: pos.getY() } };
 
@@ -153,27 +149,24 @@ function create(options, doneCallback) {
         }
 
         function onViewObjectCreated(object){
-            if(object === null || object === undefined){
+            if(!object){
                 console.log("Error: Failed to create View object for invader.");
                 doneCallback(null);
                 return;
             }
-
             _view = object;
             createPhysicsModel();
         }
 
         function createPhysicsModel(){
             _physicsModel = InvaderPhysicsModel.create(_view.width, _view.height, onCollision);
-
-            if(_physicsModel === null || _physicsModel === undefined){
+            if(!_physicsModel){
                 console.log("Error: Failed to create Physics model for invader.");
                 doneCallback(null);
                 return;
             }
 
             _physicsModel.physicsBody.setPosition(_view.x, _view.y);
-
             onFinishedCreation();
         }
 
@@ -229,7 +222,6 @@ function create(options, doneCallback) {
         }
 
         return publicInvaderInterface();
-
     }(options, doneCallback));
 
     return _invader;

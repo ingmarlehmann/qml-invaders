@@ -39,18 +39,18 @@ function setRootQmlObject(qmlRootObject){
 //  and added to the qml scene.
 //
 function createObject(options, callback){
-    if(rootObject === null){
+    if(!rootObject){
         console.log("Error: You must first set a root object before calling createObject().");
         return;
     }
 
     var component = Qt.createComponent(options.qmlfile);
-    if(component === null){
+    if(!component){
         console.log("Failed to create QML Component. File doesn't exist?");
         return;
     }
 
-    if (component.status === Constants.COMPONENT_READY){
+    if(component.status === Constants.COMPONENT_READY){
         _finishCreation(options, component, callback);
     }
     else{
@@ -61,7 +61,7 @@ function createObject(options, callback){
 function _finishCreation(options, component, callback) {
     if(component.status !== Constants.COMPONENT_READY){
         console.log("Error: QML Component failed.");
-        if(callback !== null && callback !== undefined){
+        if(callback){
             callback(null);
         }
         return;
@@ -70,16 +70,16 @@ function _finishCreation(options, component, callback) {
     var sprite;
     var parent = (options.parent === undefined) ? rootObject : options.parent;
 
-    if(options.qmlparameters !== null && options.qmlparameters !== undefined){
+    if(options.qmlparameters){
         sprite = component.createObject(parent, options.qmlparameters);
     }
     else{
         sprite = component.createObject(parent);
     }
 
-    if(sprite === null) {
+    if(sprite === null){
         console.log("Failed to create QML Object");
-        if(callback !== null && callback !== undefined){
+        if(callback){
             callback(null);
         }
         return;
@@ -87,7 +87,7 @@ function _finishCreation(options, component, callback) {
 
     // postcreateparameters:
     // {a: 'value', b: 'value', c: 'value'}
-    if(options.qmlpostparameters !== null && options.qmlpostparameters !== undefined){
+    if(options.qmlpostparameters){
         for(var key in options.qmlpostparameters){
 
             var attrName = key;
@@ -97,7 +97,7 @@ function _finishCreation(options, component, callback) {
         }
     }
 
-    if(callback !== null && callback !== undefined){
+    if(callback){
         callback(sprite);
     }
 }

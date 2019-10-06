@@ -20,7 +20,6 @@ Rectangle{
 
         Text{
             id: descriptionText
-            //anchors.margins: 10
             anchors.fill: parent
             text: description
             font.pixelSize: 24
@@ -43,7 +42,6 @@ Rectangle{
 
         Text{
             id: keyText
-            //anchors.margins: 10
             anchors.fill: parent
             text: key
             font.pixelSize: 24

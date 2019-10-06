@@ -1,7 +1,5 @@
 
-function create(options,
-                collisionCallback) {
-
+function create(options, collisionCallback){
     var physicsObject = (function(options,
                                   collisionCallback){
         var _exports = {};

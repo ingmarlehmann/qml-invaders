@@ -1,6 +1,5 @@
 
 function create(){
-
     var engine = (function(){
 
         // ----------------
@@ -26,9 +25,7 @@ function create(){
         };
 
         function registerPhysicsObject(physicsObject){
-            //console.log("DEBUG: Registering physics object in collision group: " + physicsObject.collisionGroup);
             _physicsObjects.push(physicsObject);
-
             if(_physicsDebugActive){
                 createPhysicsDebugBox(physicsObject);
             }
@@ -72,18 +69,12 @@ function create(){
             var height = physicsObject.physicsBody.getHeight();
 
             callback = function(qmlobject){
-                //console.log("DEBUG: Physics debug object visible: " + qmlobject.visible);
-
                 // Also save a reference to the parent physics object so
                 // we can update the position later during runtime.
                 _physicsDebugBoxes.push({
                     view: qmlobject,
                     physicsBody: physicsObject.physicsBody });
             }
-
-            //console.log("DEBUG: Creating physics debug box with properties " +
-            //            "x: " + x + " y: " + y + " width: " + width +
-            //            " height: " + height);
 
             options = { qmlfile: 'PhysicsDebugBox.qml',
                         qmlparameters: {

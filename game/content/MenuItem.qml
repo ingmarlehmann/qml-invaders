@@ -36,9 +36,9 @@ Rectangle {
         hoverEnabled: true
         acceptedButtons: Qt.LeftButton
 
-        onClicked:  { itemClicked(); /*console.log("mouse click");*/ }
-        onEntered:  { hovered = true; /*console.log("mouse enter");*/  }
-        onExited:   { hovered = false; /*console.log("mouse exit");*/  }
+        onClicked:  { itemClicked(); }
+        onEntered:  { hovered = true; }
+        onExited:   { hovered = false; }
     }
 
     Text{

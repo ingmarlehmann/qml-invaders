@@ -1,6 +1,6 @@
 import QtQuick 2.0
 
-Rectangle {
+Rectangle{
     width: 50
     height: 50
 

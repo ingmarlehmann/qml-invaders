@@ -16,7 +16,7 @@ Rectangle {
 
         Text{
             anchors.horizontalCenter: parent.horizontalCenter
-            text: "DEM SCORES TO BE SHOWN HERE"
+            text: "TODO: IMPLEMENT HIGHSCORES"
             font.pixelSize: 24
             color: "#00ff00"
         }

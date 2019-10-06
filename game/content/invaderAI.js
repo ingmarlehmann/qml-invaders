@@ -80,7 +80,6 @@ function create(physicsEngine, invadersToControl){
         function countInvaders(invaders){
             var row, column;
             var numInvaders = 0;
-
             for(row=0; row< invaders.length; ++row){
                 for(column=0; column< invaders[row].length; ++column){
                     if(invaders[row][column] !== null && invaders[row][column] !== undefined){
@@ -88,7 +87,6 @@ function create(physicsEngine, invadersToControl){
                     }
                 }
             }
-
             return numInvaders;
         }
 
@@ -197,7 +195,7 @@ function create(physicsEngine, invadersToControl){
             // that will fire a missile towards the player.
             randomInvader = bottomInvaders[Math.floor(Math.random() * bottomInvaders.length)];
 
-            //PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);            
+            //PS.PubSub.publish(Constants.TOPIC_ENEMY_FIRED, 0);
 
             createEnemyProjectile(randomInvader.view.x + (Constants.ENEMYSHIP_WIDTH/2),
                                   randomInvader.view.y + (Constants.ENEMYSHIP_HEIGHT));
@@ -237,7 +235,7 @@ function create(physicsEngine, invadersToControl){
             var column = 0, row = 0;
 
             var aabb = getInvaderPackBoundingBox();
-            if(aabb === undefined){
+            if(!aabb){
                 return; // all invaders are dead.
             }
 
@@ -281,13 +279,9 @@ function create(physicsEngine, invadersToControl){
 
         function moveDown(){
             var column = 0, row = 0;
-
-            //var aabb = _getInvaderPackBoundingBox();
-            //console.log("moving down. invader aabb: min.x: " + aabb.min.x + " max.x: " + aabb.max.x + " min.y: " + aabb.min.y + " max.y: " + aabb.max.y);
-
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                    if(_invaders[row][column]){
                         _invaders[row][column].appendY(Constants.ENEMYSHIP_HEIGHT);
                     }
                 }
@@ -308,7 +302,7 @@ function create(physicsEngine, invadersToControl){
 
             for(row=0; row< _invaders.length; ++row){
                 for(column=0; column< _invaders[row].length; ++column){
-                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                    if(_invaders[row][column]){
                         atLeastOneInvaderAlive = true;
                         aabb = aabb.merge(_invaders[row][column].physicsObject.physicsBody);
                     }
@@ -316,7 +310,6 @@ function create(physicsEngine, invadersToControl){
             }
 
             if(!atLeastOneInvaderAlive){
-                //console.log("invader pack aabb undefined");
                 return undefined;
             }
 

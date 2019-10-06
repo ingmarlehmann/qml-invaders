@@ -6,10 +6,13 @@ Rectangle{
     id: root
     color: "black"
 
-    function onHighScoreChanged(newScore) { hiScoreText.text = helper.leftPad(newScore, 4); }
-    function onScoreChanged(newScore) { scoreText.text = helper.leftPad(newScore, 4); }
-    function onNumLivesChanged(newNumberOfLives)
-    {
+    function onHighScoreChanged(newScore){
+        hiScoreText.text = helper.leftPad(newScore, 4); 
+    }
+    function onScoreChanged(newScore){ 
+        scoreText.text = helper.leftPad(newScore, 4); 
+    }
+    function onNumLivesChanged(newNumberOfLives){
         firstLifeImage.visible = (newNumberOfLives >= 1);
         secondLifeImage.visible = (newNumberOfLives >= 2);
         thridLifeImage.visible = (newNumberOfLives >= 3);

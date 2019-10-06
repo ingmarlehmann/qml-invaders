@@ -9,7 +9,7 @@
 .import "playerLaserProjectile.js" as PlayerLaserProjectile
 
 function create(width, height){
-    var engine = (function (width, height) {
+    var engine = (function (width, height){
 
         // ----------------
         // Private variables
@@ -71,18 +71,26 @@ function create(width, height){
             createEnemyShips();
         }
 
+        // Access level: Public
+        // Description: Set score changed callback.
         function onScoreChanged(cb){
             _onScoreChangedCb = cb;
         }
 
+        // Access level: Public
+        // Description: Set num lives changed callback.
         function onNumLivesChanged(cb){
             _onNumLivesChangedCb = cb;
         }
 
+        // Access level: Public
+        // Description: Set played died callback.
         function onPlayerDied(cb){
             _onPlayerDiedCb = cb;
         }
 
+        // Access level: Public
+        // Description: set all invaders dead callback.
         function onAllInvadersDead(cb){
             _onAllInvadersDeadCb = cb;
         }
@@ -92,20 +100,18 @@ function create(width, height){
         function keyDown(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
-                    if(_player !== null && _player !== undefined){
+                    if(_player){
                         _player.moveDir |= Constants.MOVEDIR_LEFT;
                     }
                 }
-
                 event.accepted = true;
             }
             if(event.key === Qt.Key_Right){
                 if(!event.isAutoRepeat){
-                    if(_player !== null && _player !== undefined){
+                    if(_player){
                         _player.moveDir |= Constants.MOVEDIR_RIGHT;
                     }
                 }
-
                 event.accepted = true;
             }
             if(event.key === Qt.Key_P){
@@ -120,23 +126,21 @@ function create(width, height){
         function keyUp(event){
             if(event.key === Qt.Key_Left){
                 if(!event.isAutoRepeat){
-                    if(_player !== null && _player !== undefined){
+                    if(_player){
                         _player.moveDir &= ~(Constants.MOVEDIR_LEFT);
                     }
                 }
             }
-
-            if(event.key === Qt.Key_Right){
+            else if(event.key === Qt.Key_Right){
                 if(!event.isAutoRepeat){
-                    if(_player !== null && _player !== undefined){
+                    if(_player){
                         _player.moveDir &= ~(Constants.MOVEDIR_RIGHT);
                     }
                 }
             }
-
-            if(event.key === Qt.Key_Space){
+            else if(event.key === Qt.Key_Space){
                 if(!event.isAutoRepeat){
-                    if(_player !== null && _player !== undefined){
+                    if(_player){
                         createPlayerProjectile();
                         //PS.PubSub.publish(Constants.TOPIC_PLAYER_FIRED, 0);
                     }
@@ -165,8 +169,7 @@ function create(width, height){
         // Description: Clear the game data.
         function clearGameData(){
             var i, j;
-
-            if(_player !== null && _player !== undefined){
+            if(_player){
                 _player.view.destroy();
             }
 
@@ -178,7 +181,7 @@ function create(width, height){
 
             for(i=0; i< _invaders.length; ++i){
                 for(j=0; j< _invaders[i].length; ++j){
-                    if(_invaders[i][j] !== null && _invaders[i][j] !== undefined){
+                    if(_invaders[i][j]){
                         _invaders[i][j].view.destroy();
                     }
                 }
@@ -203,10 +206,9 @@ function create(width, height){
         // Access level: Private
         // Description: Animate the player object.
         function updatePlayer(deltaTime){
-            if(_player == null || _player == undefined){
+            if(!_player){
                 return;
             }
-
             // Move player ship.
             if(_player.moveDir === Constants.MOVEDIR_LEFT){
                 // Make sure player does not go out of bounds and move the ship to new position.
@@ -220,7 +222,7 @@ function create(width, height){
         // Access level: Private
         // Description: Update physics engine.
         function updatePhysicsEngine(deltaTime){
-            if(_physicsEngine !== null && _physicsEngine !== undefined){
+            if(_physicsEngine){
                 _physicsEngine.update();
             }
         }
@@ -252,7 +254,7 @@ function create(width, height){
         // Access level: Private
         // Description: Update all invaders.
         function updateInvaders(deltaTime) {
-            if(_invaderAI !== null){
+            if(_invaderAI){
                 _invaderAI.update(deltaTime);
             }
         }
@@ -261,10 +263,9 @@ function create(width, height){
         // Description: delete all invaders that have been marked for deletion.
         function deleteDeadInvaders(){
             var row, column;
-
             for(row=0; row < _invaders.length; ++row){
                 for(column=0; column < _invaders[row].length; ++column){;
-                    if(_invaders[row][column] !== null && _invaders[row][column] !== undefined){
+                    if(_invaders[row][column]){
                         if(_invaders[row][column].isToBeDeleted()){
                             _invaders[row][column].view.destroy();
                             _invaders[row][column] = null;
@@ -278,7 +279,6 @@ function create(width, height){
         // Description: delete all player projectiles that have been marked for deletion.
         function deleteDeadPlayerProjectiles(){
             var i;
-
             for(i=(_playerProjectiles.length-1); i >= 0; --i){
                 if(_playerProjectiles[i].isToBeDeleted()){
                     _playerProjectiles[i].view.destroy();
@@ -290,7 +290,7 @@ function create(width, height){
         // Access level: Private
         // Description: delete all player projectiles that have been marked for deletion.
         function deleteDeadPlayers(){
-            if(_player !== undefined && _player !== null){
+            if(_player){
                 if(_player.isToBeDeleted()){
                     _player.view.destroy();
                     _player = null;
@@ -301,7 +301,6 @@ function create(width, height){
         // Access level: Private
         // Description: Delete all objects marked for deletion.
         function deleteDeadObjects(deltaTime){
-
             deleteDeadInvaders();
             deleteDeadPlayerProjectiles();
             deleteDeadPlayers();
@@ -327,7 +326,6 @@ function create(width, height){
             PlayerLaserProjectile.create(
                         { x: projectileStartX, y: projectileStartY },
                         completedCallback);
-
         }
 
         // Access level: Private
@@ -362,17 +360,17 @@ function create(width, height){
             // Create invader game objects.
             y = 100;
 
-            // calculate the position to place the first invader.
+            // Calculate the position to place the first invader.
             x = (_width/2)-((Constants.INVADER_COLUMNS*Constants.ENEMYSHIP_WIDTH)/2);
 
-            // the create method is asynchronous so we need to define a completion callback.
+            // The create method is asynchronous so we need to define a completion callback.
             onInvaderCreated = function(invader) {
-                if(invader !== null && invader !== undefined) {
+                if(invader){
                     currentRow.push(invader);
                     _physicsEngine.registerPhysicsObject(invader.physicsObject);
                     invader.view.died.connect(onInvaderDeath);
                 }
-                else {
+                else{
                     console.log("ERROR: Error creating invader.");
                 }
             }
@@ -399,7 +397,8 @@ function create(width, height){
             }
         }
 
-        //
+        // Access level: Private
+        // Description: Callback for when an invader dies.
         function onInvaderDeath(){
             _score.setScore(_score.getScore()+10);
             if(_onScoreChangedCb){
